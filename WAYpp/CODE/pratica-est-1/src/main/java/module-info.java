@@ -1,0 +1,12 @@
+module praticaest1.praticaest1 {
+    requires javafx.controls;
+    requires javafx.fxml;
+    requires java.net.http;
+    requires com.fasterxml.jackson.core;
+    requires com.fasterxml.jackson.databind;
+    requires io.github.cdimascio.dotenv.java;
+
+
+    opens praticaest1.praticaest1 to javafx.fxml;
+    exports praticaest1.praticaest1;
+}
