@@ -6,18 +6,24 @@ import javafx.animation.PauseTransition;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
-import praticaest1.praticaest1.obj.Utente;
-import praticaest1.praticaest1.utility.GestoreHTTP;
+import praticaest1.praticaest1.obj.*;
+import praticaest1.praticaest1.utility.*;
 
 import java.io.IOException;
 
 public class HomeController {
     @FXML
-    private AnchorPane profileBox,tripBox,homeBox,sideBox;
+    private AnchorPane profileBox,tripBox,homeBox;
     /*BARRA LATERALE*/
     @FXML
     private HBox b1,b2,b3,b4; //Quelli della barra laterale (Lo so nomi terribili ma non ho voglia di cambiarli)
@@ -31,7 +37,10 @@ public class HomeController {
     @FXML
     private TextArea t4;
     @FXML
-    private Button salva;
+    private Button salva,aggiungiNuovoViaggio;
+    /*SEZIONE VIAGGI*/
+    @FXML
+    private VBox scrollTrip;
 
     //Elementi gestionali
     private Utente utente;
@@ -70,7 +79,20 @@ public class HomeController {
     @FXML
     public void goToHome(){ gestSchermate(true,false,false); }
     @FXML
-    public void goToTrip(){ gestSchermate(false,true,false); }
+    public void goToTrip(){
+        try {
+            gestSchermate(false,true,false);
+            String risposta=gestoreHTTP.inviaRichiestaConParametri(URL_BASE+"getListaViaggi.php",mapper.writeValueAsString(this.utente));
+            Messaggio<ListaViaggi> m=mapper.readValue(risposta, Messaggio.class); //Lo converto nella variabile messaggio
+            if (!m.getConfermaAzione())
+                animazioneBottone(aggiungiNuovoViaggio,"-fx-background-color: #BE2538; -fx-background-radius: 6; -fx-padding: 8 16;","-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
+            else{
+                popolaScroolPane(m.getParametro1());
+            }
+        } catch (Exception e) {
+            animazioneBottone(aggiungiNuovoViaggio,"-fx-background-color: #BE2538; -fx-background-radius: 6; -fx-padding: 8 16;","-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
+        }
+    }
     @FXML
     public void goToProfile(){
         gestSchermate(false,false,true);
@@ -138,8 +160,66 @@ public class HomeController {
         }
     }
 
+    /*SEZIONE VIAGGI*/
+    @FXML
+    private void popolaScroolPane(ListaViaggi listaViaggi){
+        scrollTrip.getChildren().clear();
+        for(Viaggio v:listaViaggi.getList()){
+            scrollTrip.getChildren().add(creaViaggioBox(listaViaggi,v,this.utente.getNome())); //Escamotage perchè tanto non possono esserci più utenti per la stessa lista viaggi
+        }
+    }
+    private HBox creaViaggioBox(ListaViaggi listaViaggi,Viaggio viaggioCorrente, String creatoreXRimozione) {
+        // HBox principale
+        HBox hBox = new HBox();
+        hBox.setAlignment(Pos.CENTER_LEFT);
+        hBox.setSpacing(15);
+        hBox.setStyle("-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 16;");
+
+        // Effetto ombra
+        DropShadow dropShadow = new DropShadow();
+        dropShadow.setColor(Color.rgb(0, 0, 0, 0.05));
+        dropShadow.setRadius(10);
+        dropShadow.setOffsetY(4);
+        hBox.setEffect(dropShadow);
+
+        // Immagine
+        ImageView imageView = new ImageView(new Image(getClass().getResourceAsStream("/img/plane-icon.png")));
+        imageView.setFitHeight(36);
+        imageView.setFitWidth(36);
+
+        // VBox con le etichette
+        VBox vBox = new VBox();
+        vBox.setSpacing(4);
+
+        Label titoloLabel = new Label(viaggioCorrente.getNomeUnivoco()); //TODO: INSERIRE AZIONI MENU VERO E PROPRIO
+        titoloLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
+
+        Label removeLabel = new Label(creatoreXRimozione+" cancella");
+        removeLabel.setStyle("-fx-text-fill: #4B5563; -fx-font-size: 12px;");
+        removeLabel.setOnMouseClicked(e->{ //Rimozione e ricarica
+            try {
+                listaViaggi.removeElemento(viaggioCorrente);
+                String risposta=gestoreHTTP.inviaRichiestaConParametri(URL_BASE+"reloadListaViaggi.php",mapper.writeValueAsString(new MessaggioDati<Utente,ListaViaggi>(this.utente,listaViaggi)));
+                Messaggio<ListaViaggi> m=mapper.readValue(risposta, Messaggio.class);
+                if (m.getConfermaAzione())
+                    popolaScroolPane(m.getParametro1());
+                else
+                    animazioneBottone(aggiungiNuovoViaggio,"-fx-background-color: #BE2538; -fx-background-radius: 6; -fx-padding: 8 16;","-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
+            } catch (Exception ex) {
+                animazioneBottone(aggiungiNuovoViaggio,"-fx-background-color: #BE2538; -fx-background-radius: 6; -fx-padding: 8 16;","-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
+            }
+        });
+
+        vBox.getChildren().addAll(titoloLabel, removeLabel);
+
+        // Aggiunta dei nodi all'HBox
+        hBox.getChildren().addAll(imageView, vBox);
+
+        return hBox;
+    }
+    //TODO: INSERIRE RICHIESTA CREAZIONE NUOVO VIAGGIO, creare fxml dinamico con nome
+
     /*METODI GENERALI*/
-    //Errore
     @FXML
     private void animazioneBottone(Button b,String stylePost, String stylePre){
         b.setStyle(stylePost);
@@ -148,13 +228,16 @@ public class HomeController {
         pausa.play();
     }
 }
-class Messaggio{
+
+
+//Classi usate per lo scambio di messaggi con server http
+class Messaggio<T>{
     private Boolean confermaAzione;
-    private String parametro1;
+    private T parametro1;
     private Integer parametro2;
 
     public Messaggio() {}
-    public Messaggio(Boolean confermaAzione, String parametro1, Integer parametro2) {
+    public Messaggio(Boolean confermaAzione, T parametro1, Integer parametro2) {
         this.confermaAzione = confermaAzione;
         this.parametro1 = parametro1;
         this.parametro2 = parametro2;
@@ -162,11 +245,27 @@ class Messaggio{
 
     public Boolean getConfermaAzione() { return confermaAzione; }
     public void setConfermaAzione(Boolean confermaAzione) { this.confermaAzione = confermaAzione; }
-    public String getParametro1() { return parametro1; }
-    public void setParametro1(String parametro1) { this.parametro1 = parametro1; }
+    public T getParametro1() { return parametro1; }
+    public void setParametro1(T parametro1) { this.parametro1 = parametro1; }
     public Integer getParametro2() { return parametro2; }
     public void setParametro2(Integer parametro2) { this.parametro2 = parametro2; }
 }
+class MessaggioDati<T,K>{
+    private T p1;
+    private K p2;
+
+    public MessaggioDati() {}
+    public MessaggioDati(T p1, K p2) {
+        this.p1 = p1;
+        this.p2 = p2;
+    }
+
+    public T getP1() { return p1; }
+    public void setP1(T p1) { this.p1 = p1; }
+    public K getP2() { return p2; }
+    public void setP2(K p2) { this.p2 = p2; }
+}
+
 class UtenteAggiornato{
     private Utente vecchio;
     private Utente nuovo;

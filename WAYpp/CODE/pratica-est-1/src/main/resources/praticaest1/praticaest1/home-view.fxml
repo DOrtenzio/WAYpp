@@ -11,6 +11,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
@@ -175,6 +176,45 @@
                           </content>
                       </ScrollPane>
 
+                  </AnchorPane>
+                  <AnchorPane fx:id="tripBox" layoutX="10.0" layoutY="10.0" prefHeight="600.0" prefWidth="558.0">
+                     <children>
+                        <ScrollPane fitToWidth="true" style="-fx-background: #F9FAFB;">
+                           <content>
+                              <VBox fx:id="scrollTrip" alignment="TOP_LEFT" disable="true" prefHeight="588.0" prefWidth="555.0" spacing="20" style="-fx-background-color: #F9FAFB; -fx-padding: 24;" visible="false">
+                                 <children>
+                                    <HBox maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="35.0" prefWidth="507.0">
+                                       <children>
+                                          <Label prefHeight="32.0" prefWidth="131.0" style="-fx-font-size: 22px; -fx-font-weight: bold;" text="I tuoi viaggi" />
+                                          <Pane prefHeight="35.0" prefWidth="242.0" />
+                                          <HBox alignment="CENTER_RIGHT" spacing="10">
+                                             <children>
+                                                <Button fx:id="aggiungiNuovoViaggio" onAction="#salvaInfo" prefHeight="33.0" prefWidth="136.0" style="-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;" text="+ Nuovo Viaggio" textFill="WHITE" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </HBox>
+                                    <Label style="-fx-text-fill: #6B7280; -fx-font-size: 14px;" text="Aggiungi, elimina o accedi a tutti i tuoi viaggi dove e quando vuoi!" />
+                                    <HBox alignment="CENTER_LEFT" spacing="15" style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 16;                          -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 4);">
+                                       <children>
+                                          <ImageView fitHeight="36" fitWidth="36">
+                                             <image>
+                                                <Image url="@img/plane-icon.png" />
+                                             </image>
+                                          </ImageView>
+                                          <VBox spacing="4">
+                                             <children>
+                                                <Label style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Nome del viaggio" />
+                                                <Label style="-fx-text-fill: #4B5563; -fx-font-size: 12px;" text="Creato da nome utente" />
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                           </content>
+                        </ScrollPane>
+                     </children>
                   </AnchorPane>
                </children>
             </AnchorPane>

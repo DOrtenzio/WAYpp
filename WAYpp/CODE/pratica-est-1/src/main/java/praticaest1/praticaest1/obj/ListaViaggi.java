@@ -9,6 +9,9 @@ public class ListaViaggi {
         this.list = new ArrayList<>();
     }
 
+    public List<Viaggio> getList() { return list; }
+    public void setList(List<Viaggio> list) { this.list = list; }
+
     //Interfacciamento principale
     public void addElemento(Viaggio v){
         this.list.add(v);

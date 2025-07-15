@@ -1,8 +1,6 @@
 package praticaest1.praticaest1.obj;
 
 import praticaest1.praticaest1.utility.*;
-
-import java.io.IOException;
 import java.time.LocalDate;
 
 public class Tappa {
