@@ -23,6 +23,7 @@ class RisultatoGeo{
     private String lat;
     private String lon;
 
+    public RisultatoGeo() {}
     public RisultatoGeo(String lat, String lon) {
         this.lat = lat;
         this.lon = lon;

@@ -6,10 +6,10 @@ public class Utente {
     private String nome,email,bio,psw;
 
     public Utente(String nome, String email, String bio, String psw) {
-        this.nome = nome;
-        this.email = email;
+        this.nome = nome.trim();
+        this.email = email.trim();
         this.bio = bio;
-        this.psw = psw;
+        this.psw = psw.trim();
     }
 
     public String getNome() { return nome; }
@@ -38,5 +38,12 @@ public class Utente {
             return Objects.equals(getNome(), utente.getNome()) && Objects.equals(getEmail(), utente.getEmail()) && Objects.equals(getBio(), utente.getBio()) && Objects.equals(getPsw(), utente.getPsw());
         }
         return false;
+    }
+
+    public void aggiorna(String nome, String email, String bio, String psw){
+        this.nome = nome.trim();
+        this.email = email.trim();
+        this.bio = bio;
+        this.psw = psw.trim();
     }
 }
