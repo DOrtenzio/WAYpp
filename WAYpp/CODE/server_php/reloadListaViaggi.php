@@ -1,5 +1,4 @@
 <?php
-<?php
 header('Content-Type: application/json');
 require_once 'db.php';
 
@@ -7,22 +6,22 @@ require_once 'db.php';
 $input = json_decode(file_get_contents('php://input'), true);
 
 if (
-    !isset($input['utente']['email']) ||
-    !isset($input['utente']['nome']) ||
-    !isset($input['utente']['psw']) ||
-    !isset($input['listaViaggi']['list']) ||
-    !is_array($input['listaViaggi']['list'])
+    !isset($input['p1']['email']) ||
+    !isset($input['p1']['nome']) ||
+    !isset($input['p1']['psw']) ||
+    !isset($input['p2']['list']) ||
+    !is_array($input['p2']['list'])
 ) {
     http_response_code(400);
     echo json_encode(['confermaAzione' => false, 'parametro1' => null, 'parametro2' => null]);
     exit;
 } else {
     $utente = [
-        'email' => $input['utente']['email'],
-        'nome' => $input['utente']['nome'],
-        'psw' => $input['utente']['psw']
+        'email' => $input['p1']['email'],
+        'nome' => $input['p1']['nome'],
+        'psw' => $input['p1']['psw']
     ];
-    $nuovaListaViaggi = $input['listaViaggi']['list'];
+    $nuovaListaViaggi = $input['p2']['list'];
 
     try {
         // Cerca utente per email e nome

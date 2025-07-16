@@ -7,6 +7,7 @@ public class Viaggio {
     private ListaElementi listaElementi;
 
     //Costruttore
+    public Viaggio(){}
     public Viaggio(String nomeUnivoco, Budget budget, Itinerario itinerario, ListaElementi listaElementi) {
         this.nomeUnivoco=nomeUnivoco;
         this.budget = budget;

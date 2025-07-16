@@ -9,4 +9,7 @@ module praticaest1.praticaest1 {
 
     opens praticaest1.praticaest1 to javafx.fxml;
     exports praticaest1.praticaest1;
+    exports praticaest1.praticaest1.obj to com.fasterxml.jackson.databind;
+    exports praticaest1.praticaest1.utility to com.fasterxml.jackson.databind;
+
 }

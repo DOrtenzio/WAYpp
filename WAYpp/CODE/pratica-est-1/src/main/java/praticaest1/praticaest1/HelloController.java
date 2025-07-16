@@ -56,7 +56,7 @@ public class HelloController {
             stage.setResizable(false);
             stage.getIcons().add(new Image(getClass().getResource("praticaest1/praticaest1/img/logos64-icon.png").toString()));
             HomeController controller=fxmlLoader.getController();
-            controller.setUtente(utenteConAccesso);
+            controller.setUtenteAttuale(utenteConAccesso);
             stage.setScene(scene);
         } catch (Exception e) {
             segnalaErrore();
