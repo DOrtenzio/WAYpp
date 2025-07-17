@@ -8,6 +8,7 @@ public class Budget {
     private double budgetIniziale,budgetSpeso;
     private List<Pair<String,Double>> tieniConto; //Motivazione,Spesa
     //Costruttore
+    public Budget(){}
     public Budget(double budgetIniziale) {
         this.budgetIniziale = budgetIniziale;
         this.budgetSpeso = 0.0;
@@ -17,6 +18,9 @@ public class Budget {
     public double getBudgetIniziale() { return budgetIniziale; }
     public double getBudgetSpeso() { return budgetSpeso; }
     public List<Pair<String, Double>> getTieniConto() { return tieniConto; }
+    public void setBudgetIniziale(double budgetIniziale) { this.budgetIniziale = budgetIniziale; }
+    public void setBudgetSpeso(double budgetSpeso) { this.budgetSpeso = budgetSpeso; }
+    public void setTieniConto(List<Pair<String, Double>> tieniConto) { this.tieniConto = tieniConto; }
 
     //Metodi di lavoro
     public void aggiungiNuovoBudget(double nuovoBudget){

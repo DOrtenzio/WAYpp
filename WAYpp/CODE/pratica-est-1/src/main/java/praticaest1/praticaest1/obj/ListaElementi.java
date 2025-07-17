@@ -17,6 +17,8 @@ public class ListaElementi {
     public int getElementiAcquistati() { return elementiAcquistati; }
     public List<Elemento> getList() { return list; }
     public void setList(List<Elemento> list) { this.list = list; }
+    public void setElementiTot(int elementiTot) { this.elementiTot = elementiTot; }
+    public void setElementiAcquistati(int elementiAcquistati) { this.elementiAcquistati = elementiAcquistati; }
 
     //Interfacciamento principale
     public void addElemento(Elemento e){

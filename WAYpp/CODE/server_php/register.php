@@ -18,7 +18,7 @@ if (!isset($input['email']) || !isset($input['nome']) || !isset($input['psw'])) 
 
     try {
         // Controlla se l'utente esiste già
-        $stmt = $pdo->prepare("SELECT email FROM utenti WHERE email = :emailInput");
+        $stmt = $pdo->prepare("SELECT * FROM utenti WHERE email = :emailInput");
         $stmt->execute(['emailInput' => $emailInput]);
         if ($stmt->fetch()) {
             http_response_code(409); // Conflitto: l'utente esiste già
@@ -38,9 +38,7 @@ if (!isset($input['email']) || !isset($input['nome']) || !isset($input['psw'])) 
             'bio' => $bioInput
         ]);
 
-        echo json_encode([
-            'user' => ['nome' => $nomeInput, 'email' => null,'bio'=> null, 'psw'=> null]
-        ]);
+         echo json_encode(['nome' => $nomeInput, 'email' => null,'bio'=> null, 'psw'=> null]);
     } catch (Exception $e) {
         http_response_code(500); // Errore interno del server
         echo json_encode(['nome' => null, 'email' => null,'bio'=> null, 'psw'=> null]); // Risposta con dati mancanti

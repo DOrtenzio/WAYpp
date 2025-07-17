@@ -20,7 +20,7 @@ if (!isset($input['email']) || !isset($input['nome']) || !isset($input['psw'])) 
         $hashedPassword = password_hash($utente['psw'], PASSWORD_DEFAULT);
         
         // Cerca utente per email
-        $stmt = $pdo->prepare("SELECT id, nome, email, password FROM utenti WHERE email = :emailInput AND nome = :nomeInput");
+        $stmt = $pdo->prepare("SELECT * FROM utenti WHERE email = :emailInput AND nome = :nomeInput");
         $stmt->execute(['emailInput' => $utente['email'], 'nomeInput' => $utente['nome']]);
         $utenteTrovato = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -38,7 +38,7 @@ if (!isset($input['email']) || !isset($input['nome']) || !isset($input['psw'])) 
         }
 
         // Recupera la lista viaggi collegata all'utente
-        $stmt = $pdo->prepare("SELECT id, nomeUnivoco FROM viaggi WHERE user_id = :userId");
+        $stmt = $pdo->prepare("SELECT * FROM viaggi WHERE user_id = :userId");
         $stmt->execute(['userId' => $utenteTrovato['id']]);
         $listaViaggi = $stmt->fetchAll(PDO::FETCH_ASSOC);
 

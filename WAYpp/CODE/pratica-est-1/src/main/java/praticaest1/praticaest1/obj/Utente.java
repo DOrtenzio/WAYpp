@@ -5,6 +5,7 @@ import java.util.Objects;
 public class Utente {
     private String nome,email,bio,psw;
 
+    public Utente(){}
     public Utente(String nome, String email, String bio, String psw) {
         this.nome = nome.trim();
         this.email = email.trim();

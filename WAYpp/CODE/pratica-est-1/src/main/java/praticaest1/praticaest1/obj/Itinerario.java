@@ -6,7 +6,7 @@ public class Itinerario {
     private String nome;
     private List<Tappa> tappe;
 
-    public Itinerario() {}
+    public Itinerario(){}
     public Itinerario(String nome) {
         this.nome = nome;
         this.tappe = new ArrayList<>();

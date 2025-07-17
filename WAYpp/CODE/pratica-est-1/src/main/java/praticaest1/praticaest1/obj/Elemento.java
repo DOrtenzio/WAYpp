@@ -5,6 +5,7 @@ public class Elemento {
     private int quantita;
     private boolean isAcquistato;
     //Costruttore
+    public Elemento(){}
     public Elemento(String nome, String descrizione, String luogoAcquisto, int quantita) {
         this.nome = nome;
         this.descrizione = descrizione;

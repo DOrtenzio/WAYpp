@@ -9,6 +9,7 @@ public class Tappa implements Comparable<Tappa>{
     private double latitudine;
     private double longitudine;
 
+    public Tappa(){}
     public Tappa(String nome, LocalDate data) {
         this.nome = nome;
         this.data = data;

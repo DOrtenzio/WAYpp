@@ -14,7 +14,7 @@ public class HelloApplication extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("login-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 900, 700);
         stage.setTitle("WAYpp");
-        stage.getIcons().add(new Image(getClass().getResource("praticaest1/praticaest1/img/logos64-icon.png").toString()));
+        stage.getIcons().add(new Image(getClass().getResource("/praticaest1/praticaest1/img/logos64-icon.png").toString()));
         stage.setScene(scene);
         stage.setResizable(false);
         stage.show();

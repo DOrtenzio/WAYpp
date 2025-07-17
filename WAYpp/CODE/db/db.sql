@@ -1,3 +1,6 @@
+CREATE DATABASE IF NOT EXISTS test2;
+USE test2;
+
 CREATE TABLE `utenti` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
   `nome` varchar(255),

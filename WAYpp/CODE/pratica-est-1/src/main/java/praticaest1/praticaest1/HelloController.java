@@ -21,7 +21,7 @@ public class HelloController {
     @FXML
     private TextField logEmail,logPassword,regNome,regEmail,regPassword1,regPassword2; //Elementi di lettura standard
     @FXML
-    private Button b1;
+    private Button b1,b2;
     //Gestori di richieste http
     private String URL_BASE;
     private final GestoreHTTP gestoreHTTP=new GestoreHTTP();
@@ -50,16 +50,16 @@ public class HelloController {
     @FXML
     public void goToHome(Utente utenteConAccesso){
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("praticaest1/praticaest1/home-view.fxml"));
-            Scene scene = new Scene(fxmlLoader.load(), 1178, 785);
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/praticaest1/praticaest1/home-view.fxml"));
+            Scene scene = new Scene(fxmlLoader.load(), 900, 700);
             Stage stage = (Stage) anchorBase.getScene().getWindow();
             stage.setResizable(false);
-            stage.getIcons().add(new Image(getClass().getResource("praticaest1/praticaest1/img/logos64-icon.png").toString()));
+            stage.getIcons().add(new Image(getClass().getResource("/praticaest1/praticaest1/img/logos64-icon.png").toString()));
             HomeController controller=fxmlLoader.getController();
             controller.setUtenteAttuale(utenteConAccesso);
             stage.setScene(scene);
         } catch (Exception e) {
-            segnalaErrore();
+            segnalaErrore(b1);
         }
     }
 
@@ -67,53 +67,54 @@ public class HelloController {
     @FXML
     public void login(){
         if(logEmail.getText().isBlank() || logPassword.getText().isBlank())
-            segnalaErrore();
+            segnalaErrore(b1);
         else{
             //Invio al server
             try {
                 String risposta=gestoreHTTP.inviaRichiestaConParametri(URL_BASE+"login.php",mapper.writeValueAsString(new UserLogin(logEmail.getText(),logPassword.getText())));
                 //Sarà sempre restituito un oggetto Utente variano i campi per capire se il login è accettato
                 Utente userP=mapper.readValue(risposta, Utente.class);
-                if(userP.getNome()==null && userP.getEmail()==null && userP.getPsw()==null)
-                    segnalaErrore(); //Significa che il server ci sta dicendo che l'utente non esiste
-                else{
+                userP.setPsw(logPassword.getText().trim()); //Evito di fare l'unback hash
+                if(userP.getEmail()==null && userP.getPsw()==null) {
+                    segnalaErrore(b1); //Significa che il server ci sta dicendo che l'utente non esiste
+                }else{
                     //Cambio schermata
                     goToHome(userP);
                 }
             } catch (Exception e) {
-                segnalaErrore();
+                segnalaErrore(b1);
             }
         }
     }
     @FXML
-    public void registrati(){
-        if(regEmail.getText().isBlank() || regNome.getText().isBlank() || regPassword1.getText().isBlank() || regPassword2.getText().isBlank() || !regPassword1.getText().trim().equalsIgnoreCase(regPassword2.getText().trim()))
-            segnalaErrore();
-        else{
+    public void registrati() {
+        if (regEmail.getText().isBlank() || regNome.getText().isBlank() || regPassword1.getText().isBlank() || regPassword2.getText().isBlank() || !regPassword1.getText().trim().equalsIgnoreCase(regPassword2.getText().trim())){
+            segnalaErrore(b2);
+        }else{
             //Invio al server
             try {
-                String risposta=gestoreHTTP.inviaRichiestaConParametri(URL_BASE+"register.php",mapper.writeValueAsString(new UserRegister(regNome.getText(), regEmail.getText(),regPassword1.getText())));
+                String risposta = gestoreHTTP.inviaRichiestaConParametri(URL_BASE + "register.php", mapper.writeValueAsString(new UserRegister(regNome.getText(), regEmail.getText(), regPassword1.getText())));
                 //Sarà sempre restituito un oggetto Utente variano i campi per capire se la registrazione è accettata
-                Utente userP=mapper.readValue(risposta, Utente.class);
-                if(userP.getNome()==null && userP.getEmail()==null && userP.getPsw()==null)
-                    segnalaErrore(); //Significa che il server ci sta dicendo che ci sono problemi con la registrazione
-                else{
+                Utente userP = mapper.readValue(risposta, Utente.class);
+                if (userP.getNome() == null && userP.getEmail() == null && userP.getPsw() == null){
+                    segnalaErrore(b2); //Significa che il server ci sta dicendo che ci sono problemi con la registrazione
+                }else{
                     //Cambio schermata
                     goToLogin();
                 }
             } catch (Exception e) {
-                segnalaErrore();
+                segnalaErrore(b2);
             }
         }
     }
 
     //Errore
     @FXML
-    private void segnalaErrore(){
-        b1.setStyle("-fx-background-color: #BE2538; -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 10 0; -fx-font-weight: bold;");
+    private void segnalaErrore(Button button){
+        button.setStyle("-fx-background-color: #BE2538; -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 10 0; -fx-font-weight: bold;");
         PauseTransition pausa = new PauseTransition(Duration.seconds(3));
         pausa.setOnFinished(e -> {
-            b1.setStyle("-fx-background-color: #3B82F6; -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 10 0; -fx-font-weight: bold;");
+            button.setStyle("-fx-background-color: #3B82F6; -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 10 0; -fx-font-weight: bold;");
         });
         pausa.play();
     }

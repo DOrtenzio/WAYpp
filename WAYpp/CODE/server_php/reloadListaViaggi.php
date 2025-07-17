@@ -25,7 +25,7 @@ if (
 
     try {
         // Cerca utente per email e nome
-        $stmt = $pdo->prepare("SELECT id, nome, email, password FROM utenti WHERE email = :emailInput AND nome = :nomeInput");
+        $stmt = $pdo->prepare("SELECT * password FROM utenti WHERE email = :emailInput AND nome = :nomeInput");
         $stmt->execute(['emailInput' => $utente['email'], 'nomeInput' => $utente['nome']]);
         $utenteTrovato = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -58,7 +58,7 @@ if (
         }
 
         // Recupera la nuova lista viaggi aggiornata
-        $stmt = $pdo->prepare("SELECT id, nomeUnivoco FROM viaggi WHERE user_id = :userId");
+        $stmt = $pdo->prepare("SELECT * FROM viaggi WHERE user_id = :userId");
         $stmt->execute(['userId' => $utenteTrovato['id']]);
         $listaViaggi = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
