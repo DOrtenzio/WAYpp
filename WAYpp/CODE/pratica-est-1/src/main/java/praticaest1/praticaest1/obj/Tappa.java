@@ -3,7 +3,7 @@ package praticaest1.praticaest1.obj;
 import praticaest1.praticaest1.utility.*;
 import java.time.LocalDate;
 
-public class Tappa {
+public class Tappa implements Comparable<Tappa>{
     private String nome;
     private LocalDate data;
     private double latitudine;
@@ -28,5 +28,14 @@ public class Tappa {
     public void setData(LocalDate data) { this.data = data; }
     public double getLatitudine() { return latitudine; }
     public double getLongitudine() { return longitudine; }
+
+    //Comaprable
+    public int compareTo(Tappa tappa2){
+        if (tappa2.getData().isBefore(this.data))
+            return -1;
+        else if (tappa2.getData().isAfter(this.data)) {
+            return 1;
+        } else return 0;
+    }
 }
 

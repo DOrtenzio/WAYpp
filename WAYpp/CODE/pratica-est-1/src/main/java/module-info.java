@@ -5,6 +5,7 @@ module praticaest1.praticaest1 {
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.databind;
     requires io.github.cdimascio.dotenv.java;
+    requires com.gluonhq.maps;
 
 
     opens praticaest1.praticaest1 to javafx.fxml;

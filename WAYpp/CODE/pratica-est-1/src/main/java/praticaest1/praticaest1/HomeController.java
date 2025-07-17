@@ -1,6 +1,7 @@
 package praticaest1.praticaest1;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gluonhq.maps.*;
 import io.github.cdimascio.dotenv.Dotenv;
 import javafx.animation.PauseTransition;
 import javafx.beans.value.ChangeListener;
@@ -17,6 +18,9 @@ import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import praticaest1.praticaest1.obj.*;
 import praticaest1.praticaest1.utility.*;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.*;
 
 public class HomeController {
     @FXML
@@ -566,11 +570,291 @@ public class HomeController {
     @FXML
     public void sezItinerario(){
         workTrip.getChildren().clear();
+        workTrip.getChildren().add(creaGraficaItinerario());
     }
     @FXML
+    private SplitPane creaGraficaItinerario() {
+        Label l0 = new Label("Itinerario");
+        l0.setPrefSize(131, 32);
+        l0.setStyle("-fx-font-size: 22px; -fx-font-weight: bold;");
+
+        // Spacer Pane
+        Pane s1 = new Pane();
+        s1.setPrefSize(147, 49);
+
+        Label l1 = new Label("Tappe attuali : "+viaggioAttuale.getItinerario().getTappe().size());
+        l1.setPrefSize(131, 32);
+        l1.setLayoutX(10);
+        l1.setLayoutY(10);
+        l1.setWrapText(true);
+        l1.setStyle("-fx-font-size: 22px; -fx-font-weight: bold;");
+
+        // Spacer Pane
+        Pane s2 = new Pane();
+        s2.setPrefSize(147, 29);
+        s2.setLayoutX(10);
+        s2.setLayoutY(42);
+
+        VBox dxVBox = new VBox();
+
+        Button aggiungiNuovoElemento = new Button("Aggiungi Tappa");
+        aggiungiNuovoElemento.setPrefSize(131, 33);
+        aggiungiNuovoElemento.setStyle("-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
+        aggiungiNuovoElemento.setTextFill(Color.WHITE);
+        aggiungiNuovoElemento.setOnAction(e -> {
+            Pane base=workTrip;
+            // Crea il contenitore principale trasparente
+            AnchorPane overlay = new AnchorPane();
+            overlay.setPrefSize(base.getWidth(), base.getHeight());
+            overlay.setStyle("-fx-background-color: rgba(0,0,0,0.3);");
+
+            // Crea il VBox centrale del popup
+            VBox popupBox = new VBox(10);
+            popupBox.setAlignment(Pos.TOP_RIGHT);
+            popupBox.setPadding(new Insets(20));
+            popupBox.setStyle(
+                    "-fx-background-color: #FFFFFF;" +
+                            "-fx-background-radius: 8;" +
+                            "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0.0, 0, 5);"
+            );
+            popupBox.setPrefWidth(400);
+
+            // Bottone "X" per chiudere
+            Button closeButton = new Button("X");
+            closeButton.setStyle("-fx-background-color: transparent; -fx-font-size: 14px; -fx-text-fill: #6B7280;");
+            closeButton.setOnAction(ez -> {
+                base.getChildren().remove(overlay);
+                base.setDisable(false);
+            });
+
+            HBox b0 = new HBox(closeButton);
+            b0.setAlignment(Pos.TOP_RIGHT);
+            //Elementi
+            Label l11 = new Label("Inserisci destinazione o nome della Tappa:");
+            l11.setStyle("-fx-font-size: 12px; -fx-text-fill: #374151;");
+            TextField nome = new TextField();
+            nome.setPromptText("Perugia");
+            VBox b1 = new VBox(5, l11, nome);
+            b1.setAlignment(Pos.TOP_LEFT);
+            Label l21 = new Label("Inserisci la data d'arrivo o partenza");
+            l21.setStyle("-fx-font-size: 12px; -fx-text-fill: #374151;");
+            DatePicker datePicker=new DatePicker();
+            VBox b2 = new VBox(5, l21, datePicker);
+            b2.setAlignment(Pos.TOP_LEFT);
+
+            // Pulsante Inserisci
+            Button inserisciBottone = new Button("Inserisci");
+            inserisciBottone.setStyle(
+                    "-fx-background-color: #3B82F6;" +
+                            "-fx-background-radius: 6;" +
+                            "-fx-padding: 8 16;" +
+                            "-fx-text-fill: white;"
+            );
+
+            inserisciBottone.setOnAction(ezz -> {
+                try {
+                    viaggioAttuale.getItinerario().aggiungiTappa(new Tappa(nome.getText(), datePicker.getValue()));
+                    if (salvaViaggioCorrente()) {
+                        base.getChildren().remove(overlay);
+                        base.setDisable(false);
+                    }else
+                        animazioneBottone(inserisciBottone,"-fx-background-color: #BE2538; -fx-background-radius: 6; -fx-padding: 8 16;","-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
+                } catch (Exception ex) {
+                    animazioneBottone(inserisciBottone,"-fx-background-color: #BE2538; -fx-background-radius: 6; -fx-padding: 8 16;","-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
+                }
+            });
+
+            HBox b5 = new HBox(inserisciBottone);
+            b5.setAlignment(Pos.CENTER_RIGHT);
+
+            // Inserimento
+            // Composizione finale
+            popupBox.getChildren().addAll(b0, b1, b2, b5);
+            popupBox.setLayoutX((base.getWidth() - popupBox.getPrefWidth()) / 2);
+            popupBox.setLayoutY(100);
+            overlay.getChildren().add(popupBox);
+            base.getChildren().add(overlay);
+            base.setDisable(true);
+
+        });
+
+        // VBox sinistra con tutte le label e bottoni
+        VBox sxVBox = new VBox();
+        sxVBox.setPrefSize(100, 200);
+        sxVBox.getChildren().addAll(l0, s1, l1, s1, aggiungiNuovoElemento);
+
+        // VBox destra
+        dxVBox.setPrefSize(545, 200);
+        dxVBox.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        creaGraficaDxTappe(dxVBox);
+
+        // SplitPane
+        SplitPane splitPane = new SplitPane();
+        splitPane.setPrefSize(200, 160);
+        splitPane.setDividerPositions(0.29797979797979796);
+        splitPane.getItems().addAll(sxVBox, dxVBox);
+        VBox.setVgrow(splitPane, Priority.ALWAYS);
+
+        return splitPane;
+    }
+    @FXML
+    private void creaGraficaDxTappe(VBox vBox){
+        vBox.getChildren().clear();
+        //Creazione mappa
+        Label l0 = new Label("Mappa dell'itinerario");
+        l0.setPrefSize(131, 32);
+        l0.setStyle("-fx-font-size: 22px; -fx-font-weight: bold;");
+        MapView mappa=creaMappa();
+
+        //Creazione Calendario
+        Label l1 = new Label("Date selezionate");
+        l1.setPrefSize(131, 32);
+        l1.setStyle("-fx-font-size: 22px; -fx-font-weight: bold;");
+        viaggioAttuale.getItinerario().ordinaTappe(); //Ordiniamo sempre non si sa mai
+        CalendarioMensile calendario=new CalendarioMensile(YearMonth.from(viaggioAttuale.getItinerario().getDateTappe().getFirst()));
+
+        //Creazione lista gestionale tappe
+        Label l2 = new Label("Tappe scelte");
+        l2.setPrefSize(131, 32);
+        l2.setStyle("-fx-font-size: 22px; -fx-font-weight: bold;");
+
+        // Spacer Pane
+        Pane s2 = new Pane();
+        s2.setPrefSize(147, 29);
+        s2.setLayoutX(10);
+        s2.setLayoutY(42);
+
+        //Aggiunta
+        vBox.getChildren().addAll(l0,mappa,s2,l1,calendario,s2,l2);
+
+        viaggioAttuale.getItinerario().ordinaTappe(); //Le ordiniamo cronologicamente prima dell'inserimento
+        for (Tappa tappa : viaggioAttuale.getItinerario().getTappe()) vBox.getChildren().add(creaAggiuntaTappaBox(vBox,tappa));
+    }
+    private HBox creaAggiuntaTappaBox(VBox listaGenerale,Tappa tappa) {
+        // HBox principale
+        HBox hBox = new HBox();
+        hBox.setAlignment(Pos.CENTER_LEFT);
+        hBox.setSpacing(15);
+        hBox.setStyle("-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 16;");
+
+        // Effetto ombra
+        DropShadow dropShadow = new DropShadow();
+        dropShadow.setColor(Color.rgb(0, 0, 0, 0.05));
+        dropShadow.setRadius(10);
+        dropShadow.setOffsetY(4);
+        hBox.setEffect(dropShadow);
+
+        // VBox con le etichette
+        VBox vBox = new VBox();
+        vBox.setSpacing(4);
+
+        Label titoloLabel = new Label(tappa.getNome());
+        titoloLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px; -fx-strikethrough: "+tappa.getData().isBefore(LocalDate.now())+";");
+        titoloLabel.setOnMouseClicked(e ->{
+            Pane base=workTrip;
+            // Crea il contenitore principale trasparente
+            AnchorPane overlay = new AnchorPane();
+            overlay.setPrefSize(base.getWidth(), base.getHeight());
+            overlay.setStyle("-fx-background-color: rgba(0,0,0,0.3);");
+
+            // Crea il VBox centrale del popup
+            VBox popupBox = new VBox(10);
+            popupBox.setAlignment(Pos.TOP_RIGHT);
+            popupBox.setPadding(new Insets(20));
+            popupBox.setStyle(
+                    "-fx-background-color: #FFFFFF;" +
+                            "-fx-background-radius: 8;" +
+                            "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0.0, 0, 5);"
+            );
+            popupBox.setPrefWidth(400);
+
+            // Bottone "X" per chiudere
+            Button closeButton = new Button("X");
+            closeButton.setStyle("-fx-background-color: transparent; -fx-font-size: 14px; -fx-text-fill: #6B7280;");
+            closeButton.setOnAction(ez -> {
+                base.getChildren().remove(overlay);
+                base.setDisable(false);
+            });
+
+            HBox b0 = new HBox(closeButton);
+            b0.setAlignment(Pos.TOP_RIGHT);
+            //Elementi
+            Label l11 = new Label("Luogo: "+tappa.getNome());
+            l11.setStyle("-fx-font-size: 12px; -fx-text-fill: #374151;");
+            VBox b1 = new VBox(5, l11);
+            b1.setAlignment(Pos.TOP_LEFT);
+            Label l21 = new Label("Giorno: "+tappa.getData());
+            l21.setStyle("-fx-font-size: 12px; -fx-text-fill: #374151;");
+            VBox b2 = new VBox(5, l21);
+            b2.setAlignment(Pos.TOP_LEFT);
+            Label l111 = new Label("Longitudine: "+tappa.getLongitudine());
+            l111.setStyle("-fx-font-size: 12px; -fx-text-fill: #374151;");
+            VBox b3 = new VBox(5, l111);
+            b3.setAlignment(Pos.TOP_LEFT);
+            Label l1111 = new Label("Latitudine: "+tappa.getLatitudine());
+            l1111.setStyle("-fx-font-size: 12px; -fx-text-fill: #374151;");
+            Button chiudiBottone = new Button("Chiudi");
+            chiudiBottone.setStyle(
+                    "-fx-background-color: #3B82F6;" +
+                            "-fx-background-radius: 6;" +
+                            "-fx-padding: 8 16;" +
+                            "-fx-text-fill: white;"
+            );
+
+            chiudiBottone.setOnAction(ezz -> {
+                base.getChildren().remove(overlay);
+                base.setDisable(false);
+            });
+
+            HBox b5 = new HBox(chiudiBottone);
+            b5.setAlignment(Pos.CENTER_RIGHT);
+
+            // Inserimento
+            // Composizione finale
+            popupBox.getChildren().addAll(b0, b1, b2, b3, b4, b5);
+            popupBox.setLayoutX((base.getWidth() - popupBox.getPrefWidth()) / 2);
+            popupBox.setLayoutY(100);
+            overlay.getChildren().add(popupBox);
+            base.getChildren().add(overlay);
+            base.setDisable(true);
+        });
+        Label removeLabel = new Label("Elimina");
+        removeLabel.setStyle("-fx-text-fill: #4B5563; -fx-font-size: 12px;");
+        removeLabel.setOnMouseClicked(e->{ //Rimozione e ricarica
+            try {
+                viaggioAttuale.getItinerario().rimuoviTappa(tappa);
+                if (salvaViaggioCorrente())
+                    listaGenerale.getChildren().remove(hBox);
+            } catch (Exception ex) {
+                animazioneBottone(aggiungiNuovoViaggio,"-fx-background-color: #BE2538; -fx-background-radius: 6; -fx-padding: 8 16;","-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
+            }
+        });
+
+        vBox.getChildren().addAll(titoloLabel, removeLabel);
+        hBox.getChildren().add(vBox);
+
+        return hBox;
+    }
+    private MapView creaMappa() {
+        //ordiniamo cronologicamente per sicurezza
+        viaggioAttuale.getItinerario().ordinaTappe();
+        List<Tappa> tappe=viaggioAttuale.getItinerario().getTappe();
+
+        //Creiamo la mappa centrata sulla destinazione/Partenza
+        MapView mapView = new MapView();
+        mapView.setZoom(6);
+        mapView.setCenter(new MapPoint(tappe.getFirst().getLatitudine(), tappe.getFirst().getLongitudine()));
+        if (tappe.size()>=2) {
+            // Aggiunge il layer con marker e percorso, vedi questo github : https://github.com/gluonhq/maps/tree/main
+            mapView.addLayer(new PercorsoMappa(tappe));
+        }
+        return mapView;
+    }
+
+    @FXML
     public void sezElementi(){
-        workTrip.getChildren().add(creaGraficaElementi());
         workTrip.getChildren().clear();
+        workTrip.getChildren().add(creaGraficaElementi());
     }
     @FXML
     private SplitPane creaGraficaElementi() {
@@ -840,6 +1124,7 @@ public class HomeController {
 
         return hBox;
     }
+
 
     /*METODI GENERALI*/
     @FXML
