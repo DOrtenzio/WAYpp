@@ -181,7 +181,15 @@ public class HomeController {
         scrollTrip.getChildren().clear();
         for(Viaggio v: listaViaggiAttuale.getList()){
             scrollTrip.getChildren().add(creaViaggioBox(v,this.utenteAttuale.getNome())); //Escamotage perchè tanto non possono esserci più utenti per la stessa lista viaggi
-            scrollTrip.getChildren().add(new HBox(creaSpaziatore(true)));
+            //Spaziatore
+            Pane s = new Pane();
+            s.setPrefHeight(14);
+            s.setMinHeight(14);
+            s.setMaxHeight(14);
+            s.setPrefWidth(147);
+            s.setMinWidth(147);
+            s.setMaxWidth(147);
+            scrollTrip.getChildren().add(s);
         }
     }
     private HBox creaViaggioBox(Viaggio viaggioCorrente, String creatoreXRimozione) {
@@ -370,6 +378,7 @@ public class HomeController {
         // === SPINNER IMPORTO ===
         Spinner<Integer> importoSpinner = new Spinner<>();
         importoSpinner.setPrefWidth(130);
+        importoSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 1000, 0, 10));
 
         // === BOTTONI "+" e "-" ===
         Button plusButton = new Button("+");
@@ -388,16 +397,16 @@ public class HomeController {
         });
 
         Button minusButton = new Button("-");
-        minusButton.setStyle("-fx-background-color: #f9fafb; -fx-background-radius: 6; -fx-text-fill: black;");
-        minusButton.setOnAction(e -> {
+        minusButton.setStyle("-fx-background-color: #E5E7EB; -fx-background-radius: 6; -fx-text-fill: black;");
+        minusButton.setOnAction(e -> { //TODO: CORREGGI
             int val = importoSpinner.getValue();
             if (val <= 0) {
-                animazioneBottone(minusButton, "-fx-background-color: #BE2538;", "-fx-background-color: #f9fafb;");
+                animazioneBottone(minusButton, "-fx-background-color: #BE2538;", "-fx-background-color: #E5E7EB;");
             } else {
                 viaggioAttuale.getBudget().rimuoviBudget(val);
                 if (!salvaViaggioCorrente()) {
                     viaggioAttuale.getBudget().aggiungiNuovoBudget(val);
-                    animazioneBottone(minusButton, "-fx-background-color: #BE2538;", "-fx-background-color: #f9fafb;");
+                    animazioneBottone(minusButton, "-fx-background-color: #BE2538;", "-fx-background-color: #E5E7EB;");
                 }
             }
         });
@@ -408,7 +417,10 @@ public class HomeController {
         VBox destraBox = new VBox();
 
         // === BOTTONE NUOVA SPESA ===
-        Button aggiungiSpesa = new Button("Aggiungi nuova spesa");
+        Button aggiungiSpesa = new Button("+ Spesa");
+        aggiungiSpesa.setAlignment(Pos.CENTER);
+        aggiungiSpesa.setWrapText(true);
+        aggiungiSpesa.setPrefSize(131, 44);
         aggiungiSpesa.setStyle("-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-text-fill: white;");
         aggiungiSpesa.setOnAction(e -> mostraPopupNuovaSpesa(aggiungiSpesa,destraBox));
 
@@ -433,12 +445,10 @@ public class HomeController {
         splitPane.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE); // Lascia che cresca
 
         // Dopo che lo SplitPane è stato aggiunto alla scena così evitamo problemi di caricamento
-        Platform.runLater(() -> {
-            for (Node divider : splitPane.lookupAll(".split-pane-divider")) {
-                divider.setMouseTransparent(true); // Blocca il trascinamento
-                divider.setVisible(false);
-            }
-        });
+        for (Node divider : splitPane.lookupAll(".split-pane-divider")) {
+            divider.setMouseTransparent(true); // Blocca il trascinamento
+            divider.setVisible(false);
+        }
         VBox.setVgrow(splitPane, Priority.ALWAYS);
 
         AnchorPane.setTopAnchor(splitPane, 0.0);
@@ -460,7 +470,7 @@ public class HomeController {
         popupBox.setPadding(new Insets(20));
         popupBox.setStyle("-fx-background-color: white; -fx-background-radius: 8;");
         popupBox.setPrefWidth(400);
-        popupBox.setAlignment(Pos.TOP_RIGHT);
+        popupBox.setAlignment(Pos.TOP_CENTER);
 
         Button chiudi = new Button("X");
         chiudi.setStyle("-fx-background-color: transparent; -fx-font-size: 14px; -fx-text-fill: #6B7280;");
@@ -497,7 +507,12 @@ public class HomeController {
             }
         });
 
-        popupBox.getChildren().addAll(new HBox(chiudi), motivazioneLabel, motivo, spesaLabel, spesa, inserisci);
+        HBox topBar = new HBox(chiudi);
+        topBar.setAlignment(Pos.TOP_RIGHT);
+        HBox bottomBar = new HBox(inserisci);
+        bottomBar.setAlignment(Pos.CENTER_RIGHT);
+
+        popupBox.getChildren().addAll(topBar, motivazioneLabel, motivo, spesaLabel, spesa, bottomBar);
         Platform.runLater(() -> {
             popupBox.setLayoutX((this.base.getWidth() - popupBox.getWidth()) / 2);
             popupBox.setLayoutY((this.base.getHeight() - popupBox.getHeight()) / 2);
@@ -578,7 +593,9 @@ public class HomeController {
 
         VBox dxVBox = new VBox();
 
-        Button aggiungiTappa = new Button("Aggiungi Tappa");
+        Button aggiungiTappa = new Button("+ Tappa");
+        aggiungiTappa.setWrapText(true);
+        aggiungiTappa.setAlignment(Pos.CENTER);
         aggiungiTappa.setPrefSize(131, 33);
         aggiungiTappa.setStyle("-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
         aggiungiTappa.setTextFill(Color.WHITE);
@@ -861,17 +878,19 @@ public class HomeController {
 
         Label l1 = new Label("Elementi aggiunti: " + viaggioAttuale.getListaElementi().getElementiTot());
         l1.setWrapText(true);
-        l1.setStyle("-fx-font-size: 14px; -fx-font-weight: normal;");
+        l1.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
 
         Label l3 = new Label("Elementi acquistati: " + viaggioAttuale.getListaElementi().getElementiAcquistati());
         l3.setWrapText(true);
-        l3.setStyle("-fx-font-size: 14px; -fx-font-weight: normal;");
+        l3.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
 
 
         VBox dxVBox = new VBox();
 
-        Button aggiungiNuovoElemento = new Button("Aggiungi nuovo elemento");
-        aggiungiNuovoElemento.setPrefSize(131, 33);
+        Button aggiungiNuovoElemento = new Button("+ Elemento");
+        aggiungiNuovoElemento.setWrapText(true);
+        aggiungiNuovoElemento.setAlignment(Pos.CENTER);
+        aggiungiNuovoElemento.setPrefSize(131, 44);
         aggiungiNuovoElemento.setStyle("-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
         aggiungiNuovoElemento.setTextFill(Color.WHITE);
         aggiungiNuovoElemento.setOnAction(e -> {
@@ -975,9 +994,12 @@ public class HomeController {
         });
 
         // VBox sinistra con tutte le label e bottoni
-        VBox sxVBox = new VBox();
-        sxVBox.setPrefSize(100, 200);
-        sxVBox.getChildren().addAll(l0, creaSpaziatore(true), l1, creaSpaziatore(false), l3, creaSpaziatore(true), aggiungiNuovoElemento);
+        VBox sxVBox = new VBox(10, l0, l1, l3, aggiungiNuovoElemento);
+        sxVBox.setPadding(new Insets(10));
+        sxVBox.setPrefWidth(250);
+        sxVBox.setAlignment(Pos.TOP_LEFT);
+        sxVBox.setMaxHeight(Double.MAX_VALUE);
+        VBox.setVgrow(sxVBox, Priority.ALWAYS);
 
         // VBox destra
         dxVBox.setPrefSize(545, 200);
@@ -1159,11 +1181,17 @@ public class HomeController {
         }
     }
     private Pane creaSpaziatore(boolean isBig){
-        Pane s=new Pane();
-        if(isBig) s.setPrefSize(147, 49);
-        else s.setPrefSize(147, 29);
+        Pane s = new Pane();
+        double altezza = isBig ? 49 : 29;
+        s.setPrefHeight(altezza);
+        s.setMinHeight(altezza);
+        s.setMaxHeight(altezza);
+        s.setPrefWidth(147);
+        s.setMinWidth(147);
+        s.setMaxWidth(147);
         return s;
     }
+
 }
 
 
