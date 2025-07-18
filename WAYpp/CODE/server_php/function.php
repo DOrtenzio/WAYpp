@@ -1,4 +1,7 @@
 <?php
+header('Content-Type: application/json');
+require_once 'db.php';
+
 function getViaggiCompleti($pdo, $userId) {
     $stmt = $pdo->prepare("SELECT * FROM viaggi WHERE user_id = :userId");
     $stmt->execute(['userId' => $userId]);
@@ -60,8 +63,7 @@ function getViaggiCompleti($pdo, $userId) {
             'budget' => $budget ? [
                 'budgetIniziale' => $budget['budget_iniziale'],
                 'budgetSpeso' => $budget['budget_speso'],
-                'tieniConto' => $rendicontazioni,
-                'lista' => "" // eventualmente ricostruibile
+                'tieniConto' => $rendicontazioni
             ] : null,
             'itinerario' => $itinerario ? [
                 'nome' => $itinerario['nome'] ?? '',
@@ -75,6 +77,5 @@ function getViaggiCompleti($pdo, $userId) {
             ] : null
         ];
     }
-
     return $viaggiCompleti;
 }

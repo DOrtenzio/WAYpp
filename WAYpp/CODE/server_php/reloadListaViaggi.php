@@ -43,6 +43,7 @@ if ( !isset($input['p1']['email']) || !isset($input['p1']['nome']) || !isset($in
 
         // Inserisci i nuovi viaggi
         $stmtViaggio = $pdo->prepare("INSERT INTO viaggi (user_id, nomeUnivoco) VALUES (:userId, :nomeUnivoco)");
+        $userId = $utenteTrovato['id'];
         foreach ($nuovaListaViaggi as $viaggio) {
             if (!isset($viaggio['nomeUnivoco'])) continue;
 
@@ -124,9 +125,11 @@ if ( !isset($input['p1']['email']) || !isset($input['p1']['nome']) || !isset($in
         }
 
         // Recupera tutti i viaggi dell'utente
-        $viaggi = getViaggiCompleti($pdo, $utenteTrovato['id']);
-        echo json_encode(['confermaAzione' => true, 'parametro1' => ['list' => $viaggi], 'parametro2' => null]);
+        $viaggi = getViaggiCompleti($pdo, $userId);
+        header('Content-Type: application/json');
+        echo json_encode(['confermaAzione' => true, 'parametro1' => $viaggi,'parametro2'=> null]);
         exit;
+
 
     } catch (Exception $e) {
         http_response_code(500);

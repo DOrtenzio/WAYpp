@@ -1,6 +1,5 @@
 package praticaest1.praticaest1;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gluonhq.maps.*;
@@ -12,6 +11,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
@@ -48,7 +48,7 @@ public class HomeController {
     @FXML
     private Label nomeViaggio;
     @FXML
-    private Pane workTrip;
+    private AnchorPane workTrip;
 
     //Dell'utente attuale
     private Utente utenteAttuale;
@@ -110,7 +110,6 @@ public class HomeController {
                 animazioneBottone(aggiungiNuovoViaggio,"-fx-background-color: #BE2538; -fx-background-radius: 6; -fx-padding: 8 16;","-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
             else{
                 this.listaViaggiAttuale =new ListaViaggi(m.getParametro1()); //Converto l'array di viaggi nel nostro oggetto lista viaggi
-                System.out.println(mapper.writeValueAsString(listaViaggiAttuale)); //TODO
                 popolaScroolPane();
             }
         } catch (Exception e) {
@@ -182,6 +181,7 @@ public class HomeController {
         scrollTrip.getChildren().clear();
         for(Viaggio v: listaViaggiAttuale.getList()){
             scrollTrip.getChildren().add(creaViaggioBox(v,this.utenteAttuale.getNome())); //Escamotage perchè tanto non possono esserci più utenti per la stessa lista viaggi
+            scrollTrip.getChildren().add(new HBox(creaSpaziatore(true)));
         }
     }
     private HBox creaViaggioBox(Viaggio viaggioCorrente, String creatoreXRimozione) {
@@ -217,11 +217,6 @@ public class HomeController {
             intoTripBox.setDisable(false);
             //Setto nome ed entro in modalità budget
             this.viaggioAttuale=viaggioCorrente;
-            try { //TODO
-                System.out.println(mapper.writeValueAsString(viaggioAttuale));
-            } catch (JsonProcessingException ex) {
-                throw new RuntimeException(ex);
-            }
             nomeViaggio.setText(viaggioCorrente.getNomeUnivoco());
             sezBudget();
         });
@@ -352,7 +347,7 @@ public class HomeController {
     @FXML
     public void sezBudget(){
         workTrip.getChildren().clear();
-        workTrip.getChildren().add(creaGraficaBudget()); //Aggiunta della grafica spezzata
+        workTrip.getChildren().setAll(creaGraficaBudget()); //Aggiunta della grafica spezzata
     }
     @FXML
     private SplitPane creaGraficaBudget() {
@@ -386,13 +381,14 @@ public class HomeController {
             } else {
                 viaggioAttuale.getBudget().aggiungiNuovoBudget(val);
                 if (!salvaViaggioCorrente()) {
+                    viaggioAttuale.getBudget().rimuoviBudget(val);
                     animazioneBottone(plusButton, "-fx-background-color: #BE2538;", "-fx-background-color: #3B82F6;");
                 }
             }
         });
 
         Button minusButton = new Button("-");
-        minusButton.setStyle("-fx-background-color: #f9fafb; -fx-background-radius: 6; -fx-text-fill: white;");
+        minusButton.setStyle("-fx-background-color: #f9fafb; -fx-background-radius: 6; -fx-text-fill: black;");
         minusButton.setOnAction(e -> {
             int val = importoSpinner.getValue();
             if (val <= 0) {
@@ -400,6 +396,7 @@ public class HomeController {
             } else {
                 viaggioAttuale.getBudget().rimuoviBudget(val);
                 if (!salvaViaggioCorrente()) {
+                    viaggioAttuale.getBudget().aggiungiNuovoBudget(val);
                     animazioneBottone(minusButton, "-fx-background-color: #BE2538;", "-fx-background-color: #f9fafb;");
                 }
             }
@@ -408,10 +405,12 @@ public class HomeController {
         HBox controlloBudgetBox = new HBox(10, plusButton, minusButton);
         controlloBudgetBox.setAlignment(Pos.CENTER);
 
+        VBox destraBox = new VBox();
+
         // === BOTTONE NUOVA SPESA ===
         Button aggiungiSpesa = new Button("Aggiungi nuova spesa");
         aggiungiSpesa.setStyle("-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-text-fill: white;");
-        aggiungiSpesa.setOnAction(e -> mostraPopupNuovaSpesa());
+        aggiungiSpesa.setOnAction(e -> mostraPopupNuovaSpesa(aggiungiSpesa,destraBox));
 
         // === VBOX SINISTRA ===
         VBox sinistraBox = new VBox(10, titolo, spesoLabel, pattuitoLabel, incrementoLabel, importoSpinner, controlloBudgetBox, aggiungiSpesa);
@@ -422,39 +421,53 @@ public class HomeController {
         VBox.setVgrow(sinistraBox, Priority.ALWAYS);
 
         // === VBOX DESTRA ===
-        VBox destraBox = new VBox();
         destraBox.setPadding(new Insets(10));
         destraBox.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         popolaListaAcquisti(destraBox);
         VBox.setVgrow(destraBox, Priority.ALWAYS);
 
-        // === SPLITPANE ===
         SplitPane splitPane = new SplitPane();
         splitPane.getItems().addAll(sinistraBox, destraBox);
         splitPane.setDividerPositions(0.3);
-        splitPane.setMaxSize(workTrip.getPrefWidth(), workTrip.getPrefHeight());
+        splitPane.setPrefSize(800, 600); // Imposta una dimensione iniziale decente
+        splitPane.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE); // Lascia che cresca
+
+        // Dopo che lo SplitPane è stato aggiunto alla scena così evitamo problemi di caricamento
+        Platform.runLater(() -> {
+            for (Node divider : splitPane.lookupAll(".split-pane-divider")) {
+                divider.setMouseTransparent(true); // Blocca il trascinamento
+                divider.setVisible(false);
+            }
+        });
         VBox.setVgrow(splitPane, Priority.ALWAYS);
 
+        AnchorPane.setTopAnchor(splitPane, 0.0);
+        AnchorPane.setBottomAnchor(splitPane, 0.0);
+        AnchorPane.setLeftAnchor(splitPane, 0.0);
+        AnchorPane.setRightAnchor(splitPane, 0.0);
         return splitPane;
     }
-    private void mostraPopupNuovaSpesa() {
-        Pane base = workTrip;
+    private void mostraPopupNuovaSpesa(Button bottoneDInnesco, VBox vBox) {
+        AnchorPane baseScroll = workTrip;
 
         AnchorPane overlay = new AnchorPane();
-        overlay.setPrefSize(base.getWidth(), base.getHeight());
+        Platform.runLater(()->{
+            overlay.setPrefSize(this.base.getWidth(), this.base.getHeight());
+        });
         overlay.setStyle("-fx-background-color: rgba(0,0,0,0.3);");
 
-        VBox popup = new VBox(10);
-        popup.setPadding(new Insets(20));
-        popup.setStyle("-fx-background-color: white; -fx-background-radius: 8;");
-        popup.setPrefWidth(400);
-        popup.setAlignment(Pos.TOP_RIGHT);
+        VBox popupBox = new VBox(10);
+        popupBox.setPadding(new Insets(20));
+        popupBox.setStyle("-fx-background-color: white; -fx-background-radius: 8;");
+        popupBox.setPrefWidth(400);
+        popupBox.setAlignment(Pos.TOP_RIGHT);
 
         Button chiudi = new Button("X");
         chiudi.setStyle("-fx-background-color: transparent; -fx-font-size: 14px; -fx-text-fill: #6B7280;");
         chiudi.setOnAction(e -> {
-            base.getChildren().remove(overlay);
-            base.setDisable(false);
+            this.base.getChildren().remove(overlay);
+            baseScroll.setDisable(false);
+            bottoneDInnesco.setDisable(false);
         });
 
         Label motivazioneLabel = new Label("Motivazione:");
@@ -468,10 +481,14 @@ public class HomeController {
         inserisci.setOnAction(ez -> {
             try {
                 viaggioAttuale.getBudget().aggiungiSpesa(spesa.getValue());
+                viaggioAttuale.getBudget().aggiungiRendicontazione(motivo.getText(),spesa.getValue());
                 if (salvaViaggioCorrente()) {
-                    base.getChildren().remove(overlay);
-                    base.setDisable(false);
-                    // Aggiorna UI
+                    viaggioAttuale.getBudget().rimuoviSpesa(spesa.getValue());
+                    viaggioAttuale.getBudget().rimuoviRendicontazione(motivo.getText(),spesa.getValue());
+                    this.base.getChildren().remove(overlay);
+                    baseScroll.setDisable(false);
+                    bottoneDInnesco.setDisable(false);
+                    popolaListaAcquisti(vBox);
                 } else {
                     animazioneBottone(inserisci, "-fx-background-color: #BE2538;", "-fx-background-color: #3B82F6;");
                 }
@@ -480,13 +497,15 @@ public class HomeController {
             }
         });
 
-        popup.getChildren().addAll(new HBox(chiudi), motivazioneLabel, motivo, spesaLabel, spesa, inserisci);
-        popup.setLayoutX((base.getWidth() - popup.getPrefWidth()) / 2);
-        popup.setLayoutY(100);
-
-        overlay.getChildren().add(popup);
-        base.getChildren().add(overlay);
-        base.setDisable(true);
+        popupBox.getChildren().addAll(new HBox(chiudi), motivazioneLabel, motivo, spesaLabel, spesa, inserisci);
+        Platform.runLater(() -> {
+            popupBox.setLayoutX((this.base.getWidth() - popupBox.getWidth()) / 2);
+            popupBox.setLayoutY((this.base.getHeight() - popupBox.getHeight()) / 2);
+        });
+        overlay.getChildren().add(popupBox);
+        this.base.getChildren().add(overlay);
+        baseScroll.setDisable(true);
+        bottoneDInnesco.setDisable(true);
     }
 
     @FXML
@@ -523,6 +542,10 @@ public class HomeController {
                viaggioAttuale.getBudget().rimuoviRendicontazione(coppiaMotivoSpesa.getKey(),coppiaMotivoSpesa.getValue());
                if (salvaViaggioCorrente())
                    listaGenerale.getChildren().remove(hBox);
+               else{
+                   viaggioAttuale.getBudget().aggiungiSpesa(coppiaMotivoSpesa.getValue());
+                   viaggioAttuale.getBudget().aggiungiRendicontazione(coppiaMotivoSpesa.getKey(),coppiaMotivoSpesa.getValue());
+               }
               } catch (Exception ex) {
                 animazioneBottone(aggiungiNuovoViaggio,"-fx-background-color: #BE2538; -fx-background-radius: 6; -fx-padding: 8 16;","-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
             }
@@ -538,7 +561,7 @@ public class HomeController {
     @FXML
     public void sezItinerario(){
         workTrip.getChildren().clear();
-        workTrip.getChildren().add(creaGraficaItinerario());
+        workTrip.getChildren().setAll(creaGraficaItinerario());
     }
     @FXML
     private SplitPane creaGraficaItinerario() {
@@ -555,15 +578,17 @@ public class HomeController {
 
         VBox dxVBox = new VBox();
 
-        Button aggiungiNuovoElemento = new Button("Aggiungi Tappa");
-        aggiungiNuovoElemento.setPrefSize(131, 33);
-        aggiungiNuovoElemento.setStyle("-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
-        aggiungiNuovoElemento.setTextFill(Color.WHITE);
-        aggiungiNuovoElemento.setOnAction(e -> {
-            Pane base=workTrip;
+        Button aggiungiTappa = new Button("Aggiungi Tappa");
+        aggiungiTappa.setPrefSize(131, 33);
+        aggiungiTappa.setStyle("-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
+        aggiungiTappa.setTextFill(Color.WHITE);
+        aggiungiTappa.setOnAction(e -> {
+            AnchorPane baseScroll=workTrip;
             // Crea il contenitore principale trasparente
             AnchorPane overlay = new AnchorPane();
-            overlay.setPrefSize(base.getWidth(), base.getHeight());
+            Platform.runLater(()->{
+                overlay.setPrefSize(this.base.getWidth(), this.base.getHeight());
+            });
             overlay.setStyle("-fx-background-color: rgba(0,0,0,0.3);");
 
             // Crea il VBox centrale del popup
@@ -581,8 +606,9 @@ public class HomeController {
             Button closeButton = new Button("X");
             closeButton.setStyle("-fx-background-color: transparent; -fx-font-size: 14px; -fx-text-fill: #6B7280;");
             closeButton.setOnAction(ez -> {
-                base.getChildren().remove(overlay);
-                base.setDisable(false);
+                this.base.getChildren().remove(overlay);
+                baseScroll.setDisable(false);
+                aggiungiTappa.setDisable(false);
             });
 
             HBox b0 = new HBox(closeButton);
@@ -613,10 +639,13 @@ public class HomeController {
                 try {
                     viaggioAttuale.getItinerario().aggiungiTappa(new Tappa(nome.getText(), datePicker.getValue()));
                     if (salvaViaggioCorrente()) {
-                        base.getChildren().remove(overlay);
-                        base.setDisable(false);
-                    }else
-                        animazioneBottone(inserisciBottone,"-fx-background-color: #BE2538; -fx-background-radius: 6; -fx-padding: 8 16;","-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
+                        this.base.getChildren().remove(overlay);
+                        baseScroll.setDisable(false);
+                        aggiungiTappa.setDisable(false);
+                    }else {
+                        viaggioAttuale.getItinerario().rimuoviTappa(new Tappa(nome.getText(), datePicker.getValue()));
+                        animazioneBottone(inserisciBottone, "-fx-background-color: #BE2538; -fx-background-radius: 6; -fx-padding: 8 16;", "-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
+                    }
                 } catch (Exception ex) {
                     animazioneBottone(inserisciBottone,"-fx-background-color: #BE2538; -fx-background-radius: 6; -fx-padding: 8 16;","-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
                 }
@@ -626,32 +655,48 @@ public class HomeController {
             b5.setAlignment(Pos.CENTER_RIGHT);
 
             // Inserimento
-            // Composizione finale
             popupBox.getChildren().addAll(b0, b1, b2, b5);
-            popupBox.setLayoutX((base.getWidth() - popupBox.getPrefWidth()) / 2);
-            popupBox.setLayoutY(100);
+            //Centro tutto dopo la creazione
+            Platform.runLater(() -> {
+                popupBox.setLayoutX((this.base.getWidth() - popupBox.getWidth()) / 2);
+                popupBox.setLayoutY((this.base.getHeight() - popupBox.getHeight()) / 2);
+            });
             overlay.getChildren().add(popupBox);
-            base.getChildren().add(overlay);
-            base.setDisable(true);
+            this.base.getChildren().add(overlay);
+            baseScroll.setDisable(true);
+            aggiungiTappa.setDisable(true);
 
         });
 
         // VBox sinistra con tutte le label e bottoni
         VBox sxVBox = new VBox();
         sxVBox.setPrefSize(100, 200);
-        sxVBox.getChildren().addAll(l0, creaSpaziatore(true), l1, creaSpaziatore(true), aggiungiNuovoElemento);
+        sxVBox.getChildren().addAll(l0, creaSpaziatore(true), l1, creaSpaziatore(true), aggiungiTappa);
 
         // VBox destra
         dxVBox.setPrefSize(545, 200);
         dxVBox.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         creaGraficaDxTappe(dxVBox);
 
-        // SplitPane
         SplitPane splitPane = new SplitPane();
-        splitPane.setDividerPositions(0.29797979797979796);
         splitPane.getItems().addAll(sxVBox, dxVBox);
+        splitPane.setDividerPositions(0.3);
+        splitPane.setPrefSize(800, 600); // Imposta una dimensione iniziale decente
+        splitPane.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE); // Lascia che cresca
+
+        // Dopo che lo SplitPane è stato aggiunto alla scena così evitamo problemi di caricamento
+        Platform.runLater(() -> {
+            for (Node divider : splitPane.lookupAll(".split-pane-divider")) {
+                divider.setMouseTransparent(true); // Blocca il trascinamento
+                divider.setVisible(false);
+            }
+        });
         VBox.setVgrow(splitPane, Priority.ALWAYS);
 
+        AnchorPane.setTopAnchor(splitPane, 0.0);
+        AnchorPane.setBottomAnchor(splitPane, 0.0);
+        AnchorPane.setLeftAnchor(splitPane, 0.0);
+        AnchorPane.setRightAnchor(splitPane, 0.0);
         return splitPane;
     }
     @FXML
@@ -776,6 +821,8 @@ public class HomeController {
                 viaggioAttuale.getItinerario().rimuoviTappa(tappa);
                 if (salvaViaggioCorrente())
                     listaGenerale.getChildren().remove(hBox);
+                else
+                    viaggioAttuale.getItinerario().aggiungiTappa(tappa);
             } catch (Exception ex) {
                 animazioneBottone(aggiungiNuovoViaggio,"-fx-background-color: #BE2538; -fx-background-radius: 6; -fx-padding: 8 16;","-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
             }
@@ -805,27 +852,21 @@ public class HomeController {
     @FXML
     public void sezElementi(){
         workTrip.getChildren().clear();
-        workTrip.getChildren().add(creaGraficaElementi());
+        workTrip.getChildren().setAll(creaGraficaElementi());
     }
     @FXML
     private SplitPane creaGraficaElementi() {
         Label l0 = new Label("Valigie");
-        l0.setPrefSize(131, 32);
-        l0.setStyle("-fx-font-size: 22px; -fx-font-weight: bold;");
+        l0.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
 
-        Label l1 = new Label("Elementi aggiunti : "+viaggioAttuale.getListaElementi().getElementiTot());
-        l1.setPrefSize(131, 32);
-        l1.setLayoutX(10);
-        l1.setLayoutY(10);
+        Label l1 = new Label("Elementi aggiunti: " + viaggioAttuale.getListaElementi().getElementiTot());
         l1.setWrapText(true);
-        l1.setStyle("-fx-font-size: 22px; -fx-font-weight: bold;");
+        l1.setStyle("-fx-font-size: 14px; -fx-font-weight: normal;");
 
-        Label l3 = new Label("Elementi acquisti : "+viaggioAttuale.getListaElementi().getElementiAcquistati());
-        l3.setPrefSize(131, 32);
-        l3.setLayoutX(10);
-        l3.setLayoutY(10);
+        Label l3 = new Label("Elementi acquistati: " + viaggioAttuale.getListaElementi().getElementiAcquistati());
         l3.setWrapText(true);
-        l3.setStyle("-fx-font-size: 22px; -fx-font-weight: bold;");
+        l3.setStyle("-fx-font-size: 14px; -fx-font-weight: normal;");
+
 
         VBox dxVBox = new VBox();
 
@@ -834,10 +875,12 @@ public class HomeController {
         aggiungiNuovoElemento.setStyle("-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
         aggiungiNuovoElemento.setTextFill(Color.WHITE);
         aggiungiNuovoElemento.setOnAction(e -> {
-            Pane base=workTrip;
+            AnchorPane baseScroll=workTrip;
             // Crea il contenitore principale trasparente
             AnchorPane overlay = new AnchorPane();
-            overlay.setPrefSize(base.getWidth(), base.getHeight());
+            Platform.runLater(()->{
+                overlay.setPrefSize(this.base.getWidth(), this.base.getHeight());
+            });
             overlay.setStyle("-fx-background-color: rgba(0,0,0,0.3);");
 
             // Crea il VBox centrale del popup
@@ -855,8 +898,9 @@ public class HomeController {
             Button closeButton = new Button("X");
             closeButton.setStyle("-fx-background-color: transparent; -fx-font-size: 14px; -fx-text-fill: #6B7280;");
             closeButton.setOnAction(ez -> {
-                base.getChildren().remove(overlay);
-                base.setDisable(false);
+                this.base.getChildren().remove(overlay);
+                baseScroll.setDisable(false);
+                aggiungiNuovoElemento.setDisable(false);
             });
 
             HBox b0 = new HBox(closeButton);
@@ -900,10 +944,14 @@ public class HomeController {
                 try {
                     viaggioAttuale.getListaElementi().addElemento(new Elemento(nome.getText(), descrizione.getText(), luogo.getText(), quantita.getValue()));
                     if (salvaViaggioCorrente()) {
-                        base.getChildren().remove(overlay);
-                        base.setDisable(false);
-                    }else
-                        animazioneBottone(inserisciBottone,"-fx-background-color: #BE2538; -fx-background-radius: 6; -fx-padding: 8 16;","-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
+                        this.base.getChildren().remove(overlay);
+                        baseScroll.setDisable(false);
+                        aggiungiNuovoElemento.setDisable(false);
+                        popolaListaElementi(dxVBox);
+                    }else {
+                        animazioneBottone(inserisciBottone, "-fx-background-color: #BE2538; -fx-background-radius: 6; -fx-padding: 8 16;", "-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
+                        viaggioAttuale.getListaElementi().removeElemento(new Elemento(nome.getText(), descrizione.getText(), luogo.getText(), quantita.getValue()));
+                    }
                 } catch (Exception ex) {
                     animazioneBottone(inserisciBottone,"-fx-background-color: #BE2538; -fx-background-radius: 6; -fx-padding: 8 16;","-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
                 }
@@ -913,13 +961,16 @@ public class HomeController {
             b5.setAlignment(Pos.CENTER_RIGHT);
 
             // Inserimento
-            // Composizione finale
-            popupBox.getChildren().addAll(b0, b1, b2, b3, b4, b5);
-            popupBox.setLayoutX((base.getWidth() - popupBox.getPrefWidth()) / 2);
-            popupBox.setLayoutY(100);
+            popupBox.getChildren().addAll(b0, b1, b2, b3, b4,b5);
+            //Centro tutto dopo la creazione
+            Platform.runLater(() -> {
+                popupBox.setLayoutX((this.base.getWidth() - popupBox.getWidth()) / 2);
+                popupBox.setLayoutY((this.base.getHeight() - popupBox.getHeight()) / 2);
+            });
             overlay.getChildren().add(popupBox);
-            base.getChildren().add(overlay);
-            base.setDisable(true);
+            this.base.getChildren().add(overlay);
+            baseScroll.setDisable(true);
+            aggiungiNuovoElemento.setDisable(true);
 
         });
 
@@ -933,12 +984,25 @@ public class HomeController {
         dxVBox.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         popolaListaElementi(dxVBox);
 
-        // SplitPane
         SplitPane splitPane = new SplitPane();
-        splitPane.setDividerPositions(0.29797979797979796);
         splitPane.getItems().addAll(sxVBox, dxVBox);
+        splitPane.setDividerPositions(0.3);
+        splitPane.setPrefSize(800, 600); // Imposta una dimensione iniziale decente
+        splitPane.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE); // Lascia che cresca
+
+        // Dopo che lo SplitPane è stato aggiunto alla scena così evitamo problemi di caricamento
+        Platform.runLater(() -> {
+            for (Node divider : splitPane.lookupAll(".split-pane-divider")) {
+                divider.setMouseTransparent(true); // Blocca il trascinamento
+                divider.setVisible(false);
+            }
+        });
         VBox.setVgrow(splitPane, Priority.ALWAYS);
 
+        AnchorPane.setTopAnchor(splitPane, 0.0);
+        AnchorPane.setBottomAnchor(splitPane, 0.0);
+        AnchorPane.setLeftAnchor(splitPane, 0.0);
+        AnchorPane.setRightAnchor(splitPane, 0.0);
         return splitPane;
     }
     @FXML
@@ -967,10 +1031,12 @@ public class HomeController {
         Label titoloLabel = new Label(elemento.getNome());
         titoloLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px; -fx-strikethrough: "+elemento.isAcquistato()+";");
         titoloLabel.setOnMouseClicked(e ->{
-            Pane base=workTrip;
+            AnchorPane baseScroll=workTrip;
             // Crea il contenitore principale trasparente
             AnchorPane overlay = new AnchorPane();
-            overlay.setPrefSize(base.getWidth(), base.getHeight());
+            Platform.runLater(()->{
+                overlay.setPrefSize(this.base.getWidth(), this.base.getHeight());
+            });
             overlay.setStyle("-fx-background-color: rgba(0,0,0,0.3);");
 
             // Crea il VBox centrale del popup
@@ -988,8 +1054,9 @@ public class HomeController {
             Button closeButton = new Button("X");
             closeButton.setStyle("-fx-background-color: transparent; -fx-font-size: 14px; -fx-text-fill: #6B7280;");
             closeButton.setOnAction(ez -> {
-                base.getChildren().remove(overlay);
-                base.setDisable(false);
+                this.base.getChildren().remove(overlay);
+                baseScroll.setDisable(false);
+                titoloLabel.setDisable(false);
             });
 
             HBox b0 = new HBox(closeButton);
@@ -1011,13 +1078,16 @@ public class HomeController {
             l1111.setStyle("-fx-font-size: 12px; -fx-text-fill: #374151;");
             CheckBox ck=new CheckBox("Acquistato");
             Button chiudiBottone = new Button("Chiudi");
-            ck.setOnAction(ez->{
+            ck.setOnAction(ez->{ //TODO: CHANGE CON MODIFICA
                 elemento.setAcquistato(ck.isSelected());
                 if (salvaViaggioCorrente()){
-                    base.getChildren().remove(overlay);
-                    base.setDisable(false);
-                } else
-                    animazioneBottone(chiudiBottone,"-fx-background-color: #BE2538; -fx-background-radius: 6; -fx-padding: 8 16;","-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
+                    this.base.getChildren().remove(overlay);
+                    baseScroll.setDisable(false);
+                    titoloLabel.setDisable(false);
+                } else {
+                    animazioneBottone(chiudiBottone, "-fx-background-color: #BE2538; -fx-background-radius: 6; -fx-padding: 8 16;", "-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
+                    elemento.setAcquistato(!ck.isSelected());
+                }
             });
             VBox b4 = new VBox(5, l1111,ck);
             b4.setAlignment(Pos.TOP_LEFT);
@@ -1029,23 +1099,26 @@ public class HomeController {
                             "-fx-padding: 8 16;" +
                             "-fx-text-fill: white;"
             );
-
-            chiudiBottone.setOnAction(ezz -> {
-                base.getChildren().remove(overlay);
-                base.setDisable(false);
+            chiudiBottone.setOnAction(ez -> {
+                this.base.getChildren().remove(overlay);
+                baseScroll.setDisable(false);
+                titoloLabel.setDisable(false);
             });
 
             HBox b5 = new HBox(chiudiBottone);
             b5.setAlignment(Pos.CENTER_RIGHT);
 
             // Inserimento
-            // Composizione finale
             popupBox.getChildren().addAll(b0, b1, b2, b3, b4, b5);
-            popupBox.setLayoutX((base.getWidth() - popupBox.getPrefWidth()) / 2);
-            popupBox.setLayoutY(100);
+            //Centro tutto dopo la creazione
+            Platform.runLater(() -> {
+                popupBox.setLayoutX((this.base.getWidth() - popupBox.getWidth()) / 2);
+                popupBox.setLayoutY((this.base.getHeight() - popupBox.getHeight()) / 2);
+            });
             overlay.getChildren().add(popupBox);
             this.base.getChildren().add(overlay);
-            base.setDisable(true);
+            baseScroll.setDisable(true);
+            titoloLabel.setDisable(true);
         });
         Label removeLabel = new Label("Rimuovi");
         removeLabel.setStyle("-fx-text-fill: #4B5563; -fx-font-size: 12px;");
@@ -1054,6 +1127,8 @@ public class HomeController {
                 viaggioAttuale.getListaElementi().removeElemento(elemento);
                 if (salvaViaggioCorrente())
                     listaGenerale.getChildren().remove(hBox);
+                else
+                    viaggioAttuale.getListaElementi().addElemento(elemento);
             } catch (Exception ex) {
                 animazioneBottone(aggiungiNuovoViaggio,"-fx-background-color: #BE2538; -fx-background-radius: 6; -fx-padding: 8 16;","-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
             }

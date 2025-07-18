@@ -204,7 +204,7 @@
                   </AnchorPane>
                   <AnchorPane fx:id="intoTripBox" layoutX="10.0" layoutY="10.0" prefHeight="600.0" prefWidth="558.0" visible="false" disable="true">
                      <children>
-                        <ScrollPane fitToWidth="true" style="-fx-background: #F9FAFB;">
+                         <ScrollPane fitToWidth="true" style="-fx-background: #F9FAFB;">
                            <content>
                               <VBox alignment="TOP_LEFT"  prefHeight="588.0" prefWidth="555.0" spacing="20" style="-fx-background-color: #F9FAFB; -fx-padding: 24;">
                                  <children>
@@ -221,7 +221,7 @@
                                           </HBox>
                                        </children>
                                     </HBox>
-                                    <Pane fx:id="workTrip" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS"/>
+                                     <AnchorPane fx:id="workTrip" VBox.vgrow="ALWAYS"/>
                                  </children>
                               </VBox>
                            </content>

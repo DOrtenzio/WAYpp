@@ -1,5 +1,8 @@
 package praticaest1.praticaest1.obj;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Viaggio {
     private String nomeUnivoco;
     private Budget budget;

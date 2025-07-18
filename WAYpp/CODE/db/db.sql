@@ -12,26 +12,31 @@ CREATE TABLE `utenti` (
 CREATE TABLE `viaggi` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
   `nomeUnivoco` varchar(255) UNIQUE,
-  `user_id` int
+  `user_id` int,
+  FOREIGN KEY (user_id) REFERENCES utenti(id) ON DELETE CASCADE
 );
 
 CREATE TABLE `budget` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
   `viaggio_id` int,
   `budget_iniziale` double,
-  `budget_speso` double
+  `budget_speso` double,
+  FOREIGN KEY (viaggio_id) REFERENCES viaggi(id) ON DELETE CASCADE
 );
 
 CREATE TABLE `rendicontazioni` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
   `budget_id` int,
   `motivazione` varchar(255),
-  `cifra` double
+  `cifra` double,
+  FOREIGN KEY (budget_id) REFERENCES budget(id) ON DELETE CASCADE
 );
 
 CREATE TABLE `itinerario` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
-  `viaggio_id` int
+  `viaggio_id` int,
+  `nome` varchar(255),
+  FOREIGN KEY (viaggio_id) REFERENCES viaggi(id) ON DELETE CASCADE
 );
 
 CREATE TABLE `tappe` (
@@ -40,14 +45,16 @@ CREATE TABLE `tappe` (
   `data` date,
   `latitudine` double,
   `longitudine` double,
-  `itinerario_id` int
+  `itinerario_id` int,
+  FOREIGN KEY (itinerario_id) REFERENCES itinerario(id) ON DELETE CASCADE
 );
 
 CREATE TABLE `listaElementi` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
   `viaggio_id` int,
   `elementiTot` int,
-  `elementiAcquistati` int
+  `elementiAcquistati` int,
+  FOREIGN KEY (viaggio_id) REFERENCES viaggi(id) ON DELETE CASCADE
 );
 
 CREATE TABLE `elementi` (
@@ -56,19 +63,6 @@ CREATE TABLE `elementi` (
   `descrizione` text,
   `luogoAcquisto` varchar(255),
   `isAcquistato` boolean,
-  `lista_elementi_id` int
+  `lista_elementi_id` int,
+  FOREIGN KEY (lista_elementi_id) REFERENCES listaElementi(id) ON DELETE CASCADE
 );
-
-ALTER TABLE `viaggi` ADD FOREIGN KEY (`user_id`) REFERENCES `utenti` (`id`);
-
-ALTER TABLE `budget` ADD FOREIGN KEY (`viaggio_id`) REFERENCES `viaggi` (`id`);
-
-ALTER TABLE `rendicontazioni` ADD FOREIGN KEY (`budget_id`) REFERENCES `budget` (`id`);
-
-ALTER TABLE `itinerario` ADD FOREIGN KEY (`viaggio_id`) REFERENCES `viaggi` (`id`);
-
-ALTER TABLE `tappe` ADD FOREIGN KEY (`itinerario_id`) REFERENCES `itinerario` (`id`);
-
-ALTER TABLE `listaElementi` ADD FOREIGN KEY (`viaggio_id`) REFERENCES `viaggi` (`id`);
-
-ALTER TABLE `elementi` ADD FOREIGN KEY (`lista_elementi_id`) REFERENCES `listaElementi` (`id`);
