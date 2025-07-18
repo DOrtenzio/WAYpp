@@ -10,13 +10,13 @@ if (!isset($input['nuovo']['email']) || !isset($input['nuovo']['nome']) || !isse
     echo json_encode(['confermaAzione' => false, 'parametro1' => null,'parametro2'=> null]);
     exit;
 } else {
-    $nuovo => [
+    $nuovo = [
         'email' => $input['nuovo']['email'],
         'nome' => $input['nuovo']['nome'],
         'psw' => $input['nuovo']['psw'],
         'bio' => $input['nuovo']['bio']
     ];
-    $vecchio => [
+    $vecchio = [
         'email' => $input['vecchio']['email'],
         'nome' => $input['vecchio']['nome'],
         'psw' => $input['vecchio']['psw'],

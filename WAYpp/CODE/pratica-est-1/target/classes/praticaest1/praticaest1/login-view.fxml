@@ -108,7 +108,7 @@
                          </VBox>
 
                          <!-- Bottone Registrati -->
-                         <Button onAction="#registrati" prefWidth="300" style="-fx-background-color: #3B82F6; -fx-text-fill: white;                            -fx-background-radius: 8; -fx-padding: 10 0; -fx-font-weight: bold;" text="Registrati" />
+                         <Button fx:id="b2" onAction="#registrati" prefWidth="300" style="-fx-background-color: #3B82F6; -fx-text-fill: white;                            -fx-background-radius: 8; -fx-padding: 10 0; -fx-font-weight: bold;" text="Registrati" />
 
                          <!-- Link per tornare al login -->
                          <HBox alignment="CENTER">

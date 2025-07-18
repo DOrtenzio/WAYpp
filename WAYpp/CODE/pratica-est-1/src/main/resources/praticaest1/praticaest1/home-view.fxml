@@ -5,7 +5,6 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
@@ -19,7 +18,7 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700" prefWidth="900" style="-fx-background-color: #e1e6ea;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="praticaest1.praticaest1.HomeController">
    <children>
-      <AnchorPane layoutX="10.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="680.0" prefWidth="880.0" style="-fx-background-color: #f9fafb; -fx-background-radius: 32;">
+      <AnchorPane fx:id="base" layoutX="10.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="680.0" prefWidth="880.0" style="-fx-background-color: #f9fafb; -fx-background-radius: 32;">
          <padding>
             <Insets bottom="50.0" left="50.0" right="50.0" top="50.0" />
          </padding>
@@ -82,7 +81,7 @@
             <AnchorPane fx:id="workBox" layoutX="310.0" layoutY="40.0" prefHeight="600.0" prefWidth="570.0" style="-fx-background-color: #f9fafb;">
                <children>
                   <AnchorPane fx:id="profileBox" disable="true" prefHeight="600.0" prefWidth="570.0" visible="false">
-                      <VBox alignment="TOP_LEFT" disable="true" layoutX="27.0" layoutY="21.0" prefHeight="570.0" prefWidth="517.0" spacing="20" style="-fx-background-color: #F9FAFB; -fx-padding: 20;" visible="false">
+                      <VBox alignment="TOP_LEFT"  layoutX="27.0" layoutY="21.0" prefHeight="570.0" prefWidth="517.0" spacing="20" style="-fx-background-color: #F9FAFB; -fx-padding: 20;" >
                           <!-- Titolo -->
                           <Label style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Profilo utente" />
 
@@ -118,10 +117,10 @@
 
                       </VBox>
                   </AnchorPane>
-                  <AnchorPane fx:id="homeBox" layoutX="10.0" layoutY="10.0" prefHeight="600.0" prefWidth="558.0">
+                  <AnchorPane fx:id="homeBox" visible="true" disable="false" layoutX="10.0" layoutY="10.0" prefHeight="600.0" prefWidth="558.0">
                       <ScrollPane fitToWidth="true" style="-fx-background: #F9FAFB;">
                           <content>
-                              <VBox alignment="TOP_LEFT" prefHeight="588.0" prefWidth="555.0" spacing="20" style="-fx-background-color: #F9FAFB; -fx-padding: 24;" visible="false">
+                              <VBox alignment="TOP_LEFT" prefHeight="588.0" prefWidth="555.0" spacing="20" style="-fx-background-color: #F9FAFB; -fx-padding: 24;">
 
                                   <!-- Titolo Home -->
                                   <Label style="-fx-font-size: 22px; -fx-font-weight: bold;" text="Benvenuto su Waypp" />
@@ -182,7 +181,7 @@
                      <children>
                         <ScrollPane fitToWidth="true" style="-fx-background: #F9FAFB;">
                            <content>
-                              <VBox alignment="TOP_LEFT" disable="true" prefHeight="588.0" prefWidth="555.0" spacing="20" style="-fx-background-color: #F9FAFB; -fx-padding: 24;" visible="false">
+                              <VBox alignment="TOP_LEFT" prefHeight="588.0" prefWidth="555.0" spacing="20" style="-fx-background-color: #F9FAFB; -fx-padding: 24;">
                                  <children>
                                     <HBox maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="35.0" prefWidth="507.0">
                                        <children>
@@ -203,11 +202,11 @@
                         </ScrollPane>
                      </children>
                   </AnchorPane>
-                  <AnchorPane fx:id="intoTripBox" layoutX="10.0" layoutY="10.0" prefHeight="600.0" prefWidth="558.0">
+                  <AnchorPane fx:id="intoTripBox" layoutX="10.0" layoutY="10.0" prefHeight="600.0" prefWidth="558.0" visible="false" disable="true">
                      <children>
                         <ScrollPane fitToWidth="true" style="-fx-background: #F9FAFB;">
                            <content>
-                              <VBox alignment="TOP_LEFT" disable="true" prefHeight="588.0" prefWidth="555.0" spacing="20" style="-fx-background-color: #F9FAFB; -fx-padding: 24;" visible="false">
+                              <VBox alignment="TOP_LEFT"  prefHeight="588.0" prefWidth="555.0" spacing="20" style="-fx-background-color: #F9FAFB; -fx-padding: 24;">
                                  <children>
                                     <HBox maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="35.0" prefWidth="507.0">
                                        <children>
@@ -222,30 +221,7 @@
                                           </HBox>
                                        </children>
                                     </HBox>
-                                    <Pane fx:id="workTrip" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
-                                       <children>
-                                          <SplitPane dividerPositions="0.29797979797979796" prefHeight="160.0" prefWidth="200.0">
-                                            <items>
-                                                <VBox prefHeight="200.0" prefWidth="100.0">
-                                                   <children>
-                                                      <Label fx:id="nomeViaggio1" prefHeight="32.0" prefWidth="131.0" style="-fx-font-size: 22px; -fx-font-weight: bold;" text="Budget" />
-                                                      <Pane prefHeight="49.0" prefWidth="147.0" />
-                                                      <Label fx:id="nomeViaggio11" layoutX="10.0" layoutY="10.0" prefHeight="32.0" prefWidth="131.0" style="-fx-font-size: 22px; -fx-font-weight: bold;" text="Budget Speso" />
-                                                      <Pane layoutX="10.0" layoutY="42.0" prefHeight="29.0" prefWidth="147.0" />
-                                                      <Label fx:id="nomeViaggio12" layoutX="10.0" layoutY="10.0" prefHeight="32.0" prefWidth="131.0" style="-fx-font-size: 22px; -fx-font-weight: bold;" text="Budget Pattuito" />
-                                                      <HBox alignment="CENTER" prefHeight="31.0" prefWidth="147.0" VBox.vgrow="NEVER">
-                                                         <children>
-                                                            <Button onAction="#sezBudget" prefHeight="33.0" prefWidth="43.0" style="-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;" text="+" textFill="WHITE" />
-                                                            <Button layoutX="62.0" layoutY="10.0" onAction="#sezBudget" prefHeight="33.0" prefWidth="43.0" style="-fx-background-color: #f9fafb; -fx-background-radius: 6; -fx-padding: 8 16;" text="-" textFill="WHITE" />
-                                                         </children>
-                                                      </HBox>
-                                                   </children>
-                                                </VBox>
-                                                <VBox fx:id="workTrip" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="545.0" />
-                                            </items>
-                                          </SplitPane>
-                                       </children>
-                                    </Pane>
+                                    <Pane fx:id="workTrip" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS"/>
                                  </children>
                               </VBox>
                            </content>

@@ -1,13 +1,16 @@
 package praticaest1.praticaest1.obj;
 
-import java.util.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.util.*;
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ListaViaggi {
     private List<Viaggio> list;
 
     public ListaViaggi() {
         this.list = new ArrayList<>();
     }
+    public ListaViaggi(List<Viaggio> list) { this.list = list; }
 
     public List<Viaggio> getList() { return list; }
     public void setList(List<Viaggio> list) { this.list = list; }

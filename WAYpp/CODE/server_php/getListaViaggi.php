@@ -10,7 +10,7 @@ if (!isset($input['email']) || !isset($input['nome']) || !isset($input['psw'])) 
     echo json_encode(['confermaAzione' => false, 'parametro1' => null,'parametro2'=> null]);
     exit;
 } else {
-    $utente => [
+    $utente = [
         'email' => $input['email'],
         'nome' => $input['nome'],
         'psw' => $input['psw']
