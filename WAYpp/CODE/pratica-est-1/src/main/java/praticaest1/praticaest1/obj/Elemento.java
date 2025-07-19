@@ -1,8 +1,12 @@
 package praticaest1.praticaest1.obj;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Elemento {
     private String nome,descrizione,luogoAcquisto;
     private int quantita;
+    @JsonProperty("isAcquistato")
     private boolean isAcquistato;
     //Costruttore
     public Elemento(){}

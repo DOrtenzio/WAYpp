@@ -54,8 +54,18 @@ function getViaggiCompleti($pdo, $userId) {
         if ($lista) {
             $stmtE = $pdo->prepare("SELECT * FROM elementi WHERE lista_elementi_id = :lid");
             $stmtE->execute(['lid' => $lista['id']]);
-            $elementi = $stmtE->fetchAll(PDO::FETCH_ASSOC);
+            $elementiDB = $stmtE->fetchAll(PDO::FETCH_ASSOC);
+
+            foreach ($elementiDB as $elemento) {
+                if (isset($elemento['isAcquistato'])) {
+                    $elemento['isAcquistato'] = $elemento['isAcquistato'] == 1 ? true : false;
+                } else {
+                    $elemento['isAcquistato'] = false; // Default nel caso manchi
+                }
+                $elementi[] = $elemento;
+            }
         }
+
 
         // Componi il viaggio completo
         $viaggiCompleti[] = [

@@ -1,7 +1,9 @@
 package praticaest1.praticaest1.obj;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.time.LocalDate;
 import java.util.*;
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Itinerario {
     private String nome;
     private List<Tappa> tappe;

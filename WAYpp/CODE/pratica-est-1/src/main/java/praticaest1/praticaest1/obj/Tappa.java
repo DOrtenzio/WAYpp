@@ -1,8 +1,9 @@
 package praticaest1.praticaest1.obj;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import praticaest1.praticaest1.utility.*;
 import java.time.LocalDate;
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Tappa implements Comparable<Tappa>{
     private String nome;
     private LocalDate data;

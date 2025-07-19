@@ -1,26 +1,27 @@
 package praticaest1.praticaest1.obj;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import praticaest1.praticaest1.utility.*;
-
 import java.util.*;
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Budget {
     private double budgetIniziale,budgetSpeso;
-    private List<Pair<String,Double>> tieniConto; //Motivazione,Spesa
+    private List<MotivoSpesa> tieniConto; //Motivazione,Spesa
     //Costruttore
     public Budget(){}
     public Budget(double budgetIniziale) {
         this.budgetIniziale = budgetIniziale;
         this.budgetSpeso = 0.0;
-        this.tieniConto = new ArrayList<Pair<String,Double>>();
+        this.tieniConto = new ArrayList<MotivoSpesa>();
     }
     //Getter
     public double getBudgetIniziale() { return budgetIniziale; }
     public double getBudgetSpeso() { return budgetSpeso; }
-    public List<Pair<String, Double>> getTieniConto() { return tieniConto; }
+    public List<MotivoSpesa> getTieniConto() { return tieniConto; }
     public void setBudgetIniziale(double budgetIniziale) { this.budgetIniziale = budgetIniziale; }
     public void setBudgetSpeso(double budgetSpeso) { this.budgetSpeso = budgetSpeso; }
-    public void setTieniConto(List<Pair<String, Double>> tieniConto) { this.tieniConto = tieniConto; }
+    public void setTieniConto(List<MotivoSpesa> tieniConto) { this.tieniConto = tieniConto; }
 
     //Metodi di lavoro
     public void aggiungiNuovoBudget(double nuovoBudget){
@@ -48,11 +49,12 @@ public class Budget {
             this.budgetSpeso-=spesaDaRimuovere;
     }
     //Rendicontazione
-    public void aggiungiRendicontazione(String motivazione,Double cifra){ this.tieniConto.add(new Pair<>(motivazione,cifra)); }
-    public void rimuoviRendicontazione(String motivazione,Double cifra){ this.tieniConto.remove(new Pair<>(motivazione,cifra)); }
+    public void aggiungiRendicontazione(String motivazione,Double cifra){ this.tieniConto.add(new MotivoSpesa(motivazione,cifra)); }
+    public void rimuoviRendicontazione(String motivazione,Double cifra){ this.tieniConto.remove( new MotivoSpesa(motivazione,cifra)); }
+    @JsonIgnore
     public String getLista(){
         String s="";
-        for (Pair r:this.tieniConto) s=s+r.getKey()+"-"+r.getValue()+"\n";
+        for (MotivoSpesa r:this.tieniConto) s=s+r.getMotivazione()+"-"+r.getCifra()+"\n";
         return s;
     }
 }

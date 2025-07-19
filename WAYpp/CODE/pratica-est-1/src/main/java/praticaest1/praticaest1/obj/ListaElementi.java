@@ -1,8 +1,10 @@
 package praticaest1.praticaest1.obj;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.ArrayList;
 import java.util.List;
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ListaElementi {
     private List<Elemento> list;
     private int elementiTot, elementiAcquistati;
@@ -28,6 +30,8 @@ public class ListaElementi {
     public void removeElemento(Elemento e){
         this.list.remove(e);
         elementiTot--;
+        if(e.isAcquistato())
+            elementiAcquistati--;
     }
     public void setElemento(Elemento eRicercato,Elemento eDaSostituire) throws Exception{
         int ind=this.list.indexOf(eRicercato);
@@ -41,6 +45,10 @@ public class ListaElementi {
         if (ind!=-1) {
             e.setAcquistato(isAcq);
             this.list.set(ind, e);
+            if (isAcq) //Aggiorno il contatore
+                elementiAcquistati++;
+            else
+                elementiAcquistati--;
         } else
             throw new Exception("Elemento non trovato"); //Dato l'interfacciamento grafico sarà quasi inutile
     }
