@@ -1,6 +1,7 @@
 <?php
 header('Content-Type: application/json');
-require 'db.php';
+require_once 'db.php';
+require 'function.php';
 
 // Prendi dati POST e decodifica JSON
 $input = json_decode(file_get_contents('php://input'), true);
@@ -17,14 +18,13 @@ if ((!isset($input['p1']['email'])) || (!isset($input['p1']['nome'])) || (!isset
     ];
     $nuovoViaggio = [
         'nomeUnivoco' => $input['p2']['nomeUnivoco'],
-        'budgetIniziale' => $input['budget']['budgetIniziale'],
-        'budgetSpeso' => $input['budget']['budgetSpeso'],
-        'tieniConto' => $input['budget']['tieniConto'],
-        'listaBudget' => $input['budget']['lista'],
-        'tappe' => $input['itinerario']['tappe'],
-        'dateTappe' => $input['itinerario']['dateTappe'],
-        'elementiTot' => $input['listaElementi']['elementiTot'],
-        'elementiAcquistati' => $input['listaElementi']['elementiAcquistati']
+        'budgetIniziale' => $input['p2']['budget']['budgetIniziale'],
+        'budgetSpeso' => $input['p2']['budget']['budgetSpeso'],
+        'tieniConto' => $input['p2']['budget']['tieniConto'],
+        'tappe' => $input['p2']['itinerario']['tappe'],
+        'dateTappe' => $input['p2']['itinerario']['dateTappe'],
+        'elementiTot' => $input['p2']['listaElementi']['elementiTot'],
+        'elementiAcquistati' => $input['p2']['listaElementi']['elementiAcquistati']
     ];
 
     try {
