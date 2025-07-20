@@ -84,19 +84,21 @@ if ( !isset($input['p1']['email']) || !isset($input['p1']['nome']) || !isset($in
                     'viaggio_id' => $viaggioId,
                     'nome' => $viaggio['itinerario']['nome'] ?? ''
                 ]);
+                $itinerarioId = $pdo->lastInsertId();
 
-                if (!empty($viaggio['itinerario']['tappe']) && !empty($viaggio['itinerario']['dateTappe'])) {
-                    $stmtTappa = $pdo->prepare("INSERT INTO tappe (nome_tappa, data, latitudine, longitudine, itinerario_id) VALUES (:nome, :data, :lat, :lon, :it_id)");
-                    foreach ($viaggio['itinerario']['tappe'] as $i => $tappa) {
-                        $stmtTappa->execute([
-                            'nome' => $tappa['nome'] ?? 'Senza nome',
-                            'data' => $viaggio['itinerario']['dateTappe'][$i] ?? null,
-                            'lat' => $tappa['latitudine'] ?? null,
-                            'lon' => $tappa['longitudine'] ?? null,
-                            'it_id' => $itinerarioId
-                        ]);
-                    }
-                }
+             if (!empty($viaggio['itinerario']['tappe'])) {
+                 $stmtTappa = $pdo->prepare("INSERT INTO tappe (nome_tappa, data, latitudine, longitudine, itinerario_id) VALUES (:nome, :data, :lat, :lon, :it_id)");
+
+                 foreach ($viaggio['itinerario']['tappe'] as $tappa) {
+                     $stmtTappa->execute([
+                         'nome' => $tappa['nome'] ?? 'Senza nome',
+                         'data' => $tappa['data'] ?? null,
+                         'lat' => $tappa['latitudine'] ?? null,
+                         'lon' => $tappa['longitudine'] ?? null,
+                         'it_id' => $itinerarioId
+                     ]);
+                 }
+             }
             }
 
             // 4. Inserisci lista elementi e elementi

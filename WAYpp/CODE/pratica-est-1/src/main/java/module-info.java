@@ -6,6 +6,7 @@ module praticaest1.praticaest1 {
     requires com.fasterxml.jackson.databind;
     requires io.github.cdimascio.dotenv.java;
     requires com.gluonhq.maps;
+    requires com.fasterxml.jackson.datatype.jsr310;
 
     opens praticaest1.praticaest1 to javafx.fxml, com.fasterxml.jackson.databind;
     opens praticaest1.praticaest1.obj to com.fasterxml.jackson.databind;

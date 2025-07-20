@@ -1,13 +1,16 @@
 package praticaest1.praticaest1;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.gluonhq.maps.*;
 import io.github.cdimascio.dotenv.Dotenv;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -57,12 +60,13 @@ public class HomeController {
     //Elementi gestionali
     private String URL_BASE;
     private final GestoreHTTP gestoreHTTP=new GestoreHTTP();
-    private final ObjectMapper mapper=new ObjectMapper();
+    private ObjectMapper mapper=new ObjectMapper();
 
     public void initialize(){
         //Variabili
         Dotenv dotenv= Dotenv.load();
         this.URL_BASE=dotenv.get("URL_BASE_SERVER");
+        mapper.registerModule(new JavaTimeModule());
         //Grafica
         animaBottoni();
     }
@@ -290,6 +294,7 @@ public class HomeController {
         Label l1 = new Label("Inserisci nome del viaggio (Attento che sia univoco)");
         l1.setStyle("-fx-font-size: 12px; -fx-text-fill: #374151;");
         TextField nome = new TextField();
+        nome.setStyle("-fx-background-radius: 8; -fx-padding: 10; -fx-background-color: white;");
         nome.setPromptText("Nome viaggio");
         VBox b1 = new VBox(5, l1, nome);
         b1.setAlignment(Pos.TOP_LEFT);
@@ -298,17 +303,27 @@ public class HomeController {
         Label l2 = new Label("Budget massimo da spendere (Puoi modificarlo anche in seguito)");
         l2.setStyle("-fx-font-size: 12px; -fx-text-fill: #374151;");
         TextField budget = new TextField();
+        budget.setStyle("-fx-background-radius: 8; -fx-padding: 10; -fx-background-color: white;");
         budget.setPromptText("Es. 1000");
         VBox b2 = new VBox(5, l2, budget);
         b2.setAlignment(Pos.TOP_LEFT);
 
-        // Campo: Destinazione
+        // Campo: Destinazione e data
         Label l3 = new Label("Destinazione dell’itinerario");
         l3.setStyle("-fx-font-size: 12px; -fx-text-fill: #374151;");
         TextField destinazione = new TextField();
+        destinazione.setStyle("-fx-background-radius: 8; -fx-padding: 10; -fx-background-color: white;");
         destinazione.setPromptText("Es. Roma, Parigi, Tokyo...");
         VBox b3 = new VBox(5, l3, destinazione);
         b3.setAlignment(Pos.TOP_LEFT);
+        Label l4 = new Label("Data di arrivo alla destinazione");
+        l4.setStyle("-fx-font-size: 12px; -fx-text-fill: #374151;");
+        DatePicker dataArrivo = new DatePicker();
+        dataArrivo.setPromptText("Seleziona una data...");
+        dataArrivo.setStyle("-fx-background-radius: 8; -fx-padding: 10; -fx-background-color: white;");
+        VBox b6 = new VBox(5, l4, dataArrivo);
+        b4.setAlignment(Pos.TOP_LEFT);
+
 
         // Pulsante Salva
         Button saveButton = new Button("Salva");
@@ -320,27 +335,85 @@ public class HomeController {
         );
 
         saveButton.setOnAction(e -> {
-            try {
-                listaViaggiAttuale.addElemento(new Viaggio(nome.getText().trim(),new Budget(Double.parseDouble(budget.getText().trim())),new Itinerario(destinazione.getText().trim()),new ListaElementi()));
-                String risposta=gestoreHTTP.inviaRichiestaConParametri(URL_BASE+"reloadListaViaggi.php",mapper.writeValueAsString(new MessaggioDati<Utente,ListaViaggi>(this.utenteAttuale, listaViaggiAttuale)));
-                Messaggio<ListaViaggi> m=mapper.readValue(risposta, Messaggio.class);
-                if (m.getConfermaAzione()) {
-                    this.base.getChildren().remove(overlay);
-                    baseScroll.setDisable(false);
-                    aggiungiNuovoViaggio.setDisable(false);
-                    popolaScroolPane();
-                }else
-                    animazioneBottone(saveButton,"-fx-background-color: #BE2538; -fx-background-radius: 6; -fx-padding: 8 16;","-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
-            } catch (Exception ex) {
-                animazioneBottone(saveButton,"-fx-background-color: #BE2538; -fx-background-radius: 6; -fx-padding: 8 16;","-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
-            }
+            // Spinner iniziale
+            ProgressIndicator spinner = new ProgressIndicator();
+            spinner.setMaxSize(40, 40);
+            spinner.setStyle("-fx-progress-color: #3B82F6;");
+            VBox overlaySpinner = new VBox(spinner);
+            overlaySpinner.setAlignment(Pos.CENTER);
+            overlaySpinner.setStyle("-fx-background-color: rgba(255,255,255,0.6);");
+            overlaySpinner.setPrefSize(base.getWidth(), base.getHeight());
+
+            base.getChildren().add(overlaySpinner);
+            baseScroll.setDisable(true);
+            aggiungiNuovoViaggio.setDisable(true);
+
+            // Task in background per inviare richiesta
+            Task<Void> task = new Task<>() {
+                @Override
+                protected Void call() throws Exception {
+                    try {
+                        // Crea nuovo viaggio e invia richiesta
+                        listaViaggiAttuale.addElemento(
+                                new Viaggio(
+                                        nome.getText().trim(),
+                                        new Budget(Double.parseDouble(budget.getText().trim())),
+                                        new Itinerario(destinazione.getText().trim(), dataArrivo.getValue()),
+                                        new ListaElementi()
+                                )
+                        );
+
+                        String risposta = gestoreHTTP.inviaRichiestaConParametri(
+                                URL_BASE + "reloadListaViaggi.php",
+                                mapper.writeValueAsString(new MessaggioDati<Utente, ListaViaggi>(utenteAttuale, listaViaggiAttuale))
+                        );
+                        Messaggio<ListaViaggi> m = mapper.readValue(risposta, Messaggio.class);
+
+                        Platform.runLater(() -> { //DOPO aver caricato lo spinner posso accedere alle altre impostazioni
+                            base.getChildren().remove(overlaySpinner);
+                            baseScroll.setDisable(false);
+                            aggiungiNuovoViaggio.setDisable(false);
+
+                            if (m.getConfermaAzione()) {
+                                base.getChildren().remove(overlaySpinner);
+                                baseScroll.setDisable(false);
+                                aggiungiNuovoViaggio.setDisable(false);
+                                popolaScroolPane();
+                            } else {
+                                animazioneBottone(
+                                        saveButton,
+                                        "-fx-background-color: #BE2538; -fx-background-radius: 6; -fx-padding: 8 16;",
+                                        "-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;"
+                                );
+                            }
+                        });
+
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        Platform.runLater(() -> {
+                            base.getChildren().remove(overlaySpinner);
+                            baseScroll.setDisable(false);
+                            aggiungiNuovoViaggio.setDisable(false);
+                            animazioneBottone(
+                                    saveButton,
+                                    "-fx-background-color: #BE2538; -fx-background-radius: 6; -fx-padding: 8 16;",
+                                    "-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;"
+                            );
+                        });
+                    }
+                    return null;
+                }
+            };
+
+            new Thread(task).start();
         });
+
 
         HBox b4 = new HBox(saveButton);
         b4.setAlignment(Pos.CENTER_RIGHT);
 
         // Inserimento
-        popupBox.getChildren().addAll(b0, b1, b2, b3, b4);
+        popupBox.getChildren().addAll(b0, b1, b2, b3,b6, b4);
         overlay.getChildren().add(popupBox);
         this.base.getChildren().add(overlay);
         baseScroll.setDisable(true);
@@ -486,6 +559,7 @@ public class HomeController {
 
         Label motivazioneLabel = new Label("Motivazione:");
         TextField motivo = new TextField();
+        motivo.setStyle("-fx-background-radius: 8; -fx-padding: 10; -fx-background-color: white;");
 
         Label spesaLabel = new Label("Importo:");
         Spinner<Double> spesa = new Spinner<>();
@@ -594,23 +668,22 @@ public class HomeController {
     @FXML
     private SplitPane creaGraficaItinerario() {
         Label l0 = new Label("Itinerario");
-        l0.setPrefSize(131, 32);
-        l0.setStyle("-fx-font-size: 22px; -fx-font-weight: bold;");
+        l0.setPrefSize(100, 25); // dimensioni più compatte
+        l0.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
 
-        Label l1 = new Label("Tappe attuali : "+viaggioAttuale.getItinerario().getTappe().size());
-        l1.setPrefSize(131, 32);
-        l1.setLayoutX(10);
-        l1.setLayoutY(10);
+        Label l1 = new Label("Tappe attuali : " + viaggioAttuale.getItinerario().getTappe().size());
+        l1.setPrefSize(120, 20);
         l1.setWrapText(true);
-        l1.setStyle("-fx-font-size: 22px; -fx-font-weight: bold;");
+        l1.setStyle("-fx-font-size: 14px; -fx-font-weight: normal;");
+
 
         VBox dxVBox = new VBox();
 
         Button aggiungiTappa = new Button("+ Tappa");
+        aggiungiTappa.setPrefSize(120, 30);
         aggiungiTappa.setWrapText(true);
         aggiungiTappa.setAlignment(Pos.CENTER);
-        aggiungiTappa.setPrefSize(131, 33);
-        aggiungiTappa.setStyle("-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
+        aggiungiTappa.setStyle("-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 6 12;");
         aggiungiTappa.setTextFill(Color.WHITE);
         aggiungiTappa.setOnAction(e -> {
             AnchorPane baseScroll=workTrip;
@@ -648,12 +721,14 @@ public class HomeController {
             Label l11 = new Label("Inserisci destinazione o nome della Tappa:");
             l11.setStyle("-fx-font-size: 12px; -fx-text-fill: #374151;");
             TextField nome = new TextField();
+            nome.setStyle("-fx-background-radius: 8; -fx-padding: 10; -fx-background-color: white;");
             nome.setPromptText("Perugia");
             VBox b1 = new VBox(5, l11, nome);
             b1.setAlignment(Pos.TOP_LEFT);
             Label l21 = new Label("Inserisci la data d'arrivo o partenza");
             l21.setStyle("-fx-font-size: 12px; -fx-text-fill: #374151;");
             DatePicker datePicker=new DatePicker();
+            datePicker.setStyle("-fx-background-radius: 8; -fx-padding: 10; -fx-background-color: white;");
             VBox b2 = new VBox(5, l21, datePicker);
             b2.setAlignment(Pos.TOP_LEFT);
 
@@ -695,9 +770,10 @@ public class HomeController {
         });
 
         // VBox sinistra con tutte le label e bottoni
-        VBox sxVBox = new VBox();
-        sxVBox.setPrefSize(100, 200);
-        sxVBox.getChildren().addAll(l0, creaSpaziatore(true), l1, creaSpaziatore(true), aggiungiTappa);
+        VBox sxVBox = new VBox(8); // spazio verticale 8 px tra elementi
+        sxVBox.setPrefWidth(140);
+        sxVBox.setPadding(new Insets(10)); // padding interno per distanziare contenuti
+        sxVBox.getChildren().addAll(l0, creaSpaziatore(false), l1, creaSpaziatore(true), aggiungiTappa);
 
         // VBox destra
         dxVBox.setPrefSize(545, 200);
@@ -730,9 +806,17 @@ public class HomeController {
         vBox.getChildren().clear();
         //Creazione mappa
         Label l0 = new Label("Mappa dell'itinerario");
-        l0.setPrefSize(131, 32);
-        l0.setStyle("-fx-font-size: 22px; -fx-font-weight: bold;");
-        MapView mappa=creaMappa();
+        l0.setPrefHeight(28); // più compatta
+        l0.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+        MapView mappa = creaMappa();
+        mappa.setPrefHeight(400); // <-- aumenta altezza preferita
+        mappa.setMinHeight(300);  // <-- evita che venga schiacciata troppo
+        mappa.setMaxHeight(Double.MAX_VALUE); // permette crescita
+        mappa.setPrefWidth(600); // opzionale, se vuoi una larghezza fissa
+
+        VBox contenitoreMappa = new VBox(10, l0, mappa);
+        contenitoreMappa.setPadding(new Insets(10));
+        VBox.setVgrow(mappa, Priority.ALWAYS);
 
         //Creazione Calendario
         Label l1 = new Label("Date selezionate");
@@ -747,10 +831,22 @@ public class HomeController {
         l2.setStyle("-fx-font-size: 22px; -fx-font-weight: bold;");
 
         //Aggiunta
-        vBox.getChildren().addAll(l0,mappa,creaSpaziatore(false),l1,calendario,creaSpaziatore(false),l2);
+        vBox.getChildren().addAll(contenitoreMappa,creaSpaziatore(false),l1,calendario,creaSpaziatore(false),l2);
 
         viaggioAttuale.getItinerario().ordinaTappe(); //Le ordiniamo cronologicamente prima dell'inserimento
-        for (Tappa tappa : viaggioAttuale.getItinerario().getTappe()) vBox.getChildren().add(creaAggiuntaTappaBox(vBox,tappa));
+        for (Tappa tappa : viaggioAttuale.getItinerario().getTappe()){
+            //Spaziatore
+            Pane s = new Pane();
+            s.setPrefHeight(14);
+            s.setMinHeight(14);
+            s.setMaxHeight(14);
+            s.setPrefWidth(147);
+            s.setMinWidth(147);
+            s.setMaxWidth(147);
+            vBox.getChildren().add(s);
+
+            vBox.getChildren().add(creaAggiuntaTappaBox(vBox,tappa));
+        }
     }
     private HBox creaAggiuntaTappaBox(VBox listaGenerale,Tappa tappa) {
         // HBox principale
@@ -770,7 +866,7 @@ public class HomeController {
         VBox vBox = new VBox();
         vBox.setSpacing(4);
 
-        Label titoloLabel = new Label(tappa.getNome());
+        Label titoloLabel = new Label(tappa.getNome()+"\s"+tappa.getData());
         titoloLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px; -fx-strikethrough: "+tappa.getData().isBefore(LocalDate.now())+";");
         titoloLabel.setOnMouseClicked(e ->{
             Pane base=workTrip;
@@ -866,7 +962,6 @@ public class HomeController {
         //ordiniamo cronologicamente per sicurezza
         viaggioAttuale.getItinerario().ordinaTappe();
         List<Tappa> tappe=viaggioAttuale.getItinerario().getTappe();
-
         //Creiamo la mappa centrata sulla destinazione/Partenza
         MapView mapView = new MapView();
         mapView.setZoom(6);
@@ -944,12 +1039,14 @@ public class HomeController {
             Label l11 = new Label("Inserisci l'elemento");
             l11.setStyle("-fx-font-size: 12px; -fx-text-fill: #374151;");
             TextField nome = new TextField();
+            nome.setStyle("-fx-background-radius: 8; -fx-padding: 10; -fx-background-color: white;");
             nome.setPromptText("Pomata");
             VBox b1 = new VBox(5, l11, nome);
             b1.setAlignment(Pos.TOP_LEFT);
             Label l21 = new Label("Inserisci la quantità");
             l21.setStyle("-fx-font-size: 12px; -fx-text-fill: #374151;");
             Spinner<Integer> quantita = new Spinner<>();
+            quantita.setStyle("-fx-background-radius: 8; -fx-padding: 10; -fx-background-color: white;");
             quantita.setPromptText("100.0");
             quantita.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 25, 0, 1));
             VBox b2 = new VBox(5, l21, quantita);
@@ -957,12 +1054,14 @@ public class HomeController {
             Label l111 = new Label("Inserisci il luogo d'acquisto");
             l111.setStyle("-fx-font-size: 12px; -fx-text-fill: #374151;");
             TextField luogo = new TextField();
+            luogo.setStyle("-fx-background-radius: 8; -fx-padding: 10; -fx-background-color: white;");
             luogo.setPromptText("Farmacia");
             VBox b3 = new VBox(5, l111, luogo);
             b3.setAlignment(Pos.TOP_LEFT);
             Label l1111 = new Label("Inserisci una breve descrizione");
             l1111.setStyle("-fx-font-size: 12px; -fx-text-fill: #374151;");
             TextArea descrizione = new TextArea();
+            descrizione.setStyle("-fx-background-radius: 8; -fx-padding: 10; -fx-background-color: white;");
             descrizione.setPromptText("Per irritazione al canale rettico");
             VBox b4 = new VBox(5, l1111, descrizione);
             b4.setAlignment(Pos.TOP_LEFT);
@@ -1191,7 +1290,6 @@ public class HomeController {
     }
     private boolean salvaViaggioCorrente(){
         try {
-            System.out.println(mapper.writeValueAsString(new MessaggioDati<Utente,Viaggio>(this.utenteAttuale, this.viaggioAttuale)));//TODO
             String risposta=gestoreHTTP.inviaRichiestaConParametri(URL_BASE+"reloadViaggio.php",mapper.writeValueAsString(new MessaggioDati<Utente,Viaggio>(this.utenteAttuale, this.viaggioAttuale)));
             System.out.println(risposta);
             Messaggio<ListaViaggi> m=mapper.readValue(risposta, Messaggio.class);

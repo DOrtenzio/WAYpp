@@ -30,7 +30,6 @@ function getViaggiCompleti($pdo, $userId) {
         $itinerario = $stmt->fetch(PDO::FETCH_ASSOC);
 
         $tappe = [];
-        $dateTappe = [];
         if ($itinerario) {
             $stmtT = $pdo->prepare("SELECT * FROM tappe WHERE itinerario_id = :iid");
             $stmtT->execute(['iid' => $itinerario['id']]);
@@ -39,9 +38,9 @@ function getViaggiCompleti($pdo, $userId) {
                 $tappe[] = [
                     'nome' => $t['nome_tappa'],
                     'latitudine' => $t['latitudine'],
-                    'longitudine' => $t['longitudine']
+                    'longitudine' => $t['longitudine'],
+                    'data' => $t['data'] // <-- inserisci qui la data direttamente
                 ];
-                $dateTappe[] = $t['data'];
             }
         }
 
@@ -77,8 +76,7 @@ function getViaggiCompleti($pdo, $userId) {
             ] : null,
             'itinerario' => $itinerario ? [
                 'nome' => $itinerario['nome'] ?? '',
-                'tappe' => $tappe,
-                'dateTappe' => $dateTappe
+                'tappe' => $tappe
             ] : null,
             'listaElementi' => $lista ? [
                 'list' => $elementi,

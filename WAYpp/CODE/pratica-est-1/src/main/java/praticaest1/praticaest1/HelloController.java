@@ -1,6 +1,7 @@
 package praticaest1.praticaest1;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.github.cdimascio.dotenv.Dotenv;
 import javafx.animation.PauseTransition;
 import javafx.fxml.FXML;
@@ -25,11 +26,12 @@ public class HelloController {
     //Gestori di richieste http
     private String URL_BASE;
     private final GestoreHTTP gestoreHTTP=new GestoreHTTP();
-    private final ObjectMapper mapper=new ObjectMapper();
+    private ObjectMapper mapper=new ObjectMapper();
 
     public void initialize(){
         Dotenv dotenv= Dotenv.load();
         this.URL_BASE=dotenv.get("URL_BASE_SERVER");
+        mapper.registerModule(new JavaTimeModule());
     }
 
     //Scambio schermate

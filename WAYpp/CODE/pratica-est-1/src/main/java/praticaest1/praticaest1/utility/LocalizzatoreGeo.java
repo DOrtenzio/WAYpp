@@ -1,16 +1,20 @@
 package praticaest1.praticaest1.utility;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.github.cdimascio.dotenv.Dotenv;
 import java.io.IOException;
 import java.util.List;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class LocalizzatoreGeo {
     public static String riceviLatLong(String luogoRicercato) throws IOException, InterruptedException {
         Dotenv dotenv= Dotenv.load();
         GestoreHTTP gestoreHTTP=new GestoreHTTP();
         ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
         //Uso il mapper per comodità visto che lo so già usare ma se volete potete cambiarlo con ciò che preferite,
         //inoltre ricordatevi di aggiungere le dipendenze jackson-databind a maven
         List<RisultatoGeo> risultati = mapper.readValue(gestoreHTTP.inviaRichiesta("https://geocode.maps.co/search?q="+luogoRicercato+"&api_key="+dotenv.get("API_GEO_KEY")), new TypeReference<List<RisultatoGeo>>() {});
@@ -18,7 +22,7 @@ public class LocalizzatoreGeo {
         return risultati.getFirst().getLat()+"-"+risultati.getFirst().getLon();
     }
 }
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 class RisultatoGeo{
     private String lat;
     private String lon;

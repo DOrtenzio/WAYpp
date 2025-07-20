@@ -22,7 +22,6 @@ if ((!isset($input['p1']['email'])) || (!isset($input['p1']['nome'])) || (!isset
         'budgetSpeso' => $input['p2']['budget']['budgetSpeso'],
         'tieniConto' => $input['p2']['budget']['tieniConto'],
         'tappe' => $input['p2']['itinerario']['tappe'],
-        'dateTappe' => $input['p2']['itinerario']['dateTappe'],
         'elementiTot' => $input['p2']['listaElementi']['elementiTot'],
         'elementiAcquistati' => $input['p2']['listaElementi']['elementiAcquistati']
     ];
@@ -102,10 +101,10 @@ if ((!isset($input['p1']['email'])) || (!isset($input['p1']['nome'])) || (!isset
 
                // Inserisci nuove tappe
                $stmtT = $pdo->prepare("INSERT INTO tappe (nome_tappa, data, latitudine, longitudine, itinerario_id) VALUES (:nome, :data, :lat, :lon, :it_id)");
-               foreach ($input['p2']['itinerario']['tappe'] as $i => $tappa) {
+               foreach ($input['p2']['itinerario']['tappe'] as $tappa) {
                    $stmtT->execute([
                        'nome' => $tappa['nome'] ?? '',
-                       'data' => $input['p2']['itinerario']['dateTappe'][$i] ?? null,
+                       'data' => $tappa['data'] ?? null,
                        'lat' => $tappa['latitudine'] ?? null,
                        'lon' => $tappa['longitudine'] ?? null,
                        'it_id' => $itinerario['id']

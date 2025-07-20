@@ -1,4 +1,5 @@
 package praticaest1.praticaest1.obj;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.time.LocalDate;
@@ -7,11 +8,12 @@ import java.util.*;
 public class Itinerario {
     private String nome;
     private List<Tappa> tappe;
-
     public Itinerario(){}
-    public Itinerario(String nome) {
+    public Itinerario(String nome, LocalDate dataPrimaTappa) {
         this.nome = nome;
         this.tappe = new ArrayList<>();
+        //Aggiungo la prima tappa
+        this.aggiungiTappa(new Tappa(nome,dataPrimaTappa));
     }
 
     //Getter e setter
@@ -25,6 +27,7 @@ public class Itinerario {
     public List<Tappa> getTappe() { return tappe; }
 
     //Calendario associato a tappe
+    @JsonIgnore
     public List<LocalDate> getDateTappe(){
         List<LocalDate> dateTappe=new ArrayList<>();
         for (Tappa t:this.tappe) dateTappe.add(t.getData());
