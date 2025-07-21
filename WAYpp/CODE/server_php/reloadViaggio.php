@@ -102,9 +102,28 @@ if ((!isset($input['p1']['email'])) || (!isset($input['p1']['nome'])) || (!isset
                // Inserisci nuove tappe
                $stmtT = $pdo->prepare("INSERT INTO tappe (nome_tappa, data, latitudine, longitudine, itinerario_id) VALUES (:nome, :data, :lat, :lon, :it_id)");
                foreach ($input['p2']['itinerario']['tappe'] as $tappa) {
+                   $dataTappa = null;
+                   if (isset($tappa['data'])) {
+                       if (is_array($tappa['data'])) {
+                           // Qui gestiamo il formato [anno, mese, giorno]
+                           if (count($tappa['data']) === 3 &&
+                               is_numeric($tappa['data'][0]) && // Anno
+                               is_numeric($tappa['data'][1]) && // Mese
+                               is_numeric($tappa['data'][2])) { // Giorno
+                               $dataTappa = sprintf('%04d-%02d-%02d', $tappa['data'][0], $tappa['data'][1], $tappa['data'][2]);
+                           }
+                       } elseif (is_string($tappa['data'])) {
+                          // Se per qualche motivo arriva già come stringa (es. "2024-07-21")
+                          $timestamp = strtotime($tappa['data']);
+                          if ($timestamp !== false) {
+                              $dataTappa = date('Y-m-d', $timestamp);
+                          }
+                       }
+                   }
+
                    $stmtT->execute([
                        'nome' => $tappa['nome'] ?? '',
-                       'data' => $tappa['data'] ?? null,
+                       'data' => $dataTappa, // Usa la data formattata o null
                        'lat' => $tappa['latitudine'] ?? null,
                        'lon' => $tappa['longitudine'] ?? null,
                        'it_id' => $itinerario['id']

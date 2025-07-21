@@ -35,11 +35,19 @@ function getViaggiCompleti($pdo, $userId) {
             $stmtT->execute(['iid' => $itinerario['id']]);
             $tappeData = $stmtT->fetchAll(PDO::FETCH_ASSOC);
             foreach ($tappeData as $t) {
+                $formattedDate = null;
+                if (!empty($t['data'])) {
+                    // Estrai anno, mese, giorno dalla stringa YYYY-MM-DD
+                    list($year, $month, $day) = explode('-', $t['data']);
+                    // Crea l'array numerico [anno, mese, giorno]
+                    $formattedDate = [(int)$year, (int)$month, (int)$day];
+                }
+
                 $tappe[] = [
                     'nome' => $t['nome_tappa'],
                     'latitudine' => $t['latitudine'],
                     'longitudine' => $t['longitudine'],
-                    'data' => $t['data'] // <-- inserisci qui la data direttamente
+                    'data' => $formattedDate //La formatto come se fosse una array per renderlo compatibile con LocalDate di java
                 ];
             }
         }

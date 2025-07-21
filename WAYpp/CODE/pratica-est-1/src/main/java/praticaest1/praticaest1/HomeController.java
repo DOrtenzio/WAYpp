@@ -1,6 +1,5 @@
 package praticaest1.praticaest1;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -324,7 +323,6 @@ public class HomeController {
         VBox b6 = new VBox(5, l4, dataArrivo);
         b4.setAlignment(Pos.TOP_LEFT);
 
-
         // Pulsante Salva
         Button saveButton = new Button("Salva");
         saveButton.setStyle(
@@ -362,11 +360,7 @@ public class HomeController {
                                         new ListaElementi()
                                 )
                         );
-
-                        String risposta = gestoreHTTP.inviaRichiestaConParametri(
-                                URL_BASE + "reloadListaViaggi.php",
-                                mapper.writeValueAsString(new MessaggioDati<Utente, ListaViaggi>(utenteAttuale, listaViaggiAttuale))
-                        );
+                        String risposta = gestoreHTTP.inviaRichiestaConParametri(URL_BASE + "reloadListaViaggi.php", mapper.writeValueAsString(new MessaggioDati<Utente, ListaViaggi>(utenteAttuale, listaViaggiAttuale)));
                         Messaggio<ListaViaggi> m = mapper.readValue(risposta, Messaggio.class);
 
                         Platform.runLater(() -> { //DOPO aver caricato lo spinner posso accedere alle altre impostazioni
@@ -375,7 +369,7 @@ public class HomeController {
                             aggiungiNuovoViaggio.setDisable(false);
 
                             if (m.getConfermaAzione()) {
-                                base.getChildren().remove(overlaySpinner);
+                                base.getChildren().remove(overlay);
                                 baseScroll.setDisable(false);
                                 aggiungiNuovoViaggio.setDisable(false);
                                 popolaScroolPane();
@@ -498,7 +492,7 @@ public class HomeController {
         aggiungiSpesa.setWrapText(true);
         aggiungiSpesa.setPrefSize(131, 44);
         aggiungiSpesa.setStyle("-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-text-fill: white;");
-        aggiungiSpesa.setOnAction(e -> mostraPopupNuovaSpesa(aggiungiSpesa,destraBox));
+        aggiungiSpesa.setOnAction(e -> mostraPopupNuovaSpesa(aggiungiSpesa));
 
         // === VBOX SINISTRA ===
         VBox sinistraBox = new VBox(10, titolo, spesoLabel, pattuitoLabel, incrementoLabel, importoSpinner, controlloBudgetBox, aggiungiSpesa);
@@ -533,7 +527,7 @@ public class HomeController {
         AnchorPane.setRightAnchor(splitPane, 0.0);
         return splitPane;
     }
-    private void mostraPopupNuovaSpesa(Button bottoneDInnesco, VBox vBox) {
+    private void mostraPopupNuovaSpesa(Button bottoneDInnesco) {
         AnchorPane baseScroll = workTrip;
 
         StackPane overlay = new StackPane();
@@ -748,6 +742,7 @@ public class HomeController {
                         this.base.getChildren().remove(overlay);
                         baseScroll.setDisable(false);
                         aggiungiTappa.setDisable(false);
+                        sezItinerario();
                     }else {
                         viaggioAttuale.getItinerario().rimuoviTappa(new Tappa(nome.getText(), datePicker.getValue()));
                         animazioneBottone(inserisciBottone, "-fx-background-color: #BE2538; -fx-background-radius: 6; -fx-padding: 8 16;", "-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
@@ -773,7 +768,7 @@ public class HomeController {
         VBox sxVBox = new VBox(8); // spazio verticale 8 px tra elementi
         sxVBox.setPrefWidth(140);
         sxVBox.setPadding(new Insets(10)); // padding interno per distanziare contenuti
-        sxVBox.getChildren().addAll(l0, creaSpaziatore(false), l1, creaSpaziatore(true), aggiungiTappa);
+        sxVBox.getChildren().addAll(l0, l1, aggiungiTappa);
 
         // VBox destra
         dxVBox.setPrefSize(545, 200);
@@ -785,14 +780,6 @@ public class HomeController {
         splitPane.setDividerPositions(0.3);
         splitPane.setPrefSize(800, 600); // Imposta una dimensione iniziale decente
         splitPane.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE); // Lascia che cresca
-
-        // Dopo che lo SplitPane è stato aggiunto alla scena così evitamo problemi di caricamento
-        Platform.runLater(() -> {
-            for (Node divider : splitPane.lookupAll(".split-pane-divider")) {
-                divider.setMouseTransparent(true); // Blocca il trascinamento
-                divider.setVisible(false);
-            }
-        });
         VBox.setVgrow(splitPane, Priority.ALWAYS);
 
         AnchorPane.setTopAnchor(splitPane, 0.0);
@@ -813,6 +800,7 @@ public class HomeController {
         mappa.setMinHeight(300);  // <-- evita che venga schiacciata troppo
         mappa.setMaxHeight(Double.MAX_VALUE); // permette crescita
         mappa.setPrefWidth(600); // opzionale, se vuoi una larghezza fissa
+        mappa.setStyle("-fx-background-color: white; -fx-border-color: #E0E0E0; -fx-border-radius: 10; -fx-background-radius: 10;");
 
         VBox contenitoreMappa = new VBox(10, l0, mappa);
         contenitoreMappa.setPadding(new Insets(10));
@@ -821,17 +809,21 @@ public class HomeController {
         //Creazione Calendario
         Label l1 = new Label("Date selezionate");
         l1.setPrefSize(131, 32);
-        l1.setStyle("-fx-font-size: 22px; -fx-font-weight: bold;");
+        l1.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
         viaggioAttuale.getItinerario().ordinaTappe(); //Ordiniamo sempre non si sa mai
-        CalendarioMensile calendario=new CalendarioMensile(YearMonth.from(viaggioAttuale.getItinerario().getDateTappe().getFirst()));
-
+        CalendarioMensile calendario=new CalendarioMensile(YearMonth.from(viaggioAttuale.getItinerario().getDateTappe().getFirst()),viaggioAttuale.getItinerario(),base,workTrip);
+        VBox c2 = new VBox(10, l1, calendario);
+        c2.setPadding(new Insets(10));
+        VBox.setVgrow(mappa, Priority.ALWAYS);
         //Creazione lista gestionale tappe
         Label l2 = new Label("Tappe scelte");
         l2.setPrefSize(131, 32);
-        l2.setStyle("-fx-font-size: 22px; -fx-font-weight: bold;");
-
+        l2.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+        VBox c3 = new VBox(10, l2);
+        c3.setPadding(new Insets(10));
+        VBox.setVgrow(mappa, Priority.ALWAYS);
         //Aggiunta
-        vBox.getChildren().addAll(contenitoreMappa,creaSpaziatore(false),l1,calendario,creaSpaziatore(false),l2);
+        vBox.getChildren().addAll(contenitoreMappa,creaSpaziatore(false),c2,creaSpaziatore(false),c3);
 
         viaggioAttuale.getItinerario().ordinaTappe(); //Le ordiniamo cronologicamente prima dell'inserimento
         for (Tappa tappa : viaggioAttuale.getItinerario().getTappe()){
@@ -845,10 +837,10 @@ public class HomeController {
             s.setMaxWidth(147);
             vBox.getChildren().add(s);
 
-            vBox.getChildren().add(creaAggiuntaTappaBox(vBox,tappa));
+            vBox.getChildren().add(creaAggiuntaTappaBox(tappa));
         }
     }
-    private HBox creaAggiuntaTappaBox(VBox listaGenerale,Tappa tappa) {
+    private HBox creaAggiuntaTappaBox(Tappa tappa) {
         // HBox principale
         HBox hBox = new HBox();
         hBox.setAlignment(Pos.CENTER_LEFT);
@@ -868,8 +860,8 @@ public class HomeController {
 
         Label titoloLabel = new Label(tappa.getNome()+"\s"+tappa.getData());
         titoloLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px; -fx-strikethrough: "+tappa.getData().isBefore(LocalDate.now())+";");
-        titoloLabel.setOnMouseClicked(e ->{
-            Pane base=workTrip;
+        titoloLabel.setOnMouseClicked(e -> {
+            Pane baseScroll = workTrip;
             // Crea il contenitore principale trasparente
             AnchorPane overlay = new AnchorPane();
             overlay.setPrefSize(base.getWidth(), base.getHeight());
@@ -877,13 +869,8 @@ public class HomeController {
 
             // Crea il VBox centrale del popup
             VBox popupBox = new VBox(10);
-            popupBox.setAlignment(Pos.TOP_RIGHT);
             popupBox.setPadding(new Insets(20));
-            popupBox.setStyle(
-                    "-fx-background-color: #FFFFFF;" +
-                            "-fx-background-radius: 8;" +
-                            "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0.0, 0, 5);"
-            );
+            popupBox.setStyle("-fx-background-color: white; -fx-background-radius: 8;");
             popupBox.setPrefWidth(400);
             popupBox.setMaxWidth(400);
             popupBox.setPrefHeight(300);
@@ -894,62 +881,168 @@ public class HomeController {
             closeButton.setStyle("-fx-background-color: transparent; -fx-font-size: 14px; -fx-text-fill: #6B7280;");
             closeButton.setOnAction(ez -> {
                 base.getChildren().remove(overlay);
-                base.setDisable(false);
+                baseScroll.setDisable(false);
+                titoloLabel.setDisable(false);
             });
 
             HBox b0 = new HBox(closeButton);
             b0.setAlignment(Pos.TOP_RIGHT);
-            //Elementi
-            Label l11 = new Label("Luogo: "+tappa.getNome());
-            l11.setStyle("-fx-font-size: 12px; -fx-text-fill: #374151;");
-            VBox b1 = new VBox(5, l11);
-            b1.setAlignment(Pos.TOP_LEFT);
-            Label l21 = new Label("Giorno: "+tappa.getData());
-            l21.setStyle("-fx-font-size: 12px; -fx-text-fill: #374151;");
-            VBox b2 = new VBox(5, l21);
-            b2.setAlignment(Pos.TOP_LEFT);
-            Label l111 = new Label("Longitudine: "+tappa.getLongitudine());
-            l111.setStyle("-fx-font-size: 12px; -fx-text-fill: #374151;");
-            VBox b3 = new VBox(5, l111);
-            b3.setAlignment(Pos.TOP_LEFT);
-            Label l1111 = new Label("Latitudine: "+tappa.getLatitudine());
-            l1111.setStyle("-fx-font-size: 12px; -fx-text-fill: #374151;");
-            Button chiudiBottone = new Button("Chiudi");
-            chiudiBottone.setStyle(
+            Label labelNome = new Label("Luogo:");
+            TextField campoNome = new TextField(tappa.getNome());
+            campoNome.setPromptText("Nome del luogo");
+            campoNome.setStyle("-fx-background-color: white; -fx-border-color: #E0E0E0; -fx-border-radius: 10; -fx-background-radius: 10;");
+            VBox boxNome = new VBox(5, labelNome, campoNome);
+            Label labelData = new Label("Giorno:");
+            DatePicker campoData = new DatePicker(tappa.getData());
+            campoData.setPromptText("Seleziona una data");
+            campoData.setStyle("-fx-background-color: white; -fx-border-color: #E0E0E0; -fx-border-radius: 10; -fx-background-radius: 10;");
+            VBox boxData = new VBox(5, labelData, campoData);
+
+            Label labelLongitudine = new Label("Longitudine (In caso di modifiche alla destinazione verrà modifica a seguito):");
+            TextField campoLongitudine = new TextField(String.valueOf(tappa.getLongitudine()));
+            campoLongitudine.setDisable(true);
+            VBox boxLongitudine = new VBox(5, labelLongitudine, campoLongitudine);
+            Label labelLatitudine = new Label("Latitudine (In caso di modifiche alla destinazione verrà modifica a seguito):");
+            TextField campoLatitudine = new TextField(String.valueOf(tappa.getLatitudine()));
+            campoLatitudine.setDisable(true);
+            VBox boxLatitudine = new VBox(5, labelLatitudine, campoLatitudine);
+            Button salva = new Button("Salva");
+            salva.setStyle(
                     "-fx-background-color: #3B82F6;" +
                             "-fx-background-radius: 6;" +
                             "-fx-padding: 8 16;" +
                             "-fx-text-fill: white;"
             );
+            salva.setDisable(true);
 
-            chiudiBottone.setOnAction(ezz -> {
-                base.getChildren().remove(overlay);
-                base.setDisable(false);
+
+            // --- Spinner per feedback di caricamento ---
+            ProgressIndicator spinner = new ProgressIndicator();
+            spinner.setMaxSize(40, 40);
+            spinner.setStyle("-fx-progress-color: #3B82F6;");
+            spinner.setVisible(false); // Inizialmente invisibile
+            spinner.managedProperty().bind(spinner.visibleProperty());
+
+            HBox actionBox = new HBox(10, spinner, salva);
+            actionBox.setAlignment(Pos.CENTER_RIGHT);
+
+            // Listener per abilitare/disabilitare il pulsante Salva
+            Runnable checkChanges = () -> {
+                boolean changed = false;
+                if (!campoNome.getText().equals(tappa.getNome())) {
+                    if (campoNome.getText().contains(" ")){
+                        tappa.setNome(campoNome.getText().trim()); //Modifica a seguire anche long e lat
+                        campoLatitudine.setText(String.valueOf(tappa.getLatitudine()));
+                        campoLongitudine.setText(String.valueOf(tappa.getLongitudine()));
+                    } else
+                        tappa.setOnlyNome(campoNome.getText().trim());
+                    changed = true;
+                }
+                if (campoData.getValue() != null && !campoData.getValue().equals(tappa.getData())) {
+                    tappa.setData(campoData.getValue());
+                    changed = true;
+                }
+                salva.setDisable(!changed); // Abilita se changed è true, disabilita altrimenti
+            };
+
+            campoNome.textProperty().addListener((obs, oldVal, newVal) -> checkChanges.run());
+            campoNome.focusedProperty().addListener((observable, oldValue, newValue) -> {
+                if (!newValue) {
+                    tappa.setNome(campoNome.getText().trim()); //Modifica a seguire anche long e lat
+                    campoLatitudine.setText(String.valueOf(tappa.getLatitudine()));
+                    campoLongitudine.setText(String.valueOf(tappa.getLongitudine()));
+                    salva.setDisable(false);
+                }
+            });
+            campoData.valueProperty().addListener((obs, oldVal, newVal) -> checkChanges.run());
+            salva.setOnAction(ezz -> {
+                spinner.setVisible(true);
+                salva.setDisable(true);
+                closeButton.setDisable(true);
+                campoNome.setDisable(true);
+                campoData.setDisable(true);
+                campoLongitudine.setDisable(true);
+                campoLatitudine.setDisable(true);
+
+                // Operazione di salvataggio in un Task in background
+                Task<Boolean> saveTask = new Task<>() {
+                    @Override
+                    protected Boolean call() throws Exception {
+                        return salvaViaggioCorrente();
+                    }
+                };
+                saveTask.setOnSucceeded(event -> {
+                    Platform.runLater(() -> {
+                        // Nascondi spinner e riabilita elementi
+                        spinner.setVisible(false);
+                        closeButton.setDisable(false);
+                        campoNome.setDisable(false);
+                        campoData.setDisable(false);
+                        checkChanges.run();
+
+                        if (saveTask.getValue()) {
+                            base.getChildren().remove(overlay);
+                            baseScroll.setDisable(false);
+                            titoloLabel.setDisable(false);
+                            sezItinerario();
+                        } else {
+                            animazioneBottone(salva, "-fx-background-color: #BE2538; -fx-background-radius: 6; -fx-padding: 8 16;", "-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
+                        }
+                    });
+                });
+                saveTask.setOnFailed(event -> {
+                    Platform.runLater(() -> {
+                        // Nascondi spinner e riabilita elementi
+                        spinner.setVisible(false);
+                        closeButton.setDisable(false);
+                        campoNome.setDisable(false);
+                        campoData.setDisable(false);
+                        salva.setDisable(false);
+                        animazioneBottone(salva, "-fx-background-color: #BE2538; -fx-background-radius: 6; -fx-padding: 8 16;", "-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
+                    });
+                });
+
+                new Thread(saveTask).start();
             });
 
-            HBox b5 = new HBox(chiudiBottone);
-            b5.setAlignment(Pos.CENTER_RIGHT);
+            HBox b4 = new HBox(salva);
+            b4.setAlignment(Pos.CENTER_RIGHT);
 
-            // Inserimento
             // Composizione finale
-            popupBox.getChildren().addAll(b0, b1, b2, b3, b4, b5);
+            popupBox.getChildren().addAll(b0, boxNome, boxData, boxLongitudine, boxLatitudine, b4,actionBox);
             popupBox.setLayoutX((base.getWidth() - popupBox.getPrefWidth()) / 2);
             popupBox.setLayoutY(100);
             overlay.getChildren().add(popupBox);
             base.getChildren().add(overlay);
-            base.setDisable(true);
+            baseScroll.setDisable(true);
+            titoloLabel.setDisable(true);
         });
-        Label removeLabel = new Label("Elimina");
-        removeLabel.setStyle("-fx-text-fill: #4B5563; -fx-font-size: 12px;");
-        removeLabel.setOnMouseClicked(e->{ //Rimozione e ricarica
-            try {
-                viaggioAttuale.getItinerario().rimuoviTappa(tappa);
-                if (salvaViaggioCorrente())
-                    listaGenerale.getChildren().remove(hBox);
-                else
-                    viaggioAttuale.getItinerario().aggiungiTappa(tappa);
-            } catch (Exception ex) {
-                animazioneBottone(aggiungiNuovoViaggio,"-fx-background-color: #BE2538; -fx-background-radius: 6; -fx-padding: 8 16;","-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
+
+        Label removeLabel = new Label("Rimuovi tappa");
+        if(viaggioAttuale.getItinerario().getTappe().size()==1) { //C'è solo questa tappa
+            removeLabel.setText("Rimuovi tappa (Prima inserisci un'altra tappa)");
+            removeLabel.setStyle("-fx-text-fill: #4B5563; -fx-font-size: 12px; -fx-strikethrough:true;");
+        } else
+            removeLabel.setStyle("-fx-text-fill: #4B5563; -fx-font-size: 12px;");
+        removeLabel.setOnMouseClicked(e->{//Rimozione e ricarica
+            if (viaggioAttuale.getItinerario().getTappe().size()!=1){
+                try {
+                    viaggioAttuale.getItinerario().rimuoviTappa(tappa);
+                    if (salvaViaggioCorrente())
+                        sezItinerario(); //riaggiorno anche mappa e calendari
+                    else
+                        viaggioAttuale.getItinerario().aggiungiTappa(tappa);
+                } catch (Exception ex) {
+                    removeLabel.setStyle("-fx-text-fill: #ff0505; -fx-font-size: 12px;");
+                    PauseTransition pausa = new PauseTransition(Duration.seconds(3));
+                    pausa.setOnFinished(ez -> { removeLabel.setStyle("-fx-text-fill: #4B5563; -fx-font-size: 12px;"); });
+                    pausa.play();
+                }
+            } else{
+                removeLabel.setStyle("-fx-text-fill: #ff0505; -fx-font-size: 12px;");
+                PauseTransition pausa = new PauseTransition(Duration.seconds(3));
+                pausa.setOnFinished(ez -> { removeLabel.setStyle("-fx-text-fill: #4B5563; -fx-font-size: 12px;"); });
+                pausa.play();
             }
         });
 
@@ -959,16 +1052,17 @@ public class HomeController {
         return hBox;
     }
     private MapView creaMappa() {
-        //ordiniamo cronologicamente per sicurezza
         viaggioAttuale.getItinerario().ordinaTappe();
-        List<Tappa> tappe=viaggioAttuale.getItinerario().getTappe();
-        //Creiamo la mappa centrata sulla destinazione/Partenza
+        List<Tappa> tappe = viaggioAttuale.getItinerario().getTappe();
+
+        // Creiamo la mappa centrata sulla destinazione
         MapView mapView = new MapView();
         mapView.setZoom(6);
         mapView.setCenter(new MapPoint(tappe.getFirst().getLatitudine(), tappe.getFirst().getLongitudine()));
-        if (tappe.size()>=2) {
-            // Aggiunge il layer con marker e percorso, vedi questo github : https://github.com/gluonhq/maps/tree/main
-            mapView.addLayer(new PercorsoMappa(tappe));
+
+        if (tappe.size() >= 2) {
+            PercorsoMappa percorsoMappa = new PercorsoMappa(tappe);
+            mapView.addLayer(percorsoMappa);
         }
         return mapView;
     }
@@ -1199,24 +1293,32 @@ public class HomeController {
             HBox b0 = new HBox(closeButton);
             b0.setAlignment(Pos.TOP_RIGHT);
             //Elementi
-            Label l11 = new Label("Nome: "+elemento.getNome());
-            l11.setStyle("-fx-font-size: 12px; -fx-text-fill: #374151;");
-            VBox b1 = new VBox(5, l11);
-            b1.setAlignment(Pos.TOP_LEFT);
-            Label l21 = new Label("Quantità: "+elemento.getQuantita());
-            l21.setStyle("-fx-font-size: 12px; -fx-text-fill: #374151;");
-            VBox b2 = new VBox(5, l21);
-            b2.setAlignment(Pos.TOP_LEFT);
-            Label l111 = new Label("Descrizione: "+elemento.getDescrizione());
-            l111.setStyle("-fx-font-size: 12px; -fx-text-fill: #374151;");
-            VBox b3 = new VBox(5, l111);
-            b3.setAlignment(Pos.TOP_LEFT);
-            Label l1111 = new Label("Luogo D'Acquisto: "+elemento.getLuogoAcquisto());
-            l1111.setStyle("-fx-font-size: 12px; -fx-text-fill: #374151;");
+            Label l1 = new Label("Nome:");
+            TextField c1 = new TextField(elemento.getNome());
+            c1.setPromptText("Pomata");
+            c1.setStyle("-fx-background-color: white; -fx-border-color: #E0E0E0; -fx-border-radius: 10; -fx-background-radius: 10;");
+            VBox bb1 = new VBox(5, l1, c1);
+            Label l2 = new Label("Luogo d'Acquisto:");
+
+            TextField c2 = new TextField(elemento.getLuogoAcquisto());
+            c2.setPromptText("Farmacia");
+            c2.setStyle("-fx-background-color: white; -fx-border-color: #E0E0E0; -fx-border-radius: 10; -fx-background-radius: 10;");
+            VBox bb2 = new VBox(5, l2, c2);
+
+            Label l3 = new Label("Quantità:");
+            Spinner<Integer> c3 = new Spinner<>();
+            c3.setPrefWidth(130);
+            c3.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 25, elemento.getQuantita(), 1));
+            VBox bb3 = new VBox(5, l3, c3);
+
+            Label l4 = new Label("Descrizione");
+            TextArea c4 = new TextArea(elemento.getDescrizione());
+            c4.setDisable(true);
+            VBox bb4 = new VBox(5, l4, c4);
             CheckBox ck=new CheckBox("Acquistato");
             ck.setSelected(elemento.isAcquistato());
-            Button chiudiBottone = new Button("Chiudi");
-            ck.setOnAction(ez->{ //TODO: CHANGE CON MODIFICA
+            Button salva = new Button("Chiudi");
+            ck.setOnAction(ez->{
                 try {
                     viaggioAttuale.getListaElementi().setElementoAcquistato(elemento,ck.isSelected());
                     if (salvaViaggioCorrente()){
@@ -1225,35 +1327,119 @@ public class HomeController {
                         titoloLabel.setDisable(false);
                         sezElementi();
                     } else {
-                        animazioneBottone(chiudiBottone, "-fx-background-color: #BE2538; -fx-background-radius: 6; -fx-padding: 8 16;", "-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
+                        animazioneBottone(salva, "-fx-background-color: #BE2538; -fx-background-radius: 6; -fx-padding: 8 16;", "-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
                         elemento.setAcquistato(!ck.isSelected());
                     }
                 } catch (Exception ex) {
                     elemento.setAcquistato(!ck.isSelected());
-                    animazioneBottone(chiudiBottone, "-fx-background-color: #BE2538; -fx-background-radius: 6; -fx-padding: 8 16;", "-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
+                    animazioneBottone(salva, "-fx-background-color: #BE2538; -fx-background-radius: 6; -fx-padding: 8 16;", "-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
                 }
             });
-            VBox b4 = new VBox(5, l1111,ck);
-            b4.setAlignment(Pos.TOP_LEFT);
+            VBox bb5 = new VBox(5,ck);
+            bb5.setAlignment(Pos.TOP_LEFT);
 
             // Pulsante Inserisci
-            chiudiBottone.setStyle(
+            salva.setStyle(
                     "-fx-background-color: #3B82F6;" +
                             "-fx-background-radius: 6;" +
                             "-fx-padding: 8 16;" +
                             "-fx-text-fill: white;"
             );
-            chiudiBottone.setOnAction(ez -> {
-                this.base.getChildren().remove(overlay);
-                baseScroll.setDisable(false);
-                titoloLabel.setDisable(false);
+
+            // --- Spinner per feedback di caricamento ---
+            ProgressIndicator spinner = new ProgressIndicator();
+            spinner.setMaxSize(40, 40);
+            spinner.setStyle("-fx-progress-color: #3B82F6;");
+            spinner.setVisible(false); // Inizialmente invisibile
+            spinner.managedProperty().bind(spinner.visibleProperty());
+
+            HBox actionBox = new HBox(10, spinner, salva);
+            actionBox.setAlignment(Pos.CENTER_RIGHT);
+
+            // Listener per abilitare/disabilitare il pulsante Salva
+            Runnable checkChanges = () -> {
+                boolean changed = false;
+                if (!c1.getText().trim().equals(elemento.getNome())) {
+                    elemento.setNome(c1.getText().trim());
+                    changed = true;
+                }
+                if (!c2.getText().trim().equals(elemento.getLuogoAcquisto())) {
+                    elemento.setLuogoAcquisto(c2.getText().trim());
+                    changed = true;
+                }
+                if (c3.getValue()!=elemento.getQuantita()) {
+                    elemento.setQuantita(c3.getValue());
+                    changed = true;
+                }
+                if (!c4.getText().trim().equals(elemento.getDescrizione())) {
+                    elemento.setDescrizione(c4.getText().trim());
+                    changed = true;
+                }
+                this.salva.setDisable(!changed); // Abilita se changed è true, disabilita altrimenti
+            };
+
+            c1.textProperty().addListener((obs, oldVal, newVal) -> checkChanges.run());
+            c2.textProperty().addListener((obs, oldVal, newVal) -> checkChanges.run());
+            c3.valueProperty().addListener((obs, oldVal, newVal) -> checkChanges.run());
+            c4.textProperty().addListener((obs, oldVal, newVal) -> checkChanges.run());
+            salva.setOnAction(ezz -> {
+                spinner.setVisible(true);
+                this.salva.setDisable(true);
+                closeButton.setDisable(true);
+                c1.setDisable(true);
+                c2.setDisable(true);
+                c3.setDisable(true);
+                c4.setDisable(true);
+
+                // Operazione di salvataggio in un Task in background
+                Task<Boolean> saveTask = new Task<>() {
+                    @Override
+                    protected Boolean call() throws Exception {
+                        return salvaViaggioCorrente();
+                    }
+                };
+                saveTask.setOnSucceeded(event -> {
+                    Platform.runLater(() -> {
+                        // Nascondi spinner e riabilita elementi
+                        spinner.setVisible(false);
+                        closeButton.setDisable(false);
+                        c1.setDisable(false);
+                        c2.setDisable(false);
+                        c3.setDisable(false);
+                        c4.setDisable(false);
+                        checkChanges.run();
+
+                        if (saveTask.getValue()) {
+                            base.getChildren().remove(overlay);
+                            base.setDisable(false);
+                            sezItinerario();
+                        } else {
+                            animazioneBottone(salva, "-fx-background-color: #BE2538; -fx-background-radius: 6; -fx-padding: 8 16;", "-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
+                        }
+                    });
+                });
+                saveTask.setOnFailed(event -> {
+                    Platform.runLater(() -> {
+                        // Nascondi spinner e riabilita elementi
+                        spinner.setVisible(false);
+                        closeButton.setDisable(false);
+                        c1.setDisable(false);
+                        c2.setDisable(false);
+                        c3.setDisable(false);
+                        c4.setDisable(false);
+                        salva.setDisable(false);
+                        animazioneBottone(salva, "-fx-background-color: #BE2538; -fx-background-radius: 6; -fx-padding: 8 16;", "-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
+                    });
+                });
+
+                new Thread(saveTask).start();
             });
 
-            HBox b5 = new HBox(chiudiBottone);
+            HBox b5 = new HBox(salva);
             b5.setAlignment(Pos.CENTER_RIGHT);
 
             // Inserimento
-            popupBox.getChildren().addAll(b0, b1, b2, b3, b4, b5);
+            popupBox.getChildren().addAll(bb1,bb2,bb3,bb4,bb5);
             overlay.getChildren().add(popupBox);
             this.base.getChildren().add(overlay);
             baseScroll.setDisable(true);

@@ -86,19 +86,38 @@ if ( !isset($input['p1']['email']) || !isset($input['p1']['nome']) || !isset($in
                 ]);
                 $itinerarioId = $pdo->lastInsertId();
 
-             if (!empty($viaggio['itinerario']['tappe'])) {
-                 $stmtTappa = $pdo->prepare("INSERT INTO tappe (nome_tappa, data, latitudine, longitudine, itinerario_id) VALUES (:nome, :data, :lat, :lon, :it_id)");
+                // Dichiara e prepara $stmtTappa qui, PRIMA del ciclo sulle tappe
+                $stmtTappa = $pdo->prepare("INSERT INTO tappe (nome_tappa, data, latitudine, longitudine, itinerario_id) VALUES (:nome, :data, :lat, :lon, :it_id)");
 
-                 foreach ($viaggio['itinerario']['tappe'] as $tappa) {
-                     $stmtTappa->execute([
-                         'nome' => $tappa['nome'] ?? 'Senza nome',
-                         'data' => $tappa['data'] ?? null,
-                         'lat' => $tappa['latitudine'] ?? null,
-                         'lon' => $tappa['longitudine'] ?? null,
-                         'it_id' => $itinerarioId
-                     ]);
-                 }
-             }
+                if (!empty($viaggio['itinerario']['tappe'])) {
+                    foreach ($viaggio['itinerario']['tappe'] as $tappa) {
+                        $dataTappa = null;
+                        if (isset($tappa['data'])) {
+                            if (is_array($tappa['data'])) {
+                                if (count($tappa['data']) === 3 &&
+                                    is_numeric($tappa['data'][0]) && // Anno
+                                    is_numeric($tappa['data'][1]) && // Mese
+                                    is_numeric($tappa['data'][2])) { // Giorno
+                                    $dataTappa = sprintf('%04d-%02d-%02d', $tappa['data'][0], $tappa['data'][1], $tappa['data'][2]);
+                                }
+                            } elseif (is_string($tappa['data'])) {
+                                $timestamp = strtotime($tappa['data']);
+                                if ($timestamp !== false) {
+                                    $dataTappa = date('Y-m-d', $timestamp);
+                                }
+                            }
+                        }
+
+                        // Esegui la query per la tappa
+                        $stmtTappa->execute([
+                            'nome' => $tappa['nome'] ?? 'Senza nome',
+                            'data' => $dataTappa, // Usa la data formattata o null
+                            'lat' => $tappa['latitudine'] ?? null,
+                            'lon' => $tappa['longitudine'] ?? null,
+                            'it_id' => $itinerarioId
+                        ]);
+                    }
+                }
             }
 
             // 4. Inserisci lista elementi e elementi
@@ -135,6 +154,6 @@ if ( !isset($input['p1']['email']) || !isset($input['p1']['nome']) || !isset($in
 
     } catch (Exception $e) {
         http_response_code(500);
-        echo json_encode(['confermaAzione' => false, 'parametro1' => $e, 'parametro2' => null]);
+        echo json_encode(['confermaAzione' => false, 'parametro1' => $e->getMessage(), 'parametro2' => null]);
     }
 }
