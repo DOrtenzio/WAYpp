@@ -23,6 +23,8 @@ import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import praticaest1.praticaest1.obj.*;
 import praticaest1.praticaest1.utility.*;
+
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.*;
@@ -1055,13 +1057,29 @@ public class HomeController {
         viaggioAttuale.getItinerario().ordinaTappe();
         List<Tappa> tappe = viaggioAttuale.getItinerario().getTappe();
 
-        // Creiamo la mappa centrata sulla destinazione
         MapView mapView = new MapView();
         mapView.setZoom(6);
-        mapView.setCenter(new MapPoint(tappe.getFirst().getLatitudine(), tappe.getFirst().getLongitudine()));
+        // Centra la mappa sulla prima tappa
+        if (!tappe.isEmpty()) {
+            mapView.setCenter(new MapPoint(tappe.getFirst().getLatitudine(), tappe.getFirst().getLongitudine()));
+        } else {
+            mapView.setCenter(new MapPoint(45.666, 9.666)); // Bergamo predefinita anche se non succederà mai che ci siano 0 tappe contemporaneamente
+        }
 
         if (tappe.size() >= 2) {
             PercorsoMappa percorsoMappa = new PercorsoMappa(tappe);
+
+            // Ora, usiamo il GraphHopperService per ottenere un percorso dettagliato
+            GraphHopperService graphHopperService = new GraphHopperService();
+            try {
+                List<MapPoint> puntiDettagliati = graphHopperService.getRoute(tappe);
+                if (!puntiDettagliati.isEmpty()) {
+                    percorsoMappa.setPuntiPercorsoDettagliati(puntiDettagliati); // Passa i punti dettagliati alla mappa
+                }
+            } catch (IOException | InterruptedException e) {
+                System.err.println("Errore durante il recupero del percorso da GraphHopper: " + e.getMessage());
+            }
+
             mapView.addLayer(percorsoMappa);
         }
         return mapView;
