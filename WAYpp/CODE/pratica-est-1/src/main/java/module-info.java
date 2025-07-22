@@ -9,6 +9,7 @@ module praticaest1.praticaest1 {
     requires com.fasterxml.jackson.datatype.jsr310;
     requires org.json;
     requires graphhopper.web.api;
+    requires java.desktop;
 
     opens praticaest1.praticaest1 to javafx.fxml, com.fasterxml.jackson.databind;
     opens praticaest1.praticaest1.obj to com.fasterxml.jackson.databind;

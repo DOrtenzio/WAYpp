@@ -12,6 +12,8 @@ CREATE TABLE `utenti` (
 CREATE TABLE `viaggi` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
   `nomeUnivoco` varchar(255) UNIQUE,
+  `mezzoUsato` varchar(255),
+  `obiettivo` varchar(255),
   `user_id` int,
   FOREIGN KEY (user_id) REFERENCES utenti(id) ON DELETE CASCADE
 );

@@ -22,7 +22,7 @@ public class GraphHopperService { //Codice preso in parte soprattutto nel decodi
         API_KEY_GHH= dotenv.get("API_KEY_GHH");
     }
 
-    public List<MapPoint> getRoute(List<Tappa> tappe) throws IOException, InterruptedException {
+    public List<MapPoint> getRoute(List<Tappa> tappe, String mezzoPreferito) throws IOException, InterruptedException {
         List<MapPoint> fullRoute = new ArrayList<>();
 
         if (tappe == null || tappe.size() < 2) {
@@ -41,7 +41,7 @@ public class GraphHopperService { //Codice preso in parte soprattutto nel decodi
 
             // Serve almeno 2 punti per fare una richiesta valida a GraphHopper
             if (subList.size() >= 2) {
-                fullRoute.addAll(getRouteGruppettoTappe(subList));
+                fullRoute.addAll(getRouteGruppettoTappe(subList,mezzoPreferito));
             }
         }
 
@@ -49,12 +49,20 @@ public class GraphHopperService { //Codice preso in parte soprattutto nel decodi
         return fullRoute;
     }
 
-    private List<MapPoint> getRouteGruppettoTappe(List<Tappa> tappe) throws IOException, InterruptedException {
+    private List<MapPoint> getRouteGruppettoTappe(List<Tappa> tappe, String mezzoPreferito) throws IOException, InterruptedException {
         StringBuilder urlBuilder = new StringBuilder(BASE_URL);
         urlBuilder.append("key=").append(API_KEY_GHH);
         urlBuilder.append("&points_encoded=true");
         urlBuilder.append("&locale=it");
-
+        String profiloGraphhopper = switch (mezzoPreferito.toLowerCase()) {
+            case "piedi" -> "foot";
+            case "bici" -> "bike";
+            case "auto" -> "car";
+            // Mezzi pesanti non disponibili nel piano free quindi fallback su "car" purtroppo le disponibilità sono quelle ;-)
+            case "mezzi pesanti (camper,truck)" -> "car";
+            default -> "car";
+        };
+        urlBuilder.append("&profile=").append(profiloGraphhopper); //Cosi da avere percorso personalizzato
         for (Tappa tappa : tappe) {
             urlBuilder.append("&point=").append(tappa.getLatitudine()).append(",").append(tappa.getLongitudine());
         }

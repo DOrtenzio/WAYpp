@@ -38,7 +38,7 @@ if (!isset($input['email']) || !isset($input['nome']) || !isset($input['psw'])) 
             exit;
         }
 
-        $userId = $utenteTrovato['id']; // <-- qui definisci userId
+        $userId = $utenteTrovato['id'];
 
         // Restituisci la lista come JSON
         $viaggi = getViaggiCompleti($pdo, $userId);

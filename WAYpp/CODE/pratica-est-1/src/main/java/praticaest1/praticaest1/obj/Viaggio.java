@@ -4,15 +4,17 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Viaggio {
-    private String nomeUnivoco;
+    private String nomeUnivoco,mezzoUsato,obiettivo;
     private Budget budget;
     private Itinerario itinerario;
     private ListaElementi listaElementi;
 
     //Costruttore
     public Viaggio(){}
-    public Viaggio(String nomeUnivoco, Budget budget, Itinerario itinerario, ListaElementi listaElementi) {
+    public Viaggio(String nomeUnivoco,String mezzoUsato, String obiettivo, Budget budget, Itinerario itinerario, ListaElementi listaElementi) {
         this.nomeUnivoco=nomeUnivoco;
+        this.mezzoUsato=mezzoUsato;
+        this.obiettivo=obiettivo;
         this.budget = budget;
         this.itinerario = itinerario;
         this.listaElementi = listaElementi;
@@ -27,6 +29,10 @@ public class Viaggio {
     public void setItinerario(Itinerario itinerario) { this.itinerario = itinerario; }
     public ListaElementi getListaElementi() { return listaElementi; }
     public void setListaElementi(ListaElementi listaElementi) { this.listaElementi = listaElementi; }
+    public String getMezzoUsato() { return mezzoUsato; }
+    public void setMezzoUsato(String mezzoUsato) { this.mezzoUsato = mezzoUsato; }
+    public String getObiettivo() { return obiettivo; }
+    public void setObiettivo(String obiettivo) { this.obiettivo = obiettivo; }
 
     //equals e to string
     @Override

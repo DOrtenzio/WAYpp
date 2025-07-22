@@ -25,6 +25,7 @@ import praticaest1.praticaest1.obj.*;
 import praticaest1.praticaest1.utility.*;
 
 import java.io.IOException;
+import java.net.URI;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.*;
@@ -325,6 +326,25 @@ public class HomeController {
         VBox b6 = new VBox(5, l4, dataArrivo);
         b4.setAlignment(Pos.TOP_LEFT);
 
+        // Campo: Mezzo di trasporto
+        Label lMezzo = new Label("Mezzo di trasporto preferito  (Attento non potrai modificarlo a seguire)");
+        lMezzo.setStyle("-fx-font-size: 12px; -fx-text-fill: #374151;");
+        ChoiceBox<String> mezzoScelto = new ChoiceBox<>();
+        mezzoScelto.getItems().addAll("Piedi", "Bici", "Auto", "Mezzi pesanti (Camper,Truck)");
+        mezzoScelto.setStyle("-fx-background-radius: 8; -fx-padding: 10; -fx-background-color: white;");
+        VBox boxMezzo = new VBox(5, lMezzo, mezzoScelto);
+        boxMezzo.setAlignment(Pos.TOP_LEFT);
+
+        // Campo: Obiettivo del viaggio
+        Label lObiettivo = new Label("Obiettivo del viaggio (Attento non potrai modificarlo a seguire)");
+        lObiettivo.setStyle("-fx-font-size: 12px; -fx-text-fill: #374151;");
+        ChoiceBox<String> obiettivoScelto = new ChoiceBox<>();
+        obiettivoScelto.getItems().addAll("Ricollegarsi alla natura", "Rilassarsi", "Visitare");
+        obiettivoScelto.setStyle("-fx-background-radius: 8; -fx-padding: 10; -fx-background-color: white;");
+        VBox boxObiettivo = new VBox(5, lObiettivo, obiettivoScelto);
+        boxObiettivo.setAlignment(Pos.TOP_LEFT);
+
+
         // Pulsante Salva
         Button saveButton = new Button("Salva");
         saveButton.setStyle(
@@ -357,6 +377,8 @@ public class HomeController {
                         listaViaggiAttuale.addElemento(
                                 new Viaggio(
                                         nome.getText().trim(),
+                                        mezzoScelto.getValue(),
+                                        obiettivoScelto.getValue(),
                                         new Budget(Double.parseDouble(budget.getText().trim())),
                                         new Itinerario(destinazione.getText().trim(), dataArrivo.getValue()),
                                         new ListaElementi()
@@ -409,7 +431,7 @@ public class HomeController {
         b4.setAlignment(Pos.CENTER_RIGHT);
 
         // Inserimento
-        popupBox.getChildren().addAll(b0, b1, b2, b3,b6, b4);
+        popupBox.getChildren().addAll(b0, b1,boxObiettivo,boxMezzo, b2, b3,b6, b4);
         overlay.getChildren().add(popupBox);
         this.base.getChildren().add(overlay);
         baseScroll.setDisable(true);
@@ -804,7 +826,31 @@ public class HomeController {
         mappa.setPrefWidth(600); // opzionale, se vuoi una larghezza fissa
         mappa.setStyle("-fx-background-color: white; -fx-border-color: #E0E0E0; -fx-border-radius: 10; -fx-background-radius: 10;");
 
-        VBox contenitoreMappa = new VBox(10, l0, mappa);
+        Button apriInGoogleMaps = new Button("Apri in Google Maps");
+        apriInGoogleMaps.setStyle(
+                "-fx-background-color: #3B82F6;" +
+                        "-fx-background-radius: 6;" +
+                        "-fx-padding: 8 16;" +
+                        "-fx-text-fill: white;"
+        );
+        apriInGoogleMaps.setOnAction(e -> {
+            String url = creaURLGoogleMaps(viaggioAttuale.getItinerario().getTappe());
+            try {
+                java.awt.Desktop.getDesktop().browse(new URI(url)); //Apro nel browser di sistema
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+
+        // Spacer flessibile
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        HBox hBox = new HBox(10, l0, spacer, apriInGoogleMaps);
+        hBox.setPadding(new Insets(10));
+        hBox.setAlignment(Pos.CENTER_LEFT);
+
+        VBox contenitoreMappa = new VBox(10, hBox, mappa);
         contenitoreMappa.setPadding(new Insets(10));
         VBox.setVgrow(mappa, Priority.ALWAYS);
 
@@ -1072,7 +1118,7 @@ public class HomeController {
             // Ora, usiamo il GraphHopperService per ottenere un percorso dettagliato
             GraphHopperService graphHopperService = new GraphHopperService();
             try {
-                List<MapPoint> puntiDettagliati = graphHopperService.getRoute(tappe);
+                List<MapPoint> puntiDettagliati = graphHopperService.getRoute(tappe, viaggioAttuale.getMezzoUsato());
                 if (!puntiDettagliati.isEmpty()) {
                     percorsoMappa.setPuntiPercorsoDettagliati(puntiDettagliati); // Passa i punti dettagliati alla mappa
                 }
@@ -1513,6 +1559,14 @@ public class HomeController {
         s.setMaxWidth(147);
         return s;
     }
+    private String creaURLGoogleMaps(List<Tappa> tappe) {
+        StringBuilder url = new StringBuilder("https://www.google.com/maps/dir/");
+        for (Tappa t : tappe) {
+            url.append(t.getLatitudine()).append(",").append(t.getLongitudine()).append("/");
+        }
+        return url.toString();
+    }
+
 
 }
 

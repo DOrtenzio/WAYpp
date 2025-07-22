@@ -77,6 +77,8 @@ function getViaggiCompleti($pdo, $userId) {
         // Componi il viaggio completo
         $viaggiCompleti[] = [
             'nomeUnivoco' => $v['nomeUnivoco'],
+            'mezzoUsato'=>$v['mezzoUsato'],
+            'obiettivo'=>$v['obiettivo'],
             'budget' => $budget ? [
                 'budgetIniziale' => $budget['budget_iniziale'],
                 'budgetSpeso' => $budget['budget_speso'],

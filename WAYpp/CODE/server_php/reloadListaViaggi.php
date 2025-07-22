@@ -42,15 +42,19 @@ if ( !isset($input['p1']['email']) || !isset($input['p1']['nome']) || !isset($in
         $stmt->execute(['userId' => $utenteTrovato['id']]);
 
         // Inserisci i nuovi viaggi
-        $stmtViaggio = $pdo->prepare("INSERT INTO viaggi (user_id, nomeUnivoco) VALUES (:userId, :nomeUnivoco)");
+        $stmtViaggio = $pdo->prepare("INSERT INTO viaggi (user_id, nomeUnivoco, mezzoUsato, obiettivo) VALUES (:userId, :nomeUnivoco, :mezzoUsato, :obiettivo)");
         $userId = $utenteTrovato['id'];
         foreach ($nuovaListaViaggi as $viaggio) {
             if (!isset($viaggio['nomeUnivoco'])) continue;
+            if (!isset($viaggio['mezzoUsato'])) continue;
+            if (!isset($viaggio['obiettivo'])) continue;
 
             // 1. Inserisci viaggio
             $stmtViaggio->execute([
                 'userId' => $utenteTrovato['id'],
-                'nomeUnivoco' => $viaggio['nomeUnivoco']
+                'nomeUnivoco' => $viaggio['nomeUnivoco'],
+                'mezzoUsato'=>$viaggio['mezzoUsato'],
+                'obiettivo'=>$viaggio['obiettivo']
             ]);
             $viaggioId = $pdo->lastInsertId();
 
