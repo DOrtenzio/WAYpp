@@ -7,6 +7,8 @@ import com.gluonhq.maps.*;
 import io.github.cdimascio.dotenv.Dotenv;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
@@ -21,6 +23,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
+import org.json.JSONArray;
 import praticaest1.praticaest1.obj.*;
 import praticaest1.praticaest1.utility.*;
 
@@ -63,12 +66,14 @@ public class HomeController {
     private String URL_BASE;
     private final GestoreHTTP gestoreHTTP=new GestoreHTTP();
     private ObjectMapper mapper=new ObjectMapper();
+    private GroqClient groq;
 
     public void initialize(){
         //Variabili
         Dotenv dotenv= Dotenv.load();
         this.URL_BASE=dotenv.get("URL_BASE_SERVER");
         mapper.registerModule(new JavaTimeModule());
+        this.groq=new GroqClient(Dotenv.load().get("GROQ_API_KEY"));
         //Grafica
         animaBottoni();
     }
@@ -1291,6 +1296,14 @@ public class HomeController {
     @FXML
     private void popolaListaElementi(VBox vBox){
         vBox.getChildren().clear();
+        //Inserire elementi consigliati ia
+        try {
+            Elemento[] elementiConsigliati = mapper.readValue(groq.generaTreElementi(mapper.writeValueAsString(viaggioAttuale)).toString(), Elemento[].class);
+            vBox.getChildren().add(creaAggiuntaElementoScorrere(elementiConsigliati));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        //Inserimento degli altri elementi dell'utente
         for (Elemento elemento : viaggioAttuale.getListaElementi().getList()){
             //Spaziatore
             Pane s = new Pane();
@@ -1302,10 +1315,11 @@ public class HomeController {
             s.setMaxWidth(147);
             vBox.getChildren().add(s);
 
-            vBox.getChildren().add(creaAggiuntaElementoBox(vBox,elemento));
+            vBox.getChildren().add(creaAggiuntaElementoBox(elemento));
         }
     }
-    private HBox creaAggiuntaElementoBox(VBox listaGenerale,Elemento elemento) {
+    @FXML
+    private HBox creaAggiuntaElementoBox(Elemento elemento) {
         // HBox principale
         HBox hBox = new HBox();
         hBox.setAlignment(Pos.CENTER_LEFT);
@@ -1528,6 +1542,182 @@ public class HomeController {
 
         return hBox;
     }
+    @FXML
+    private HBox creaAggiuntaElementoScorrere(Elemento[] elementi) {
+        HBox root = new HBox(12);
+        root.setAlignment(Pos.CENTER_LEFT);
+        root.setStyle("-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 16;");
+        root.setMinHeight(80);
+
+        DropShadow dropShadow = new DropShadow();
+        dropShadow.setColor(Color.rgb(0, 0, 0, 0.05));
+        dropShadow.setRadius(10);
+        dropShadow.setOffsetY(4);
+        root.setEffect(dropShadow);
+
+        // --- Stato corrente ---
+        IntegerProperty index = new SimpleIntegerProperty(0);
+
+        // --- Frecce ---
+        Button prev = new Button("<");
+        prev.setStyle("-fx-background-color: transparent; -fx-font-size: 14px; -fx-text-fill: #6B7280;");
+        Button next = new Button(">");
+        next.setStyle("-fx-background-color: transparent; -fx-font-size: 14px; -fx-text-fill: #6B7280;");
+
+        prev.setOnAction(e -> {
+            if (index.get() > 0) index.set(index.get() - 1);
+        });
+        next.setOnAction(e -> {
+            if (index.get() < elementi.length - 1) index.set(index.get() + 1);
+        });
+
+        // Disabilita frecce ai bordi
+        prev.disableProperty().bind(index.lessThanOrEqualTo(0));
+        next.disableProperty().bind(index.greaterThanOrEqualTo(elementi.length - 1));
+
+        // --- Centro (contenuto elemento) ---
+        VBox center = new VBox(4);
+        center.setAlignment(Pos.CENTER_LEFT);
+
+        Label titoloLabel = new Label();
+        titoloLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
+
+        Label l3 = new Label("SALVINO CONSIGLIA ⬆️");
+        l3.setStyle("-fx-text-fill: #4B5563; -fx-font-size: 12px;");
+
+        // Dettagli / Edit
+        Label editLabel = new Label("Dettagli / Aggiungi");
+        editLabel.setStyle("-fx-text-fill: #3B82F6; -fx-font-size: 12px; -fx-underline: true;");
+
+        // Aggiorna UI in base all'indice
+        Runnable refresh = () -> {
+            if (elementi.length == 0) {
+                titoloLabel.setText("Nessun elemento");
+                l3.setDisable(true);
+                editLabel.setDisable(true);
+                return;
+            }
+            Elemento el = elementi[index.get()];
+            titoloLabel.setText(el.getNome() + "  Quantità < A Scelta");
+            titoloLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px; -fx-strikethrough: " + el.isAcquistato() + ";");
+
+            l3.setDisable(false);
+            editLabel.setDisable(false);
+        };
+
+        // Azioni
+        editLabel.setOnMouseClicked(e -> {
+            if (elementi.length == 0) return;
+            Elemento el = elementi[index.get()];
+            AnchorPane baseScroll=workTrip;
+            // Crea il contenitore principale trasparente
+            StackPane overlay = new StackPane();
+            overlay.setPrefSize(this.base.getWidth(), this.base.getHeight());
+            overlay.setStyle("-fx-background-color: rgba(0,0,0,0.3);");
+
+            // Crea il VBox centrale del popup
+            VBox popupBox = new VBox(10);
+            popupBox.setAlignment(Pos.TOP_RIGHT);
+            popupBox.setPadding(new Insets(20));
+            popupBox.setStyle(
+                    "-fx-background-color: #FFFFFF;" +
+                            "-fx-background-radius: 8;" +
+                            "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0.0, 0, 5);"
+            );
+            popupBox.setPrefWidth(400);
+            popupBox.setMaxWidth(400);
+            popupBox.setPrefHeight(300);
+            popupBox.setMaxHeight(300);
+
+            // Bottone "X" per chiudere
+            Button closeButton = new Button("X");
+            closeButton.setStyle("-fx-background-color: transparent; -fx-font-size: 14px; -fx-text-fill: #6B7280;");
+            closeButton.setOnAction(ez -> {
+                this.base.getChildren().remove(overlay);
+                baseScroll.setDisable(false);
+                editLabel.setDisable(false);
+            });
+
+            HBox b0 = new HBox(closeButton);
+            b0.setAlignment(Pos.TOP_RIGHT);
+            //Elementi
+            Label l11 = new Label("Inserisci l'elemento");
+            l11.setStyle("-fx-font-size: 12px; -fx-text-fill: #374151;");
+            TextField nome = new TextField(el.getNome());
+            nome.setStyle("-fx-background-radius: 8; -fx-padding: 10; -fx-background-color: white;");
+            nome.setPromptText("Pomata");
+            VBox b1 = new VBox(5, l11, nome);
+            b1.setAlignment(Pos.TOP_LEFT);
+            Label l21 = new Label("Inserisci la quantità");
+            l21.setStyle("-fx-font-size: 12px; -fx-text-fill: #374151;");
+            Spinner<Integer> quantita = new Spinner<>();
+            quantita.setStyle("-fx-background-radius: 8; -fx-padding: 10; -fx-background-color: white;");
+            quantita.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 25, el.getQuantita(), 1));
+            VBox b2 = new VBox(5, l21, quantita);
+            b2.setAlignment(Pos.TOP_LEFT);
+            Label l111 = new Label("Inserisci il luogo d'acquisto");
+            l111.setStyle("-fx-font-size: 12px; -fx-text-fill: #374151;");
+            TextField luogo = new TextField(el.getLuogoAcquisto());
+            luogo.setStyle("-fx-background-radius: 8; -fx-padding: 10; -fx-background-color: white;");
+            luogo.setPromptText("Farmacia");
+            VBox b3 = new VBox(5, l111, luogo);
+            b3.setAlignment(Pos.TOP_LEFT);
+            Label l1111 = new Label("Inserisci una breve descrizione");
+            l1111.setStyle("-fx-font-size: 12px; -fx-text-fill: #374151;");
+            TextArea descrizione = new TextArea(el.getDescrizione());
+            descrizione.setStyle("-fx-background-radius: 8; -fx-padding: 10; -fx-background-color: white;");
+            descrizione.setPromptText("Per irritazione al canale rettico");
+            VBox b4 = new VBox(5, l1111, descrizione);
+            b4.setAlignment(Pos.TOP_LEFT);
+
+            // Pulsante Inserisci
+            Button inserisciBottone = new Button("Inserisci");
+            inserisciBottone.setStyle(
+                    "-fx-background-color: #3B82F6;" +
+                            "-fx-background-radius: 6;" +
+                            "-fx-padding: 8 16;" +
+                            "-fx-text-fill: white;"
+            );
+
+            inserisciBottone.setOnAction(ezz -> {
+                try {
+                    viaggioAttuale.getListaElementi().addElemento(new Elemento(nome.getText(), descrizione.getText(), luogo.getText(), quantita.getValue()));
+                    if (salvaViaggioCorrente()) {
+                        this.base.getChildren().remove(overlay);
+                        baseScroll.setDisable(false);
+                        editLabel.setDisable(false);
+                        sezElementi();
+                    }else {
+                        animazioneBottone(inserisciBottone, "-fx-background-color: #BE2538; -fx-background-radius: 6; -fx-padding: 8 16;", "-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
+                        viaggioAttuale.getListaElementi().removeElemento(new Elemento(nome.getText(), descrizione.getText(), luogo.getText(), quantita.getValue()));
+                    }
+                } catch (Exception ex) {
+                    animazioneBottone(inserisciBottone,"-fx-background-color: #BE2538; -fx-background-radius: 6; -fx-padding: 8 16;","-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
+                }
+            });
+
+            HBox b5 = new HBox(inserisciBottone);
+            b5.setAlignment(Pos.CENTER_RIGHT);
+
+            // Inserimento
+            popupBox.getChildren().addAll(b0, b1, b2, b3, b4,b5);
+            overlay.getChildren().add(popupBox);
+            this.base.getChildren().add(overlay);
+            baseScroll.setDisable(true);
+            editLabel.setDisable(true);
+
+        });
+
+        center.getChildren().addAll(titoloLabel, editLabel, l3);
+        index.addListener((obs, oldV, newV) -> refresh.run());
+        refresh.run();
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        root.getChildren().addAll(prev, center, spacer, next);
+        return root;
+    }
+
 
 
     /*METODI GENERALI*/
@@ -1541,7 +1731,6 @@ public class HomeController {
     private boolean salvaViaggioCorrente(){
         try {
             String risposta=gestoreHTTP.inviaRichiestaConParametri(URL_BASE+"reloadViaggio.php",mapper.writeValueAsString(new MessaggioDati<Utente,Viaggio>(this.utenteAttuale, this.viaggioAttuale)));
-            System.out.println(risposta);
             Messaggio<ListaViaggi> m=mapper.readValue(risposta, Messaggio.class);
             return m.getConfermaAzione();
         } catch (Exception ex) {

@@ -31,12 +31,12 @@
                     <HBox alignment="CENTER_LEFT" spacing="10">
                         <ImageView fitHeight="40" fitWidth="40">
                             <image>
-                                <Image preserveRatio="true" url="@img/logos32-icon.png" />
+                                <Image preserveRatio="true" url="@img/logos64-icon.png" />
                             </image>
                         </ImageView>
                         <VBox spacing="2">
                             <Label fx:id="nomeUtente" style="-fx-font-weight: bold; -fx-font-size: 14px;" text="NOME UTENTE" />
-                            <Label style="-fx-text-fill: #6B7280; -fx-font-size: 12px;" text="Version 0.0" />
+                            <Label style="-fx-text-fill: #6B7280; -fx-font-size: 12px;" text="Versione 1.1 - Update ✅" />
                         </VBox>
                     </HBox>
 
@@ -56,7 +56,7 @@
                                     <Image url="@img/soon-icon.png" />
                                 </image>
                             </ImageView>
-                            <Label text="Explore - Coming soon" />
+                            <Label text="Esplora - In arrivo" />
                         </HBox>
                         <HBox fx:id="b3" alignment="CENTER_LEFT" onMouseClicked="#goToTrip" spacing="10" style="-fx-background-color: #f9fafb; -fx-background-radius: 8; -fx-padding: 8;">
                             <ImageView fitHeight="16" fitWidth="16">
@@ -64,7 +64,7 @@
                                     <Image url="@img/suitcase-icon.png" />
                                 </image>
                             </ImageView>
-                            <Label text="Your Trip" />
+                            <Label text="I tuoi Viaggi" />
                         </HBox>
                         <HBox fx:id="b4" alignment="CENTER_LEFT" onMouseClicked="#goToProfile" spacing="10" style="-fx-background-color: #f9fafb; -fx-background-radius: 8; -fx-padding: 8;">
                             <ImageView fitHeight="16" fitWidth="16">
@@ -72,7 +72,7 @@
                                     <Image url="@img/profile-icon.png" />
                                 </image>
                             </ImageView>
-                            <Label text="Your Profile" />
+                            <Label text="Il tuo Profilo" />
                         </HBox>
                     </VBox>
 
@@ -124,7 +124,7 @@
 
                                   <!-- Titolo Home -->
                                   <Label style="-fx-font-size: 22px; -fx-font-weight: bold;" text="Benvenuto su Waypp" />
-                                  <Label style="-fx-text-fill: #6B7280; -fx-font-size: 14px;" text="La tua app gratuita per pianificare viaggi in modo semplice e smart!" />
+                                  <Label style="-fx-font-family: 'Segoe UI Emoji'; -fx-text-fill: #6B7280; -fx-font-size: 14px;" text="La tua app gratuita per pianificare viaggi in modo semplice e smart! 🚀" />
 
                                   <!-- Card Esplora -->
                                   <HBox alignment="CENTER_LEFT" spacing="15" style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 16;                          -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 4);">
@@ -134,8 +134,8 @@
                                           </image>
                                       </ImageView>
                                       <VBox spacing="4">
-                                          <Label style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Sezione Esplora - Coming soon" />
-                                          <Label style="-fx-text-fill: #4B5563; -fx-font-size: 12px;" text="Ottieni idee ispirazionali per la tua prossima avventura." />
+                                          <Label style="-fx-font-size: 14px; -fx-font-weight: bold;" text="Sezione Esplora - Coming soon" />
+                                          <Label style="-fx-font-family: 'Segoe UI Emoji';-fx-text-fill: #4B5563; -fx-font-size: 12px;" text="Ottieni idee ispirazionali per la tua prossima avventura 💡💡" />
                                       </VBox>
                                   </HBox>
 
@@ -147,31 +147,54 @@
                                                   <Image url="@img/suitcase-icon.png" />
                                               </image>
                                           </ImageView>
-                                          <Label style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Sezione Viaggi" />
+                                          <Label style="-fx-font-size: 14px; -fx-font-weight: bold;" text="Sezione Viaggi" />
                                       </HBox>
-                                      <Label style="-fx-text-fill: #4B5563; -fx-font-size: 12px;" text="La parte centrale di Waypp: crea il tuo viaggio e gestiscilo in ogni dettaglio." />
+                                      <Label style="-fx-font-family: 'Segoe UI Emoji'; -fx-text-fill: #4B5563; -fx-font-size: 12px;" text="La parte centrale di Waypp: crea il tuo viaggio e gestiscilo in ogni dettaglio." />
 
                                       <!-- Sotto-sezioni Viaggi -->
                                       <VBox spacing="8" style="-fx-padding: 8 0 0 8;">
-                                          <Label style="-fx-text-fill: #374151; -fx-font-size: 12px;" text="• Gestione finanziaria – Tieni traccia delle spese del viaggio." />
-                                          <Label style="-fx-text-fill: #374151; -fx-font-size: 12px;" text="• Organizzazione bagagli – Crea liste smart e condivisibili più facilmente" wrapText="true" />
-                                          <Label style="-fx-text-fill: #374151; -fx-font-size: 12px;" text="• Road Trip – Pianifica tragitti, tappe e tempi." />
+                                          <Label style="-fx-font-family: 'Segoe UI Emoji'; -fx-text-fill: #374151; -fx-font-size: 12px;" text="• Gestione finanziaria – Tieni traccia delle spese del viaggio 💶" wrapText="true"/>
+                                          <Label style="-fx-font-family: 'Segoe UI Emoji'; -fx-text-fill: #374151; -fx-font-size: 12px;" text="• Organizzazione bagagli – Crea liste smart e condivisibili più facilmente 🧳" wrapText="true" />
+                                          <Label style="-fx-font-family: 'Segoe UI Emoji'; -fx-text-fill: #374151; -fx-font-size: 12px;" text="• Road Trip – Pianifica tragitti, tappe e tempi 🕐" wrapText="true"/>
                                       </VBox>
                                   </VBox>
 
                                   <!-- Card Cloud -->
-                                  <HBox alignment="CENTER_LEFT" spacing="15" style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 16;                          -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 4);">
+                                  <HBox alignment="CENTER_LEFT" spacing="15" style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 16; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 4);">
                                       <ImageView fitHeight="36" fitWidth="36">
                                           <image>
                                               <Image url="@img/cloud-icon.png" />
                                           </image>
                                       </ImageView>
                                       <VBox spacing="4">
-                                          <Label style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Sicurezza in Cloud" />
-                                          <Label style="-fx-text-fill: #4B5563; -fx-font-size: 12px;" text="Waypp è 100% cloud: non perdi nulla, mai. E tutto è gratuito." />
+                                          <Label style="-fx-font-size: 14px; -fx-font-weight: bold;" text="Sicurezza in Cloud" />
+                                          <Label style="-fx-font-family: 'Segoe UI Emoji'; -fx-text-fill: #4B5563; -fx-font-size: 12px;" text="Waypp è 100% cloud: non perdi nulla, mai. E tutto è gratuito." />
                                       </VBox>
                                   </HBox>
+                                  <!-- Card Salvino Ia -->
+                                  <VBox spacing="12" style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 16;                          -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 4);">
+                                      <HBox alignment="CENTER_LEFT" spacing="10">
+                                          <ImageView fitHeight="36" fitWidth="36">
+                                              <image>
+                                                  <Image url="@img/salvino1-64.png" />
+                                              </image>
+                                          </ImageView>
+                                          <Label style="-fx-font-size: 14px; -fx-font-weight: bold;" text="SALVINO l'IA generativa di WAYpp" />
+                                      </HBox>
+                                      <Label style="-fx-font-family: 'Segoe UI Emoji'; -fx-text-fill: #4B5563; -fx-font-size: 12px;" text="L'Ia di WAYpp ti aiuterà nell'organizzazione del tuo prossimo viaggio:" />
 
+                                      <!-- Sotto-sezioni Viaggi -->
+                                      <VBox spacing="8" style="-fx-padding: 8 0 0 8;">
+                                          <Label style="-fx-font-family: 'Segoe UI Emoji'; -fx-text-fill: #374151; -fx-font-size: 12px;" text="• Scelta di un nuovo viaggio – In base ai tuoi interessi SALVINO ti consiglierà " wrapText="true"/>
+                                          <Label style="-fx-font-family: 'Segoe UI Emoji'; -fx-text-fill: #374151; -fx-font-size: 12px;" text="  nuovi viaggi da intraprendere 🧐"/>
+                                          <Label style="-fx-font-family: 'Segoe UI Emoji'; -fx-text-fill: #374151; -fx-font-size: 12px;" text="• Organizzazione bagagli – In base ai tutti i parametri del tuo viaggio SALVINO" wrapText="true" />
+                                          <Label style="-fx-font-family: 'Segoe UI Emoji'; -fx-text-fill: #374151; -fx-font-size: 12px;" text="  ti consiglierà dei nuovi elementi da aggiungere, cosi non dimentichi a casa più nulla!" wrapText="true" />
+                                          <Label style="-fx-font-family: 'Segoe UI Emoji'; -fx-text-fill: #374151; -fx-font-size: 12px;" text="• Road trip - SALVINO ed il suo compare GRAPHHOPPER collaborano per suggerirti" wrapText="true"/>
+                                          <Label style="-fx-font-family: 'Segoe UI Emoji'; -fx-text-fill: #374151; -fx-font-size: 12px;" text="  un possibile roadtrip in base alle tue preferenze, il quale poi può essere rintracciato " wrapText="true" />
+                                          <Label style="-fx-font-family: 'Segoe UI Emoji'; -fx-text-fill: #374151; -fx-font-size: 12px;" text="  in altre app di navigazione! 🗺"/>
+                                          <Label style="-fx-font-family: 'Segoe UI Emoji'; -fx-text-fill: #374151; -fx-font-size: 12px;" text="• Molto altro ancora a cui stiamo ancora lavorando 🫡" wrapText="true"/>
+                                      </VBox>
+                                  </VBox>
                               </VBox>
                           </content>
                       </ScrollPane>
