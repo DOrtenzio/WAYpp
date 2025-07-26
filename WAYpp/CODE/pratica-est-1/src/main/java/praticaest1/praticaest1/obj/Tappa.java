@@ -17,11 +17,17 @@ public class Tappa implements Comparable<Tappa>{
         this.data = data;
         try {
             String coordinate= LocalizzatoreGeo.riceviLatLong(this.nome.replaceAll(" ", "%20"));
-            this.latitudine = Double.parseDouble(coordinate.split("-")[0]);
-            this.longitudine = Double.parseDouble(coordinate.split("-")[1]);
+            this.latitudine = Double.parseDouble(coordinate.split("&")[0]);
+            this.longitudine = Double.parseDouble(coordinate.split("&")[1]);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+    public Tappa(String nome, LocalDate data, double latitudine, double longitudine) {
+        this.nome = nome;
+        this.data = data;
+        this.latitudine = latitudine;
+        this.longitudine = longitudine;
     }
 
     // Getters & setters
@@ -30,8 +36,8 @@ public class Tappa implements Comparable<Tappa>{
         this.nome = nome;
         try { //Aggiorno di conseguenza
             String coordinate= LocalizzatoreGeo.riceviLatLong(this.nome.replaceAll(" ", "%20"));
-            this.latitudine = Double.parseDouble(coordinate.split("-")[0]);
-            this.longitudine = Double.parseDouble(coordinate.split("-")[1]);
+            this.latitudine = Double.parseDouble(coordinate.split("&")[0]);
+            this.longitudine = Double.parseDouble(coordinate.split("&")[1]);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

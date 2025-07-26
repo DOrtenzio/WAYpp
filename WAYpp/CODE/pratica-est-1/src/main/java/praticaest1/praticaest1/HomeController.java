@@ -1,6 +1,7 @@
 package praticaest1.praticaest1;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.gluonhq.maps.*;
@@ -23,19 +24,19 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
-import org.json.JSONArray;
 import praticaest1.praticaest1.obj.*;
 import praticaest1.praticaest1.utility.*;
-
-import java.io.IOException;
-import java.net.URI;
-import java.time.LocalDate;
-import java.time.YearMonth;
+import java.io.*;
+import java.net.http.*;
+import java.time.*;
 import java.util.*;
+import java.nio.charset.StandardCharsets;
+import java.net.URI;
+import java.net.URLEncoder;
 
 public class HomeController {
     @FXML
-    private AnchorPane profileBox,tripBox,homeBox,intoTripBox,base;
+    private AnchorPane profileBox,tripBox,homeBox,intoTripBox,base,exploreBox;
     /*BARRA LATERALE*/
     @FXML
     private HBox b1,b2,b3,b4; //Quelli della barra laterale (Lo so nomi terribili ma non ho voglia di cambiarli)
@@ -50,18 +51,24 @@ public class HomeController {
     private TextArea t4;
     @FXML
     private Button salva,aggiungiNuovoViaggio;
-    /*SEZIONE VIAGGI*/
+    /*SEZIONE VIAGGI ED ESPLORA*/
     @FXML
-    private VBox scrollTrip;
+    private VBox scrollTrip,scrollExplore;
     @FXML
     private Label nomeViaggio;
     @FXML
     private AnchorPane workTrip;
+    @FXML //Ovviamente in tal caso si poteva fare un metodo che otteneva la stringa dal pulsante e poi compieva ciò che compiamo, senza 14 id, ma così ci obblighiamo a mantenere i pulsanti con la stessa stringa
+    private Button p1,p2,p3,p4,p5,p6,p7,p11,p21,p31,p41,p51,p61,p71; //Serie 1 -> Viaggi / 11 -> Esplora
 
     //Dell'utente attuale
     private Utente utenteAttuale;
     private ListaViaggi listaViaggiAttuale;
     private Viaggio viaggioAttuale;
+    private List<String> filtriViaggiAttivi;
+    private List<String> filtriEsploraAttivi;
+    private ViaggioEsplora[] viaggioEsploraGroq,viaggiStandard;
+
     //Elementi gestionali
     private String URL_BASE;
     private final GestoreHTTP gestoreHTTP=new GestoreHTTP();
@@ -76,6 +83,8 @@ public class HomeController {
         this.groq=new GroqClient(Dotenv.load().get("GROQ_API_KEY"));
         //Grafica
         animaBottoni();
+        this.filtriViaggiAttivi=new ArrayList<>();
+        this.filtriEsploraAttivi=new ArrayList<>();
     }
 
     //Setter e getter
@@ -96,7 +105,8 @@ public class HomeController {
         });
         b2.setOnMouseMoved(event -> b2.setStyle("-fx-background-color: #E5E7EB; -fx-background-radius: 8; -fx-padding: 8;"));
         b2.setOnMouseExited(event -> {
-            b2.setStyle("-fx-background-color: #f9fafb; -fx-background-radius: 8; -fx-padding: 8;"); //TODO: cambia dopo la realizzazione di esplora
+            if (exploreBox.isVisible()) b2.setStyle("-fx-background-color: #E5E7EB; -fx-background-radius: 8; -fx-padding: 8;");
+            else b2.setStyle("-fx-background-color: #f9fafb; -fx-background-radius: 8; -fx-padding: 8;");
         });
         b3.setOnMouseMoved(event -> b3.setStyle("-fx-background-color: #E5E7EB; -fx-background-radius: 8; -fx-padding: 8;"));
         b3.setOnMouseExited(event -> {
@@ -108,28 +118,156 @@ public class HomeController {
             if (profileBox.isVisible()) b4.setStyle("-fx-background-color: #E5E7EB; -fx-background-radius: 8; -fx-padding: 8;");
             else b4.setStyle("-fx-background-color: #f9fafb; -fx-background-radius: 8; -fx-padding: 8;");
         });
+
+        //Filtri viaggi
+        p1.setOnMouseMoved(event -> p1.setStyle("-fx-background-color: #E5E7EB; -fx-background-radius: 6; -fx-padding: 8 16;"));
+        p1.setOnMouseExited(event -> {
+            if (this.filtriViaggiAttivi.contains("Piedi")) p1.setStyle("-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
+            else p1.setStyle("-fx-background-color: #E5E7EB; -fx-background-radius: 6; -fx-padding: 8 16;");
+        });
+        p1.setOnAction(e->gestoreFiltriViaggi("Piedi"));
+        p2.setOnMouseMoved(event -> p2.setStyle("-fx-background-color: #E5E7EB; -fx-background-radius: 6; -fx-padding: 8 16;"));
+        p2.setOnMouseExited(event -> {
+            if (this.filtriViaggiAttivi.contains("Bici")) p2.setStyle("-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
+            else p2.setStyle("-fx-background-color: #E5E7EB; -fx-background-radius: 6; -fx-padding: 8 16;");
+        });
+        p2.setOnAction(e->gestoreFiltriViaggi("Bici"));
+        p3.setOnMouseMoved(event -> p3.setStyle("-fx-background-color: #E5E7EB; -fx-background-radius: 6; -fx-padding: 8 16;"));
+        p3.setOnMouseExited(event -> {
+            if (this.filtriViaggiAttivi.contains("Auto")) p3.setStyle("-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
+            else p3.setStyle("-fx-background-color: #E5E7EB; -fx-background-radius: 6; -fx-padding: 8 16;");
+        });
+        p3.setOnAction(e->gestoreFiltriViaggi("Auto"));
+        p4.setOnMouseMoved(event -> p4.setStyle("-fx-background-color: #E5E7EB; -fx-background-radius: 6; -fx-padding: 8 16;"));
+        p4.setOnMouseExited(event -> {
+            if (this.filtriViaggiAttivi.contains("Mezzi pesanti (Camper,Truck)")) p4.setStyle("-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
+            else p4.setStyle("-fx-background-color: #E5E7EB; -fx-background-radius: 6; -fx-padding: 8 16;");
+        });
+        p4.setOnAction(e->gestoreFiltriViaggi("Mezzi pesanti (Camper,Truck)"));
+        p5.setOnMouseMoved(event -> p5.setStyle("-fx-background-color: #E5E7EB; -fx-background-radius: 6; -fx-padding: 8 16;"));
+        p5.setOnMouseExited(event -> {
+            if (this.filtriViaggiAttivi.contains("Ricollegarsi alla natura")) p5.setStyle("-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
+            else p5.setStyle("-fx-background-color: #E5E7EB; -fx-background-radius: 6; -fx-padding: 8 16;");
+        });
+        p5.setOnAction(e->gestoreFiltriViaggi("Ricollegarsi alla natura"));
+        p6.setOnMouseMoved(event -> p6.setStyle("-fx-background-color: #E5E7EB; -fx-background-radius: 6; -fx-padding: 8 16;"));
+        p6.setOnMouseExited(event -> {
+            if (this.filtriViaggiAttivi.contains("Rilassarsi")) p6.setStyle("-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
+            else p6.setStyle("-fx-background-color: #E5E7EB; -fx-background-radius: 6; -fx-padding: 8 16;");
+        });
+        p6.setOnAction(e->gestoreFiltriViaggi("Rilassarsi"));
+        p7.setOnMouseMoved(event -> p7.setStyle("-fx-background-color: #E5E7EB; -fx-background-radius: 6; -fx-padding: 8 16;"));
+        p7.setOnMouseExited(event -> {
+            if (this.filtriViaggiAttivi.contains("Visitare")) p7.setStyle("-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
+            else p7.setStyle("-fx-background-color: #E5E7EB; -fx-background-radius: 6; -fx-padding: 8 16;");
+        });
+        p7.setOnAction(e->gestoreFiltriViaggi("Visitare"));
+
+        //Filtri esplora
+        p11.setOnMouseMoved(event -> p11.setStyle("-fx-background-color: #E5E7EB; -fx-background-radius: 6; -fx-padding: 8 16;"));
+        p11.setOnMouseExited(event -> {
+            if (this.filtriEsploraAttivi.contains("Piedi")) p11.setStyle("-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
+            else p11.setStyle("-fx-background-color: #E5E7EB; -fx-background-radius: 6; -fx-padding: 8 16;");
+        });
+        p11.setOnAction(e->gestoreFiltriEsplora("Piedi"));
+        p21.setOnMouseMoved(event -> p21.setStyle("-fx-background-color: #E5E7EB; -fx-background-radius: 6; -fx-padding: 8 16;"));
+        p21.setOnMouseExited(event -> {
+            if (this.filtriEsploraAttivi.contains("Bici")) p21.setStyle("-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
+            else p21.setStyle("-fx-background-color: #E5E7EB; -fx-background-radius: 6; -fx-padding: 8 16;");
+        });
+        p21.setOnAction(e->gestoreFiltriEsplora("Bici"));
+        p31.setOnMouseMoved(event -> p31.setStyle("-fx-background-color: #E5E7EB; -fx-background-radius: 6; -fx-padding: 8 16;"));
+        p31.setOnMouseExited(event -> {
+            if (this.filtriEsploraAttivi.contains("Auto")) p31.setStyle("-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
+            else p31.setStyle("-fx-background-color: #E5E7EB; -fx-background-radius: 6; -fx-padding: 8 16;");
+        });
+        p31.setOnAction(e->gestoreFiltriEsplora("Auto"));
+        p41.setOnMouseMoved(event -> p41.setStyle("-fx-background-color: #E5E7EB; -fx-background-radius: 6; -fx-padding: 8 16;"));
+        p41.setOnMouseExited(event -> {
+            if (this.filtriEsploraAttivi.contains("Mezzi pesanti (Camper,Truck)")) p41.setStyle("-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
+            else p41.setStyle("-fx-background-color: #E5E7EB; -fx-background-radius: 6; -fx-padding: 8 16;");
+        });
+        p41.setOnAction(e->gestoreFiltriEsplora("Mezzi pesanti (Camper,Truck)"));
+        p51.setOnMouseMoved(event -> p51.setStyle("-fx-background-color: #E5E7EB; -fx-background-radius: 6; -fx-padding: 8 16;"));
+        p51.setOnMouseExited(event -> {
+            if (this.filtriEsploraAttivi.contains("Ricollegarsi alla natura")) p51.setStyle("-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
+            else p51.setStyle("-fx-background-color: #E5E7EB; -fx-background-radius: 6; -fx-padding: 8 16;");
+        });
+        p51.setOnAction(e->gestoreFiltriEsplora("Ricollegarsi alla natura"));
+        p61.setOnMouseMoved(event -> p61.setStyle("-fx-background-color: #E5E7EB; -fx-background-radius: 6; -fx-padding: 8 16;"));
+        p61.setOnMouseExited(event -> {
+            if (this.filtriEsploraAttivi.contains("Rilassarsi")) p61.setStyle("-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
+            else p61.setStyle("-fx-background-color: #E5E7EB; -fx-background-radius: 6; -fx-padding: 8 16;");
+        });
+        p61.setOnAction(e->gestoreFiltriEsplora("Rilassarsi"));
+        p71.setOnMouseMoved(event -> p71.setStyle("-fx-background-color: #E5E7EB; -fx-background-radius: 6; -fx-padding: 8 16;"));
+        p71.setOnMouseExited(event -> {
+            if (this.filtriEsploraAttivi.contains("Visitare")) p71.setStyle("-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
+            else p71.setStyle("-fx-background-color: #E5E7EB; -fx-background-radius: 6; -fx-padding: 8 16;");
+        });
+        p71.setOnAction(e->gestoreFiltriEsplora("Visitare"));
     }
     @FXML
-    public void goToHome(){ gestSchermate(true,false,false); }
+    public void goToHome(){ gestSchermate(true,false,false,false); }
     @FXML
     public void goToTrip(){
-        try {
-            gestSchermate(false,true,false);
-            String risposta=gestoreHTTP.inviaRichiestaConParametri(URL_BASE+"getListaViaggi.php",mapper.writeValueAsString(this.utenteAttuale));
-            Messaggio<List<Viaggio>> m=mapper.readValue(risposta, new TypeReference<Messaggio<List<Viaggio>>>() {}); //Lo converto nella variabile messaggio
-            if (!m.getConfermaAzione())
-                animazioneBottone(aggiungiNuovoViaggio,"-fx-background-color: #BE2538; -fx-background-radius: 6; -fx-padding: 8 16;","-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
-            else{
-                this.listaViaggiAttuale =new ListaViaggi(m.getParametro1()); //Converto l'array di viaggi nel nostro oggetto lista viaggi
-                popolaScroolPane();
+        // Spinner iniziale (overlay)
+        ProgressIndicator spinner = new ProgressIndicator();
+        spinner.setMaxSize(40, 40);
+        spinner.setStyle("-fx-progress-color: #3B82F6;");
+        VBox overlaySpinner = new VBox(spinner);
+        overlaySpinner.setAlignment(Pos.CENTER);
+        overlaySpinner.setStyle("-fx-background-color: rgba(255,255,255,0.6);");
+        overlaySpinner.setPrefSize(base.getWidth(), base.getHeight());
+
+        base.getChildren().add(overlaySpinner);
+
+        //Gestione filtri
+        this.filtriViaggiAttivi.clear(); //Cancello i possibili rimasugli precedenti
+        this.filtriViaggiAttivi.add("Piedi"); //piedi
+        this.filtriViaggiAttivi.add("Bici"); //bici
+        this.filtriViaggiAttivi.add("Auto"); //auto
+        this.filtriViaggiAttivi.add("Mezzi pesanti (Camper,Truck)"); //mezzipesanti
+        this.filtriViaggiAttivi.add("Ricollegarsi alla natura"); //riconnettersi
+        this.filtriViaggiAttivi.add("Rilassarsi"); //rilassarsi
+        this.filtriViaggiAttivi.add("Visitare"); //visitare
+
+        // Task in background per inviare richiesta, avvio con un secondo thread il caricamento così posso mostare sulò thread principale ui lo spinner di caricamento, potrà non essere efficentissimo o il modo migliore ma è quello di cui sono capace ;-)
+        Task<Void> task = new Task<>() {
+            @Override
+            protected Void call() throws Exception {
+                try {
+                    gestSchermate(false,true,false,false);
+                    String risposta = gestoreHTTP.inviaRichiestaConParametri(URL_BASE + "getListaViaggi.php",mapper.writeValueAsString(utenteAttuale));
+                    Messaggio<List<Viaggio>> m = mapper.readValue(risposta, new TypeReference<Messaggio<List<Viaggio>>>() {});
+                    if (!m.getConfermaAzione()) {
+                        Platform.runLater(() -> {
+                            base.getChildren().remove(overlaySpinner);
+                            goToHome();
+                        });
+                        return null;
+                    }else{
+                        Platform.runLater(() -> {
+                            base.getChildren().remove(overlaySpinner);
+                            listaViaggiAttuale =new ListaViaggi(m.getParametro1()); //Converto l'array di viaggi precedente (par 1 di m) nel nostro oggetto lista viaggi
+                            popolaScroolPane();
+                        });
+                    }
+                } catch (Exception ex) {
+                    Platform.runLater(() -> {
+                        base.getChildren().remove(overlaySpinner);
+                        goToHome();
+                    });
+                }
+                return null;
             }
-        } catch (Exception e) {
-            animazioneBottone(aggiungiNuovoViaggio,"-fx-background-color: #BE2538; -fx-background-radius: 6; -fx-padding: 8 16;","-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
-        }
+        };
+
+        new Thread(task).start();
     }
     @FXML
     public void goToProfile(){
-        gestSchermate(false,false,true);
+        gestSchermate(false,false,true,false);
         t1.setText(utenteAttuale.getNome().trim());
         t2.setText(utenteAttuale.getEmail().trim());
         t3.setText(utenteAttuale.getPsw().trim());
@@ -147,7 +285,68 @@ public class HomeController {
 
     }
     @FXML
-    private void gestSchermate(boolean isHomeBoxOn, boolean isTripBoxOn, boolean isProfileBoxOn){
+    public void goToExplore() {
+        // Spinner iniziale (overlay)
+        ProgressIndicator spinner = new ProgressIndicator();
+        spinner.setMaxSize(40, 40);
+        spinner.setStyle("-fx-progress-color: #3B82F6;");
+        VBox overlaySpinner = new VBox(spinner);
+        overlaySpinner.setAlignment(Pos.CENTER);
+        overlaySpinner.setStyle("-fx-background-color: rgba(255,255,255,0.6);");
+        overlaySpinner.setPrefSize(base.getWidth(), base.getHeight());
+
+        base.getChildren().add(overlaySpinner);
+
+        //Gestione filtri
+        this.filtriEsploraAttivi.clear(); //Cancello i possibili rimasugli precedenti
+        this.filtriEsploraAttivi.add("Piedi"); //piedi
+        this.filtriEsploraAttivi.add("Bici"); //bici
+        this.filtriEsploraAttivi.add("Auto"); //auto
+        this.filtriEsploraAttivi.add("Mezzi pesanti (Camper,Truck)"); //mezzipesanti
+        this.filtriEsploraAttivi.add("Ricollegarsi alla natura"); //riconnettersi
+        this.filtriEsploraAttivi.add("Rilassarsi"); //rilassarsi
+        this.filtriEsploraAttivi.add("Visitare"); //visitare
+
+        // Task in background per inviare richiesta, avvio con un secondo thread il caricamento così posso mostare sulò thread principale ui lo spinner di caricamento, potrà non essere efficentissimo o il modo migliore ma è quello di cui sono capace ;-)
+        Task<Void> task = new Task<>() {
+            @Override
+            protected Void call() throws Exception {
+                try {
+                    gestSchermate(false,false,false,true);
+                    if(listaViaggiAttuale==null){
+                        String risposta = gestoreHTTP.inviaRichiestaConParametri(URL_BASE + "getListaViaggi.php",mapper.writeValueAsString(utenteAttuale));
+                        Messaggio<List<Viaggio>> m = mapper.readValue(risposta, new TypeReference<Messaggio<List<Viaggio>>>() {});
+                        if (!m.getConfermaAzione()) {
+                            Platform.runLater(() -> {
+                                base.getChildren().remove(overlaySpinner);
+                                goToHome();
+                            });
+                            return null;
+                        }
+                        listaViaggiAttuale= new ListaViaggi(m.getParametro1());
+                    }
+                    String risposta2=groq.generaViaggiEsplora(mapper.writeValueAsString(listaViaggiAttuale)).toString();
+                    viaggioEsploraGroq = mapper.readValue(risposta2,  ViaggioEsplora[].class );
+                    if(viaggiStandard==null)
+                        viaggiStandard=mapper.readValue(readJSONFromFile(),ViaggioEsplora[].class);
+                    Platform.runLater(() -> {
+                        base.getChildren().remove(overlaySpinner);
+                        popolaEsplora(viaggioEsploraGroq,viaggiStandard);
+                    });
+                } catch (Exception ex) {
+                    Platform.runLater(() -> {
+                        base.getChildren().remove(overlaySpinner);
+                        goToHome();
+                    });
+                }
+                return null;
+            }
+        };
+
+        new Thread(task).start();
+    }
+    @FXML
+    private void gestSchermate(boolean isHomeBoxOn, boolean isTripBoxOn, boolean isProfileBoxOn, boolean isExploreBoxOn){
         homeBox.setDisable(!isHomeBoxOn);
         homeBox.setVisible(isHomeBoxOn);
         //Controllo aggiuntivo data l'iniziale cambio colore del pulsante
@@ -163,6 +362,11 @@ public class HomeController {
         tripBox.setVisible(isTripBoxOn);
         if (tripBox.isVisible()) b3.setStyle("-fx-background-color: #E5E7EB; -fx-background-radius: 8; -fx-padding: 8;");
         else b3.setStyle("-fx-background-color: #f9fafb; -fx-background-radius: 8; -fx-padding: 8;");
+
+        exploreBox.setDisable(!isExploreBoxOn);
+        exploreBox.setVisible(isExploreBoxOn);
+        if (exploreBox.isVisible()) b2.setStyle("-fx-background-color: #E5E7EB; -fx-background-radius: 8; -fx-padding: 8;");
+        else b2.setStyle("-fx-background-color: #f9fafb; -fx-background-radius: 8; -fx-padding: 8;");
 
         //Fisso
         intoTripBox.setDisable(true);
@@ -186,12 +390,80 @@ public class HomeController {
         }
     }
 
-    /*SEZIONE VIAGGI*/
-    @FXML
-    private void popolaScroolPane(){
-        scrollTrip.getChildren().clear();
-        for(Viaggio v: listaViaggiAttuale.getList()){
-            scrollTrip.getChildren().add(creaViaggioBox(v,this.utenteAttuale.getNome())); //Escamotage perchè tanto non possono esserci più utenti per la stessa lista viaggi
+    /*SEZIONE ESPLORA*/
+    private void popolaEsplora(ViaggioEsplora[] viaggioEsploraGroq, ViaggioEsplora[] viaggioEsploraComune){
+        try {
+            for(ViaggioEsplora vg:viaggioEsploraGroq){
+                scrollExplore.getChildren().add(createCardEsplora(vg.getViaggio(),vg.getCosaVedere(),urlDaUnsplash(vg.getViaggio().getNomeUnivoco()),true));
+            }
+            for(ViaggioEsplora vg:viaggioEsploraComune){
+                if(scrollExplore.getChildren().contains(createCardEsplora(vg.getViaggio(),vg.getCosaVedere(),urlDaUnsplash(vg.getViaggio().getNomeUnivoco()),false)))
+                    break;
+                else
+                    scrollExplore.getChildren().add(createCardEsplora(vg.getViaggio(),vg.getCosaVedere(),urlDaUnsplash(vg.getViaggio().getNomeUnivoco()),false));
+            }
+        } catch (Exception e) {
+            goToHome();
+            System.err.println(e.getMessage());
+        }
+    }
+    private HBox createCardEsplora(Viaggio v,String desc,String urlimg,boolean isIAGenerated) {
+        // Root
+        HBox root = new HBox();
+        root.setAlignment(Pos.CENTER_LEFT);
+        root.setPrefSize(507, 194);
+        root.setStyle(
+                "-fx-background-color: white;" +
+                        "-fx-background-radius: 12;" +
+                        "-fx-padding: 16;" +
+                        "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 4);"
+        );
+
+        // Immagine
+        ImageView imageView = new ImageView(new Image(urlimg, true)); // true = backgroundLoading
+        imageView.setFitWidth(156);
+        imageView.setFitHeight(165);
+        imageView.setPreserveRatio(true);
+
+        // Spaziatore tra immagine e testo
+        Region spacer1 = new Region();
+        spacer1.setPrefSize(67, 166);
+
+        // Colonna di destra
+        VBox rightBox = new VBox(4);
+        rightBox.setPrefSize(318, 166);
+
+        Label titolo = new Label("Destinazione :"+v.getNomeUnivoco()); //data la generazione del viaggio il nome univoco combacierà con la destinazione
+        if(isIAGenerated) titolo.setText("Destinazione :"+v.getNomeUnivoco()+" SCELTA PER TE DA SALVINO");
+        titolo.setPrefSize(285, 20);
+        titolo.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
+
+        Label tipo = new Label("Tipo di viaggio :"+v.getObiettivo()+" Mezzo:"+v.getMezzoUsato());
+        tipo.setPrefSize(286, 34);
+        tipo.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-text-fill: #4B5563; -fx-font-size: 12px;");
+
+        Label tappe = new Label("Tappe del viaggio: "+v.getItinerario().ottieniStringaTappe());
+        tappe.setPrefSize(286, 31);
+        tappe.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-text-fill: #4B5563; -fx-font-size: 12px;");
+
+        Label cosaVedere = new Label(desc);
+        cosaVedere.setPrefSize(286, 46);
+        cosaVedere.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-text-fill: #4B5563; -fx-font-size: 12px;");
+
+        // Riga bottone in basso a destra
+        HBox buttonRow = new HBox();
+        buttonRow.setAlignment(Pos.BOTTOM_RIGHT);
+        buttonRow.setPrefSize(286, 37);
+
+        Region spacer2 = new Region();
+        HBox.setHgrow(spacer2, Priority.ALWAYS);
+
+        Button btn = new Button("Aggiungi e modifica");
+        btn.setPrefSize(160, 26);
+        btn.setStyle("-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-text-fill: white;");
+        btn.setOnAction(e->{
+            goToTrip();
+            scrollTrip.getChildren().add(creaViaggioBox(v,this.utenteAttuale.getNome()));
             //Spaziatore
             Pane s = new Pane();
             s.setPrefHeight(14);
@@ -201,6 +473,45 @@ public class HomeController {
             s.setMinWidth(147);
             s.setMaxWidth(147);
             scrollTrip.getChildren().add(s);
+        });
+        buttonRow.getChildren().addAll(spacer2, btn);
+        rightBox.getChildren().addAll(titolo, tipo, tappe, cosaVedere, buttonRow);
+        root.getChildren().addAll(imageView, spacer1, rightBox);
+
+        return root;
+    }
+    private void gestoreFiltriEsplora(String categoriaPremuta){
+        if(!this.filtriEsploraAttivi.contains(categoriaPremuta))
+            this.filtriEsploraAttivi.add(categoriaPremuta);
+        else
+            this.filtriEsploraAttivi.remove(categoriaPremuta);
+        popolaEsplora(viaggioEsploraGroq,viaggiStandard);
+    }
+
+    /*SEZIONE VIAGGI*/
+    private void gestoreFiltriViaggi(String categoriaPremuta){
+        if(!this.filtriViaggiAttivi.contains(categoriaPremuta))
+            this.filtriViaggiAttivi.add(categoriaPremuta);
+        else
+            this.filtriViaggiAttivi.remove(categoriaPremuta);
+        popolaScroolPane();
+    }
+    @FXML
+    private void popolaScroolPane(){
+        scrollTrip.getChildren().clear();
+        for(Viaggio v: listaViaggiAttuale.getList()){
+            if(this.filtriViaggiAttivi.contains(v.getObiettivo()) || this.filtriViaggiAttivi.contains(v.getMezzoUsato())){
+                scrollTrip.getChildren().add(creaViaggioBox(v,this.utenteAttuale.getNome())); //Escamotage perchè tanto non possono esserci più utenti per la stessa lista viaggi
+                //Spaziatore
+                Pane s = new Pane();
+                s.setPrefHeight(14);
+                s.setMinHeight(14);
+                s.setMaxHeight(14);
+                s.setPrefWidth(147);
+                s.setMinWidth(147);
+                s.setMaxWidth(147);
+                scrollTrip.getChildren().add(s);
+            }
         }
     }
     private HBox creaViaggioBox(Viaggio viaggioCorrente, String creatoreXRimozione) {
@@ -218,7 +529,11 @@ public class HomeController {
         hBox.setEffect(dropShadow);
 
         // Immagine
-        ImageView imageView = new ImageView(new Image(getClass().getResourceAsStream("/praticaest1/praticaest1/img/plane-icon.png")));
+        ImageView imageView;
+        if(viaggioCorrente.getMezzoUsato().equalsIgnoreCase("piedi")) imageView= new ImageView(new Image(getClass().getResourceAsStream("/praticaest1/praticaest1/img/i1.png")));
+        else if(viaggioCorrente.getMezzoUsato().equalsIgnoreCase("bici")) imageView= new ImageView(new Image(getClass().getResourceAsStream("/praticaest1/praticaest1/img/i2.png")));
+        else if(viaggioCorrente.getMezzoUsato().equalsIgnoreCase("auto")) imageView= new ImageView(new Image(getClass().getResourceAsStream("/praticaest1/praticaest1/img/i3.png")));
+        else imageView= new ImageView(new Image(getClass().getResourceAsStream("/praticaest1/praticaest1/img/i4.png")));
         imageView.setFitHeight(36);
         imageView.setFitWidth(36);
 
@@ -226,7 +541,7 @@ public class HomeController {
         VBox vBox = new VBox();
         vBox.setSpacing(4);
 
-        Label titoloLabel = new Label(viaggioCorrente.getNomeUnivoco());
+        Label titoloLabel = new Label(viaggioCorrente.getNomeUnivoco()+" / "+viaggioCorrente.getObiettivo());
         titoloLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
         titoloLabel.setOnMouseClicked(e ->{
             //Accesso alla schermata interna
@@ -240,8 +555,9 @@ public class HomeController {
             sezBudget();
         });
 
-        Label removeLabel = new Label(creatoreXRimozione+" cancella");
+        Label removeLabel = new Label("Elimina");
         removeLabel.setStyle("-fx-text-fill: #4B5563; -fx-font-size: 12px;");
+        removeLabel.setUnderline(true);
         removeLabel.setOnMouseClicked(e->{ //Rimozione e ricarica
             try {
                 listaViaggiAttuale.removeElemento(viaggioCorrente);
@@ -348,7 +664,6 @@ public class HomeController {
         obiettivoScelto.setStyle("-fx-background-radius: 8; -fx-padding: 10; -fx-background-color: white;");
         VBox boxObiettivo = new VBox(5, lObiettivo, obiettivoScelto);
         boxObiettivo.setAlignment(Pos.TOP_LEFT);
-
 
         // Pulsante Salva
         Button saveButton = new Button("Salva");
@@ -831,7 +1146,7 @@ public class HomeController {
         mappa.setPrefWidth(600); // opzionale, se vuoi una larghezza fissa
         mappa.setStyle("-fx-background-color: white; -fx-border-color: #E0E0E0; -fx-border-radius: 10; -fx-background-radius: 10;");
 
-        Button apriInGoogleMaps = new Button("Apri in Google Maps");
+        Button apriInGoogleMaps = new Button("Vedi in GMaps");
         apriInGoogleMaps.setStyle(
                 "-fx-background-color: #3B82F6;" +
                         "-fx-background-radius: 6;" +
@@ -860,21 +1175,21 @@ public class HomeController {
         VBox.setVgrow(mappa, Priority.ALWAYS);
 
         //Creazione Calendario
-        Label l1 = new Label("Date selezionate");
-        l1.setPrefSize(131, 32);
+        Label l1 = new Label("Date selezionate (Clicca per vedere di più)");
+        l1.setPrefHeight(32);
         l1.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
         viaggioAttuale.getItinerario().ordinaTappe(); //Ordiniamo sempre non si sa mai
-        CalendarioMensile calendario=new CalendarioMensile(YearMonth.from(viaggioAttuale.getItinerario().getDateTappe().getFirst()),viaggioAttuale.getItinerario(),base,workTrip);
+        CalendarioMensile calendario=new CalendarioMensile(YearMonth.from(viaggioAttuale.getItinerario().getDateTappe().getFirst()),viaggioAttuale.getItinerario(),base,workTrip,groq);
         VBox c2 = new VBox(10, l1, calendario);
         c2.setPadding(new Insets(10));
-        VBox.setVgrow(mappa, Priority.ALWAYS);
+        VBox.setVgrow(calendario, Priority.ALWAYS);
+
         //Creazione lista gestionale tappe
-        Label l2 = new Label("Tappe scelte");
-        l2.setPrefSize(131, 32);
+        Label l2 = new Label("Modifica le Tappe Scelte");
+        l2.setPrefHeight(32);
         l2.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
         VBox c3 = new VBox(10, l2);
         c3.setPadding(new Insets(10));
-        VBox.setVgrow(mappa, Priority.ALWAYS);
         //Aggiunta
         vBox.getChildren().addAll(contenitoreMappa,creaSpaziatore(false),c2,creaSpaziatore(false),c3);
 
@@ -1582,7 +1897,7 @@ public class HomeController {
         Label titoloLabel = new Label();
         titoloLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
 
-        Label l3 = new Label("SALVINO CONSIGLIA ⬆️");
+        Label l3 = new Label("SALVINO CONSIGLIA ⬆");
         l3.setStyle("-fx-text-fill: #4B5563; -fx-font-size: 12px;");
 
         // Dettagli / Edit
@@ -1598,7 +1913,7 @@ public class HomeController {
                 return;
             }
             Elemento el = elementi[index.get()];
-            titoloLabel.setText(el.getNome() + "  Quantità < A Scelta");
+            titoloLabel.setText(el.getNome());
             titoloLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px; -fx-strikethrough: " + el.isAcquistato() + ";");
 
             l3.setDisable(false);
@@ -1755,7 +2070,96 @@ public class HomeController {
         }
         return url.toString();
     }
+    private String urlDaUnsplash(String soggettoFotoRicercata) throws IOException, InterruptedException {
+        // 1) Leggo la key dal .env
+        String accessKey = Dotenv.load().get("UNSPLASH_ACCESS_KEY");
+        if (accessKey == null || accessKey.isBlank()) {
+            throw new IllegalStateException("UNSPLASH_ACCESS_KEY non trovato nel file .env");
+        }
 
+        // 2) Costruisco la richiesta come specificato dalle docs di unsplash
+        String endpoint = "https://api.unsplash.com/search/photos?per_page=1&query="
+                + URLEncoder.encode(soggettoFotoRicercata, StandardCharsets.UTF_8);
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(endpoint))
+                .header("Authorization", "Client-ID " + accessKey)
+                .header("Accept-Version", "v1")
+                .GET()
+                .build();
+
+        // 3) Invio e leggo la risposta
+        HttpResponse<String> response = HttpClient.newHttpClient()
+                .send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (response.statusCode() != 200) {
+            throw new IOException("Errore Unsplash: HTTP " + response.statusCode() + " - " + response.body());
+        }
+
+        // 4) Parsing JSON e ritorno dell'URL
+        JsonNode risposta = new ObjectMapper().readTree(response.body()).path("results"); //Vedi risposta tipo sottostante per capire
+        if (!risposta.isArray() || risposta.isEmpty()) return null;
+        JsonNode normale = risposta.get(0).path("urls").path("regular");
+        return normale.isMissingNode() ? null : normale.asText();
+
+        /**
+         * {
+         *   "total": 3451,
+         *   "total_pages": 3451,
+         *   "results": [
+         *     {
+         *       "id": "eOLpJytrbsQ",
+         *       "created_at": "2014-11-18T14:35:36-05:00",
+         *       "width": 4000,
+         *       "height": 3000,
+         *       "color": "#A7A2A1",
+         *       "likes": 286,
+         *       "user": {
+         *         "id": "Ul0QVz12Goo",
+         *         "username": "ugmonk",
+         *         "name": "Jeff Sheldon",
+         *         "first_name": "Jeff",
+         *         "last_name": "Sheldon",
+         *         "portfolio_url": "http://ugmonk.com/",
+         *         "profile_image": {
+         *           "small": "https://images.unsplash.com/profile-1441298803695-accd94000cac?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&cs=tinysrgb&fit=crop&h=32&w=32&s=7cfe3b93750cb0c93e2f7caec08b5a41",
+         *           "medium": "https://images.unsplash.com/profile-1441298803695-accd94000cac?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&cs=tinysrgb&fit=crop&h=64&w=64&s=5a9dc749c43ce5bd60870b129a40902f",
+         *           "large": "https://images.unsplash.com/profile-1441298803695-accd94000cac?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&cs=tinysrgb&fit=crop&h=128&w=128&s=32085a077889586df88bfbe406692202"
+         *         },
+         *         "links": {
+         *           "self": "https://api.unsplash.com/users/ugmonk",
+         *           "html": "http://unsplash.com/@ugmonk",
+         *           "photos": "https://api.unsplash.com/users/ugmonk/photos",
+         *           "likes": "https://api.unsplash.com/users/ugmonk/likes"
+         *         }
+         *       },
+         *       "urls": {
+         *         "raw": "https://images.unsplash.com/photo-1416339306562-f3d12fefd36f",
+         *         "full": "https://hd.unsplash.com/photo-1416339306562-f3d12fefd36f",
+         *         "regular": "https://images.unsplash.com/photo-1416339306562-f3d12fefd36f?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max&s=92f3e02f63678acc8416d044e189f515",
+         *         "small": "https://images.unsplash.com/photo-1416339306562-f3d12fefd36f?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&s=263af33585f9d32af39d165b000845eb",
+         *         "thumb": "https://images.unsplash.com/photo-1416339306562-f3d12fefd36f?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=200&fit=max&s=8aae34cf35df31a592f0bef16e6342ef"
+         *       },
+         *       "links": {
+         *         "self": "https://api.unsplash.com/photos/eOLpJytrbsQ",
+         *         "html": "http://unsplash.com/photos/eOLpJytrbsQ",
+         *         "download": "http://unsplash.com/photos/eOLpJytrbsQ/download"
+         *       }
+         *     }
+         *   ]
+         * }*/
+    }
+    private String readJSONFromFile(){
+        String s="";
+        try (BufferedReader rd=new BufferedReader(new FileReader("WAYpp/CODE/pratica-est-1/src/main/resources/praticaest1/praticaest1/information/viaggiStandard.json"))){
+            String next;
+            while ((next=rd.readLine())!=null)
+                s=s+next;
+        } catch (Exception e) {
+           System.err.println(e.getMessage());
+        }
+        return s;
+    }
 
 }
 
@@ -1810,4 +2214,23 @@ class UtenteAggiornato{
     public void setVecchio(Utente vecchio) { this.vecchio = vecchio; }
     public Utente getNuovo() { return nuovo; }
     public void setNuovo(Utente nuovo) { this.nuovo = nuovo; }
+}
+class ViaggioEsplora{
+    private Viaggio viaggio;
+    private String cosaVedere;
+    private String urlImmagine;
+
+    public ViaggioEsplora(){}
+    public ViaggioEsplora(Viaggio viaggio, String cosaVedere, String urlImmagine) {
+        this.viaggio = viaggio;
+        this.cosaVedere = cosaVedere;
+        this.urlImmagine = urlImmagine;
+    }
+
+    public Viaggio getViaggio() { return viaggio; }
+    public void setViaggio(Viaggio viaggio) { this.viaggio = viaggio; }
+    public String getCosaVedere() { return cosaVedere; }
+    public void setCosaVedere(String cosaVedere) { this.cosaVedere = cosaVedere; }
+    public String getUrlImmagine() { return urlImmagine; }
+    public void setUrlImmagine(String urlImmagine) { this.urlImmagine = urlImmagine; }
 }

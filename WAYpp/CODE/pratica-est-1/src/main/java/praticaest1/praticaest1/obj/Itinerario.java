@@ -34,5 +34,15 @@ public class Itinerario {
         return dateTappe;
     }
     public void ordinaTappe(){ Collections.sort(this.tappe); }
+    public String ottieniStringaTappe(){
+        String s="";
+        for (int i=0;i<this.tappe.size();i++){
+            if (i==this.tappe.size()-1)
+                s=s+"\s"+this.tappe.get(i).getNome();
+            else
+                s=s+"\s"+this.tappe.get(i).getNome()+"\s-";
+        }
+        return s;
+    }
 }
 

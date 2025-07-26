@@ -17,9 +17,11 @@ public class LocalizzatoreGeo {
         mapper.registerModule(new JavaTimeModule());
         //Uso il mapper per comodità visto che lo so già usare ma se volete potete cambiarlo con ciò che preferite,
         //inoltre ricordatevi di aggiungere le dipendenze jackson-databind a maven
-        List<RisultatoGeo> risultati = mapper.readValue(gestoreHTTP.inviaRichiesta("https://geocode.maps.co/search?q="+luogoRicercato+"&api_key="+dotenv.get("API_GEO_KEY")), new TypeReference<List<RisultatoGeo>>() {});
-        if (risultati.isEmpty()) return "-";
-        return risultati.getFirst().getLat()+"-"+risultati.getFirst().getLon();
+        String responseString=gestoreHTTP.inviaRichiesta("https://geocode.maps.co/search?q="+luogoRicercato+"&api_key="+dotenv.get("API_GEO_KEY"));
+        List<RisultatoGeo> risultati = mapper.readValue(responseString, new TypeReference<List<RisultatoGeo>>() {});
+        if (risultati.isEmpty()) return "&";
+        Thread.sleep(1000); //Pausa di 1 sec per l'api
+        return risultati.getFirst().getLat()+"&"+risultati.getFirst().getLon();
     }
 }
 @JsonIgnoreProperties(ignoreUnknown = true)

@@ -1,0 +1,725 @@
+[
+  {
+    "viaggio": {
+      "nomeUnivoco": "Roma",
+      "mezzoUsato": "Piedi",
+      "obiettivo": "Visitare",
+      "budget": {
+        "budgetIniziale": 600,
+        "budgetSpeso": 0,
+        "tieniConto": []
+      },
+      "itinerario": {
+        "nome": "Roma",
+        "tappe": [
+          { "nome": "Colosseo", "latitudine": 41.8902, "longitudine": 12.4922, "data": [2025, 9, 12] },
+          { "nome": "Fori Imperiali", "latitudine": 41.8925, "longitudine": 12.4853, "data": [2025, 9, 13] },
+          { "nome": "Piazza Navona", "latitudine": 41.8992, "longitudine": 12.4731, "data": [2025, 9, 14] }
+        ]
+      },
+      "listaElementi": {
+        "list": [
+          { "nome": "Borraccia termica", "descrizione": "Per mantenere l'acqua fresca durante le visite.", "luogoAcquisto": "Negozio sportivo", "isAcquistato": false },
+          { "nome": "Scarpe comode", "descrizione": "Per camminare a lungo in città.", "luogoAcquisto": "Calzoleria", "isAcquistato": false },
+          { "nome": "Power bank", "descrizione": "Per tenere carichi smartphone e fotocamera.", "luogoAcquisto": "Elettronica", "isAcquistato": false }
+        ]
+      }
+    },
+    "cosaVedere": "Visita il Colosseo e scopri la vita nell’antica Roma.\nPasseggia tra i Fori Imperiali fino al Campidoglio.\nRilassati a Piazza Navona e assaggia un gelato artigianale.",
+    "urlImmagine": "https://example.com/images/roma.jpg"
+  },
+  {
+    "viaggio": {
+      "nomeUnivoco": "Firenze",
+      "mezzoUsato": "Piedi",
+      "obiettivo": "Visitare",
+      "budget": {
+        "budgetIniziale": 500,
+        "budgetSpeso": 0,
+        "tieniConto": []
+      },
+      "itinerario": {
+        "nome": "Firenze",
+        "tappe": [
+          { "nome": "Duomo di Firenze", "latitudine": 43.7731, "longitudine": 11.2556, "data": [2025, 4, 10] },
+          { "nome": "Ponte Vecchio", "latitudine": 43.7679, "longitudine": 11.2531, "data": [2025, 4, 11] },
+          { "nome": "Galleria degli Uffizi", "latitudine": 43.7687, "longitudine": 11.2550, "data": [2025, 4, 12] }
+        ]
+      },
+      "listaElementi": {
+        "list": [
+          { "nome": "Guida musei", "descrizione": "Con informazioni storiche e orari.", "luogoAcquisto": "Libreria", "isAcquistato": false },
+          { "nome": "Scarpe antiscivolo", "descrizione": "Per le strade acciottolate.", "luogoAcquisto": "Calzoleria", "isAcquistato": false },
+          { "nome": "Ombrello pieghevole", "descrizione": "Per eventuali piogge primaverili.", "luogoAcquisto": "Supermercato", "isAcquistato": false }
+        ]
+      }
+    },
+    "cosaVedere": "Ammira il Duomo e sali sulla cupola per un panorama mozzafiato.\nAttraversa il Ponte Vecchio e visita le botteghe degli orafi.\nEsplora gli Uffizi e scopri capolavori del Rinascimento.",
+    "urlImmagine": "https://example.com/images/firenze.jpg"
+  },
+  {
+    "viaggio": {
+      "nomeUnivoco": "Venezia",
+      "mezzoUsato": "Piedi",
+      "obiettivo": "Visitare",
+      "budget": {
+        "budgetIniziale": 700,
+        "budgetSpeso": 0,
+        "tieniConto": []
+      },
+      "itinerario": {
+        "nome": "Venezia",
+        "tappe": [
+          { "nome": "Piazza San Marco", "latitudine": 45.4340, "longitudine": 12.3388, "data": [2025, 5, 5] },
+          { "nome": "Canal Grande", "latitudine": 45.4372, "longitudine": 12.3346, "data": [2025, 5, 6] },
+          { "nome": "Ponte di Rialto", "latitudine": 45.4380, "longitudine": 12.3358, "data": [2025, 5, 7] }
+        ]
+      },
+      "listaElementi": {
+        "list": [
+          { "nome": "Scarpe impermeabili", "descrizione": "Per le giornate di acqua alta.", "luogoAcquisto": "Negozio calzature", "isAcquistato": false },
+          { "nome": "Guida isole", "descrizione": "Mappa e descrizioni di Murano e Burano.", "luogoAcquisto": "Libreria", "isAcquistato": false },
+          { "nome": "Zaino impermeabile", "descrizione": "Protegge gli oggetti dall’umidità.", "luogoAcquisto": "Negozio sportivo", "isAcquistato": false }
+        ]
+      }
+    },
+    "cosaVedere": "Perditi tra calli e campielli fino a Piazza San Marco.\nFai un giro in gondola lungo il Canal Grande.\nVisita le vetrerie di Murano e i merletti di Burano.",
+    "urlImmagine": "https://example.com/images/venezia.jpg"
+  },
+  {
+    "viaggio": {
+      "nomeUnivoco": "Napoli",
+      "mezzoUsato": "Auto",
+      "obiettivo": "Visitare",
+      "budget": {
+        "budgetIniziale": 450,
+        "budgetSpeso": 0,
+        "tieniConto": []
+      },
+      "itinerario": {
+        "nome": "Napoli",
+        "tappe": [
+          { "nome": "Centro Storico", "latitudine": 40.8518, "longitudine": 14.2681, "data": [2025, 6, 2] },
+          { "nome": "Lungomare Caracciolo", "latitudine": 40.8330, "longitudine": 14.2251, "data": [2025, 6, 3] },
+          { "nome": "Vesuvio", "latitudine": 40.8224, "longitudine": 14.4289, "data": [2025, 6, 4] }
+        ]
+      },
+      "listaElementi": {
+        "list": [
+          { "nome": "Scarpe da trekking", "descrizione": "Per l'escursione sul Vesuvio.", "luogoAcquisto": "Negozio sportivo", "isAcquistato": false },
+          { "nome": "Mappa della città", "descrizione": "Per non perdersi tra i vicoli.", "luogoAcquisto": "Libreria", "isAcquistato": false },
+          { "nome": "Cappello estivo", "descrizione": "Protezione dal sole intenso.", "luogoAcquisto": "Negozio abbigliamento", "isAcquistato": false }
+        ]
+      }
+    },
+    "cosaVedere": "Assaggia la pizza nel quartiere Spaccanapoli.\nPasseggia sul Lungomare e ammira il Golfo.\nSalita al cratere del Vesuvio per un’esperienza indimenticabile.",
+    "urlImmagine": "https://example.com/images/napoli.jpg"
+  },
+  {
+    "viaggio": {
+      "nomeUnivoco": "Milano",
+      "mezzoUsato": "Piedi",
+      "obiettivo": "Visitare",
+      "budget": {
+        "budgetIniziale": 500,
+        "budgetSpeso": 0,
+        "tieniConto": []
+      },
+      "itinerario": {
+        "nome": "Milano",
+        "tappe": [
+          { "nome": "Duomo di Milano", "latitudine": 45.4642, "longitudine": 9.1900, "data": [2025, 3, 15] },
+          { "nome": "Galleria Vittorio Emanuele II", "latitudine": 45.4646, "longitudine": 9.1894, "data": [2025, 3, 16] },
+          { "nome": "Castello Sforzesco", "latitudine": 45.4703, "longitudine": 9.1799, "data": [2025, 3, 17] }
+        ]
+      },
+      "listaElementi": {
+        "list": [
+          { "nome": "Guida shopping", "descrizione": "Per scoprire le boutique del Quadrilatero.", "luogoAcquisto": "Libreria", "isAcquistato": false },
+          { "nome": "Fotocamera", "descrizione": "Per immortalare il Duomo.", "luogoAcquisto": "Elettronica", "isAcquistato": false },
+          { "nome": "Biglietti metro", "descrizione": "Per spostarsi velocemente.", "luogoAcquisto": "Tabacchi", "isAcquistato": false }
+        ]
+      }
+    },
+    "cosaVedere": "Visita il Duomo e sali sulle terrazze per un panorama unico.\nPasseggia nella Galleria storica tra boutique di lusso.\nScopri il design italiano al Castello Sforzesco.",
+    "urlImmagine": "https://example.com/images/milano.jpg"
+  },
+  {
+    "viaggio": {
+      "nomeUnivoco": "Torino",
+      "mezzoUsato": "Auto",
+      "obiettivo": "Visitare",
+      "budget": {
+        "budgetIniziale": 400,
+        "budgetSpeso": 0,
+        "tieniConto": []
+      },
+      "itinerario": {
+        "nome": "Torino",
+        "tappe": [
+          { "nome": "Mole Antonelliana", "latitudine": 45.0689, "longitudine": 7.6931, "data": [2025, 10, 2] },
+          { "nome": "Museo Egizio", "latitudine": 45.0675, "longitudine": 7.6837, "data": [2025, 10, 3] },
+          { "nome": "Parco del Valentino", "latitudine": 45.0524, "longitudine": 7.6866, "data": [2025, 10, 4] }
+        ]
+      },
+      "listaElementi": {
+        "list": [
+          { "nome": "Guida Museo Egizio", "descrizione": "Per approfondire la collezione egizia.", "luogoAcquisto": "Libreria", "isAcquistato": false },
+          { "nome": "Zaino daypack", "descrizione": "Per portare tutto l’occorrente.", "luogoAcquisto": "Negozio borse", "isAcquistato": false },
+          { "nome": "Sciarpa leggera", "descrizione": "Per le serate fresche.", "luogoAcquisto": "Negozio abbigliamento", "isAcquistato": false }
+        ]
+      }
+    },
+    "cosaVedere": "Salita in ascensore alla Mole Antonelliana per vista sulla città.\nScopri i reperti del Museo Egizio.\nRelax tra le passeggiate e il Borgo Medievale al Valentino.",
+    "urlImmagine": "https://example.com/images/torino.jpg"
+  },
+  {
+    "viaggio": {
+      "nomeUnivoco": "Bologna",
+      "mezzoUsato": "Auto",
+      "obiettivo": "Visitare",
+      "budget": {
+        "budgetIniziale": 350,
+        "budgetSpeso": 0,
+        "tieniConto": []
+      },
+      "itinerario": {
+        "nome": "Bologna",
+        "tappe": [
+          { "nome": "Piazza Maggiore", "latitudine": 44.4949, "longitudine": 11.3426, "data": [2025, 4, 4] },
+          { "nome": "Due Torri", "latitudine": 44.4941, "longitudine": 11.3464, "data": [2025, 4, 5] },
+          { "nome": "Santuario di San Luca", "latitudine": 44.4781, "longitudine": 11.3060, "data": [2025, 4, 6] }
+        ]
+      },
+      "listaElementi": {
+        "list": [
+          { "nome": "Zaino leggero", "descrizione": "Per portare acqua e snack.", "luogoAcquisto": "Negozio sportivo", "isAcquistato": false },
+          { "nome": "Occhiali da sole", "descrizione": "Per proteggerti dal sole.", "luogoAcquisto": "Ottica", "isAcquistato": false },
+          { "nome": "Guida gastronomica", "descrizione": "Per scoprire i migliori ristoranti.", "luogoAcquisto": "Libreria", "isAcquistato": false }
+        ]
+      }
+    },
+    "cosaVedere": "Passeggia sotto i portici fino a Piazza Maggiore.\nSalita alle Due Torri per ammirare il centro.\nPercorri il portico di San Luca e godi del panorama.",
+    "urlImmagine": "https://example.com/images/bologna.jpg"
+  },
+  {
+    "viaggio": {
+      "nomeUnivoco": "Palermo",
+      "mezzoUsato": "Auto",
+      "obiettivo": "Visitare",
+      "budget": {
+        "budgetIniziale": 400,
+        "budgetSpeso": 0,
+        "tieniConto": []
+      },
+      "itinerario": {
+        "nome": "Palermo",
+        "tappe": [
+          { "nome": "Cattedrale di Palermo", "latitudine": 38.1157, "longitudine": 13.3615, "data": [2025, 7, 20] },
+          { "nome": "Teatro Massimo", "latitudine": 38.1156, "longitudine": 13.3614, "data": [2025, 7, 22] }
+        ]
+      },
+      "listaElementi": {
+        "list": [
+          { "nome": "Cappello di paglia", "descrizione": "Per il sole estivo.", "luogoAcquisto": "Mercato locale", "isAcquistato": false },
+          { "nome": "Guida street food", "descrizione": "Per provare arancine e sfincione.", "luogoAcquisto": "Libreria", "isAcquistato": false },
+          { "nome": "Borraccia", "descrizione": "Per restare idratati.", "luogoAcquisto": "Negozio sportivo", "isAcquistato": false }
+        ]
+      }
+    },
+    "cosaVedere": "Scopri la Cattedrale e i suoi tesori normanni.\nVivi l’atmosfera del mercato di Ballarò.\nAmmira il maestoso Teatro Massimo e la sua acustica.",
+    "urlImmagine": "https://example.com/images/palermo.jpg"
+  },
+  {
+    "viaggio": {
+      "nomeUnivoco": "Genova",
+      "mezzoUsato": "Auto",
+      "obiettivo": "Visitare",
+      "budget": {
+        "budgetIniziale": 380,
+        "budgetSpeso": 0,
+        "tieniConto": []
+      },
+      "itinerario": {
+        "nome": "Genova",
+        "tappe": [
+          { "nome": "Acquario di Genova", "latitudine": 44.4071, "longitudine": 8.9339, "data": [2025, 8, 10] },
+          { "nome": "Porto Antico", "latitudine": 44.4064, "longitudine": 8.9339, "data": [2025, 8, 11] },
+          { "nome": "Palazzo Ducale", "latitudine": 44.4111, "longitudine": 8.9325, "data": [2025, 8, 12] }
+        ]
+      },
+      "listaElementi": {
+        "list": [
+          { "nome": "Zaino impermeabile", "descrizione": "Per gite in barca e visita all’acquario.", "luogoAcquisto": "Negozio sportivo", "isAcquistato": false },
+          { "nome": "Guida musei", "descrizione": "Informazioni sul Palazzo Ducale.", "luogoAcquisto": "Libreria", "isAcquistato": false },
+          { "nome": "Occhiali da sole", "descrizione": "Per le giornate di sole sul porto.", "luogoAcquisto": "Ottica", "isAcquistato": false }
+        ]
+      }
+    },
+    "cosaVedere": "Visita l’Acquario per scoprire la fauna marina.\nPasseggia nel Porto Antico riqualificato.\nEntra al Palazzo Ducale per mostre e eventi culturali.",
+    "urlImmagine": "https://example.com/images/genova.jpg"
+  },
+  {
+    "viaggio": {
+      "nomeUnivoco": "Verona",
+      "mezzoUsato": "Auto",
+      "obiettivo": "Rilassarsi",
+      "budget": {
+        "budgetIniziale": 360,
+        "budgetSpeso": 0,
+        "tieniConto": []
+      },
+      "itinerario": {
+        "nome": "Verona",
+        "tappe": [
+          { "nome": "Arena di Verona", "latitudine": 45.4384, "longitudine": 10.9936, "data": [2025, 6, 20] },
+          { "nome": "Casa di Giulietta", "latitudine": 45.4440, "longitudine": 10.9978, "data": [2025, 6, 21] },
+          { "nome": "Ponte Pietra", "latitudine": 45.4423, "longitudine": 10.9958, "data": [2025, 6, 22] }
+        ]
+      },
+      "listaElementi": {
+        "list": [
+          { "nome": "Coperta da picnic", "descrizione": "Per un pranzo rilassante lungo il fiume.", "luogoAcquisto": "Negozio articoli casa", "isAcquistato": false },
+          { "nome": "Guida città", "descrizione": "Per scoprire i luoghi romantici.", "luogoAcquisto": "Libreria", "isAcquistato": false },
+          { "nome": "Cappello floppy", "descrizione": "Protezione dal sole estivo.", "luogoAcquisto": "Negozio abbigliamento", "isAcquistato": false }
+        ]
+      }
+    },
+    "cosaVedere": "Ascolta un concerto serale nell’antica Arena.\nVisita il balcone di Giulietta e scrivi un messaggio d’amore.\nRilassati con un picnic sulle rive dell’Adige.",
+    "urlImmagine": "https://example.com/images/verona.jpg"
+  },
+  {
+    "viaggio": {
+      "nomeUnivoco": "Siena",
+      "mezzoUsato": "Auto",
+      "obiettivo": "Visitare",
+      "budget": {
+        "budgetIniziale": 340,
+        "budgetSpeso": 0,
+        "tieniConto": []
+      },
+      "itinerario": {
+        "nome": "Siena",
+        "tappe": [
+          { "nome": "Piazza del Campo", "latitudine": 43.3188, "longitudine": 11.3308, "data": [2025, 5, 18] },
+          { "nome": "Duomo di Siena", "latitudine": 43.3178, "longitudine": 11.3310, "data": [2025, 5, 19] },
+          { "nome": "Torre del Mangia", "latitudine": 43.3181, "longitudine": 11.3316, "data": [2025, 5, 20] }
+        ]
+      },
+      "listaElementi": {
+        "list": [
+          { "nome": "Binocolo compatto", "descrizione": "Per osservare la città dall’alto.", "luogoAcquisto": "Elettronica", "isAcquistato": false },
+          { "nome": "Guida Palio", "descrizione": "Storia e curiosità del Palio di Siena.", "luogoAcquisto": "Libreria", "isAcquistato": false },
+          { "nome": "Borraccia", "descrizione": "Per restare idratati durante la visita.", "luogoAcquisto": "Negozio sportivo", "isAcquistato": false }
+        ]
+      }
+    },
+    "cosaVedere": "Ammira Piazza del Campo e immagina il Palio.\nVisita il Duomo con i suoi marmi bicolore.\nSale sulla Torre del Mangia per un panorama unico.",
+    "urlImmagine": "https://example.com/images/siena.jpg"
+  },
+  {
+    "viaggio": {
+      "nomeUnivoco": "Cinque Terre",
+      "mezzoUsato": "Bici",
+      "obiettivo": "Ricollegarsi alla natura",
+      "budget": {
+        "budgetIniziale": 380,
+        "budgetSpeso": 0,
+        "tieniConto": []
+      },
+      "itinerario": {
+        "nome": "Cinque Terre",
+        "tappe": [
+          { "nome": "Monterosso al Mare", "latitudine": 44.1339, "longitudine": 9.6544, "data": [2025, 8, 1] },
+          { "nome": "Vernazza", "latitudine": 44.1426, "longitudine": 9.6845, "data": [2025, 8, 2] },
+          { "nome": "Manarola", "latitudine": 44.1012, "longitudine": 9.7106, "data": [2025, 8, 3] }
+        ]
+      },
+      "listaElementi": {
+        "list": [
+          { "nome": "Casco da bici", "descrizione": "Per sicurezza durante i percorsi in bici.", "luogoAcquisto": "Negozio sportivo", "isAcquistato": false },
+          { "nome": "Zaino idrico", "descrizione": "Per avere sempre acqua a disposizione.", "luogoAcquisto": "Negozio outdoor", "isAcquistato": false },
+          { "nome": "Scarpe da trekking leggere", "descrizione": "Per i tratti a piedi tra i sentieri.", "luogoAcquisto": "Calzoleria", "isAcquistato": false }
+        ]
+      }
+    },
+    "cosaVedere": "Pedala tra i villaggi arroccati e i terrazzamenti.\nRilassati sulle spiagge di Monterosso.\nAmmira il tramonto da Manarola con vista sul mare.",
+    "urlImmagine": "https://example.com/images/cinque-terre.jpg"
+  },
+  {
+    "viaggio": {
+      "nomeUnivoco": "Amalfi",
+      "mezzoUsato": "Mezzi pesanti (Camper,Truck)",
+      "obiettivo": "Ricollegarsi alla natura",
+      "budget": {
+        "budgetIniziale": 800,
+        "budgetSpeso": 0,
+        "tieniConto": []
+      },
+      "itinerario": {
+        "nome": "Amalfi",
+        "tappe": [
+          { "nome": "Sentiero degli Dei", "latitudine": 40.6216, "longitudine": 14.6020, "data": [2025, 7, 15] },
+          { "nome": "Spiaggia di Amalfi", "latitudine": 40.6340, "longitudine": 14.6025, "data": [2025, 7, 16] },
+          { "nome": "Valle delle Ferriere", "latitudine": 40.6322, "longitudine": 14.6041, "data": [2025, 7, 17] }
+        ]
+      },
+      "listaElementi": {
+        "list": [
+          { "nome": "Tenda da campeggio", "descrizione": "Per soste immerse nella natura.", "luogoAcquisto": "Negozio outdoor", "isAcquistato": false },
+          { "nome": "Fornello portatile", "descrizione": "Per cucinare in libertà.", "luogoAcquisto": "Negozio outdoor", "isAcquistato": false },
+          { "nome": "Sacco a pelo", "descrizione": "Per notti confortevoli all’aperto.", "luogoAcquisto": "Negozio articoli casa", "isAcquistato": false }
+        ]
+      }
+    },
+    "cosaVedere": "Cammina sul Sentiero degli Dei con vista panoramica.\nRilassati sulla spiaggia di Amalfi.\nEsplora la rigogliosa Valle delle Ferriere.",
+    "urlImmagine": "https://example.com/images/amalfi.jpg"
+  },
+  {
+    "viaggio": {
+      "nomeUnivoco": "Capri",
+      "mezzoUsato": "Mezzi pesanti (Camper,Truck)",
+      "obiettivo": "Rilassarsi",
+      "budget": {
+        "budgetIniziale": 900,
+        "budgetSpeso": 0,
+        "tieniConto": []
+      },
+      "itinerario": {
+        "nome": "Capri",
+        "tappe": [
+          { "nome": "Marina Grande", "latitudine": 40.5510, "longitudine": 14.2434, "data": [2025, 7, 10] },
+          { "nome": "Grotta Azzurra", "latitudine": 40.5532, "longitudine": 14.2394, "data": [2025, 7, 11] },
+          { "nome": "Punta Tragara", "latitudine": 40.5523, "longitudine": 14.2267, "data": [2025, 7, 12] }
+        ]
+      },
+      "listaElementi": {
+        "list": [
+          { "nome": "Costume da bagno", "descrizione": "Per le acque cristalline.", "luogoAcquisto": "Negozio abbigliamento", "isAcquistato": false },
+          { "nome": "Occhiali da sole", "descrizione": "Protezione UV per i giorni di sole.", "luogoAcquisto": "Ottica", "isAcquistato": false },
+          { "nome": "Crema solare", "descrizione": "Alta protezione per la pelle.", "luogoAcquisto": "Farmacia", "isAcquistato": false }
+        ]
+      }
+    },
+    "cosaVedere": "Goditi il panorama dalla Piazzetta.\nVisita la Grotta Azzurra in barca a remi.\nPasseggia ai Giardini di Augusto e ammira i Faraglioni.",
+    "urlImmagine": "https://example.com/images/capri.jpg"
+  },
+  {
+    "viaggio": {
+      "nomeUnivoco": "Lago di Garda",
+      "mezzoUsato": "Auto",
+      "obiettivo": "Ricollegarsi alla natura",
+      "budget": {
+        "budgetIniziale": 550,
+        "budgetSpeso": 0,
+        "tieniConto": []
+      },
+      "itinerario": {
+        "nome": "Lago di Garda",
+        "tappe": [
+          { "nome": "Sirmione", "latitudine": 45.4950, "longitudine": 10.6522, "data": [2025, 6, 25] },
+          { "nome": "Riva del Garda", "latitudine": 45.8850, "longitudine": 10.8610, "data": [2025, 6, 26] },
+          { "nome": "Malcesine", "latitudine": 45.6100, "longitudine": 10.7550, "data": [2025, 6, 27] }
+        ]
+      },
+      "listaElementi": {
+        "list": [
+          { "nome": "Kayak gonfiabile", "descrizione": "Per esplorare le acque del lago.", "luogoAcquisto": "Negozio sportivo", "isAcquistato": false },
+          { "nome": "Giubbotto salvagente", "descrizione": "Per sicurezza in acqua.", "luogoAcquisto": "Negozio nautica", "isAcquistato": false },
+          { "nome": "Cappello da sole", "descrizione": "Per proteggere viso e nuca.", "luogoAcquisto": "Farmacia", "isAcquistato": false }
+        ]
+      }
+    },
+    "cosaVedere": "Visita il Castello Scaligero di Sirmione.\nPedala o cammina lungo la pista ciclabile fino a Riva.\nSalita in funivia a Malcesine per il Monte Baldo.",
+    "urlImmagine": "https://example.com/images/lago-di-garda.jpg"
+  },
+  {
+    "viaggio": {
+      "nomeUnivoco": "Parigi",
+      "mezzoUsato": "Piedi",
+      "obiettivo": "Visitare",
+      "budget": {
+        "budgetIniziale": 1200,
+        "budgetSpeso": 0,
+        "tieniConto": []
+      },
+      "itinerario": {
+        "nome": "Parigi",
+        "tappe": [
+          { "nome": "Torre Eiffel", "latitudine": 48.8584, "longitudine": 2.2945, "data": [2025, 9, 1] },
+          { "nome": "Museo del Louvre", "latitudine": 48.8606, "longitudine": 2.3376, "data": [2025, 9, 2] },
+          { "nome": "Cattedrale di Notre-Dame", "latitudine": 48.8529, "longitudine": 2.3500, "data": [2025, 9, 3] }
+        ]
+      },
+      "listaElementi": {
+        "list": [
+          { "nome": "Adattatore universale", "descrizione": "Per le prese francesi.", "luogoAcquisto": "Elettronica", "isAcquistato": false },
+          { "nome": "Guida Parigi", "descrizione": "Mappe e consigli sui quartieri.", "luogoAcquisto": "Libreria", "isAcquistato": false },
+          { "nome": "Carnet métro", "descrizione": "10 corse per spostarsi in città.", "luogoAcquisto": "Tabacchi", "isAcquistato": false }
+        ]
+      }
+    },
+    "cosaVedere": "Scala la Torre Eiffel e gusta un picnic nei Champ de Mars.\nEsplora il Louvre e ammira la Gioconda.\nPasseggia sull’Île de la Cité fino a Notre-Dame.",
+    "urlImmagine": "https://example.com/images/parigi.jpg"
+  },
+  {
+    "viaggio": {
+      "nomeUnivoco": "Londra",
+      "mezzoUsato": "Piedi",
+      "obiettivo": "Visitare",
+      "budget": {
+        "budgetIniziale": 1100,
+        "budgetSpeso": 0,
+        "tieniConto": []
+      },
+      "itinerario": {
+        "nome": "Londra",
+        "tappe": [
+          { "nome": "Buckingham Palace", "latitudine": 51.5014, "longitudine": -0.1419, "data": [2025, 8, 15] },
+          { "nome": "Tower Bridge", "latitudine": 51.5055, "longitudine": -0.0754, "data": [2025, 8, 16] },
+          { "nome": "British Museum", "latitudine": 51.5194, "longitudine": -0.1270, "data": [2025, 8, 17] }
+        ]
+      },
+      "listaElementi": {
+        "list": [
+          { "nome": "Oyster card", "descrizione": "Per viaggiare su bus e metro.", "luogoAcquisto": "Stazione metro", "isAcquistato": false },
+          { "nome": "Guida rapida UK", "descrizione": "Consigli su usi e costumi locali.", "luogoAcquisto": "Libreria", "isAcquistato": false },
+          { "nome": "Adattatore UK", "descrizione": "Per caricare dispositivi.", "luogoAcquisto": "Elettronica", "isAcquistato": false }
+        ]
+      }
+    },
+    "cosaVedere": "Assisti al Cambio della Guardia a Buckingham.\nAttraversa il Tower Bridge e visita la Torre di Londra.\nScopri i tesori del British Museum.",
+    "urlImmagine": "https://example.com/images/londra.jpg"
+  },
+  {
+    "viaggio": {
+      "nomeUnivoco": "New York",
+      "mezzoUsato": "Piedi",
+      "obiettivo": "Visitare",
+      "budget": {
+        "budgetIniziale": 1500,
+        "budgetSpeso": 0,
+        "tieniConto": []
+      },
+      "itinerario": {
+        "nome": "New York",
+        "tappe": [
+          { "nome": "Times Square", "latitudine": 40.7580, "longitudine": -73.9855, "data": [2025, 10, 5] },
+          { "nome": "Central Park", "latitudine": 40.7851, "longitudine": -73.9683, "data": [2025, 10, 6] },
+          { "nome": "Statua della Libertà", "latitudine": 40.6892, "longitudine": -74.0445, "data": [2025, 10, 7] }
+        ]
+      },
+      "listaElementi": {
+        "list": [
+          { "nome": "MetroCard", "descrizione": "Per viaggiare su metropolitana e bus.", "luogoAcquisto": "Stazione metro", "isAcquistato": false },
+          { "nome": "Guida NYC", "descrizione": "Consigli su quartieri e ristoranti.", "luogoAcquisto": "Libreria", "isAcquistato": false },
+          { "nome": "Power bank extra", "descrizione": "Per giornate lunghe in città.", "luogoAcquisto": "Elettronica", "isAcquistato": false }
+        ]
+      }
+    },
+    "cosaVedere": "Lasciati travolgere dalle luci di Times Square.\nPasseggia o fai un giro in bici a Central Park.\nSalpa per la Statua della Libertà e Ellis Island.",
+    "urlImmagine": "https://example.com/images/new-york.jpg"
+  },
+  {
+    "viaggio": {
+      "nomeUnivoco": "Tokyo",
+      "mezzoUsato": "Mezzi pesanti (Camper,Truck)",
+      "obiettivo": "Visitare",
+      "budget": {
+        "budgetIniziale": 1800,
+        "budgetSpeso": 0,
+        "tieniConto": []
+      },
+      "itinerario": {
+        "nome": "Tokyo",
+        "tappe": [
+          { "nome": "Shibuya Crossing", "latitudine": 35.6595, "longitudine": 139.7005, "data": [2025, 11, 10] },
+          { "nome": "Tokyo Tower", "latitudine": 35.6586, "longitudine": 139.7454, "data": [2025, 11, 12] }
+        ]
+      },
+      "listaElementi": {
+        "list": [
+          { "nome": "Pocket WiFi", "descrizione": "Connessione internet ovunque.", "luogoAcquisto": "Elettronica", "isAcquistato": false },
+          { "nome": "Guida metro", "descrizione": "Mappe delle linee sotterranee.", "luogoAcquisto": "Libreria", "isAcquistato": false },
+          { "nome": "Adattatore Japan", "descrizione": "Per prese di corrente locali.", "luogoAcquisto": "Elettronica", "isAcquistato": false }
+        ]
+      }
+    },
+    "cosaVedere": "Attraversa l’iconico incrocio di Shibuya.\nVisita il mercato Nakamise.\nGoditi la vista notturna dalla Tokyo Tower.",
+    "urlImmagine": "https://example.com/images/tokyo.jpg"
+  },
+  {
+    "viaggio": {
+      "nomeUnivoco": "Sydney",
+      "mezzoUsato": "Auto",
+      "obiettivo": "Rilassarsi",
+      "budget": {
+        "budgetIniziale": 1600,
+        "budgetSpeso": 0,
+        "tieniConto": []
+      },
+      "itinerario": {
+        "nome": "Sydney",
+        "tappe": [
+          { "nome": "Opera House", "latitudine": -33.8568, "longitudine": 151.2153, "data": [2025, 12, 1] },
+          { "nome": "Bondi Beach", "latitudine": -33.8908, "longitudine": 151.2743, "data": [2025, 12, 2] },
+          { "nome": "Royal Botanic Garden", "latitudine": -33.8642, "longitudine": 151.2166, "data": [2025, 12, 3] }
+        ]
+      },
+      "listaElementi": {
+        "list": [
+          { "nome": "Costume surf", "descrizione": "Per le onde di Bondi.", "luogoAcquisto": "Negozio sport acquatici", "isAcquistato": false },
+          { "nome": "Crema solare SPF50", "descrizione": "Per proteggerti dai raggi UV.", "luogoAcquisto": "Farmacia", "isAcquistato": false },
+          { "nome": "Fotocamera subacquea", "descrizione": "Per foto sotto il mare.", "luogoAcquisto": "Elettronica", "isAcquistato": false }
+        ]
+      }
+    },
+    "cosaVedere": "Ammira la silhouette dell’Opera House e del Harbour Bridge.\nRilassati a Bondi Beach e magari prova il surf.\nPasseggia nel Royal Botanic Garden con vista sul porto.",
+    "urlImmagine": "https://example.com/images/sydney.jpg"
+  },
+  {
+    "viaggio": {
+      "nomeUnivoco": "Barcellona",
+      "mezzoUsato": "Piedi",
+      "obiettivo": "Visitare",
+      "budget": {
+        "budgetIniziale": 950,
+        "budgetSpeso": 0,
+        "tieniConto": []
+      },
+      "itinerario": {
+        "nome": "Barcellona",
+        "tappe": [
+          { "nome": "Sagrada Família", "latitudine": 41.4036, "longitudine": 2.1744, "data": [2025, 9, 20] },
+          { "nome": "Parc Güell", "latitudine": 41.4145, "longitudine": 2.1527, "data": [2025, 9, 21] },
+          { "nome": "La Rambla", "latitudine": 41.3809, "longitudine": 2.1730, "data": [2025, 9, 22] }
+        ]
+      },
+      "listaElementi": {
+        "list": [
+          { "nome": "Biglietti salta-fila", "descrizione": "Per la Sagrada Família.", "luogoAcquisto": "Online", "isAcquistato": false },
+          { "nome": "Guida Gaudí", "descrizione": "Per scoprire le opere dell’architetto.", "luogoAcquisto": "Libreria", "isAcquistato": false },
+          { "nome": "Borraccia pieghevole", "descrizione": "Per idratarti durante le visite.", "luogoAcquisto": "Negozio sportivo", "isAcquistato": false }
+        ]
+      }
+    },
+    "cosaVedere": "Ammira la maestosità della Sagrada Família.\nPasseggia tra le colorate panchine del Parc Güell.\nVivi l’atmosfera vivace de La Rambla e del mercato della Boqueria.",
+    "urlImmagine": "https://example.com/images/barcellona.jpg"
+  },
+  {
+    "viaggio": {
+      "nomeUnivoco": "Amsterdam",
+      "mezzoUsato": "Bici",
+      "obiettivo": "Rilassarsi",
+      "budget": {
+        "budgetIniziale": 900,
+        "budgetSpeso": 0,
+        "tieniConto": []
+      },
+      "itinerario": {
+        "nome": "Amsterdam",
+        "tappe": [
+          { "nome": "Van Gogh Museum", "latitudine": 52.3584, "longitudine": 4.8811, "data": [2025, 7, 5] },
+          { "nome": "Vondelpark", "latitudine": 52.3580, "longitudine": 4.8686, "data": [2025, 7, 6] },
+          { "nome": "Casa di Anna Frank", "latitudine": 52.3752, "longitudine": 4.8836, "data": [2025, 7, 7] }
+        ]
+      },
+      "listaElementi": {
+        "list": [
+          { "nome": "Noleggio bici", "descrizione": "Per muoversi come un local.", "luogoAcquisto": "Negozio bici", "isAcquistato": false },
+          { "nome": "Guida canali", "descrizione": "Informazioni sui tour in barca.", "luogoAcquisto": "Libreria", "isAcquistato": false },
+          { "nome": "Ombrello compatto", "descrizione": "Per le piogge improvvise.", "luogoAcquisto": "Supermercato", "isAcquistato": false }
+        ]
+      }
+    },
+    "cosaVedere": "Pedala lungo i canali fino al Rijksmuseum.\nRilassati con un picnic a Vondelpark.\nVisita il commovente luogo della Casa di Anna Frank.",
+    "urlImmagine": "https://example.com/images/amsterdam.jpg"
+  },
+  {
+    "viaggio": {
+      "nomeUnivoco": "Praga",
+      "mezzoUsato": "Auto",
+      "obiettivo": "Visitare",
+      "budget": {
+        "budgetIniziale": 850,
+        "budgetSpeso": 0,
+        "tieniConto": []
+      },
+      "itinerario": {
+        "nome": "Praga",
+        "tappe": [
+          { "nome": "Ponte Carlo", "latitudine": 50.0865, "longitudine": 14.4114, "data": [2025, 10, 10] },
+          { "nome": "Castello di Praga", "latitudine": 50.0909, "longitudine": 14.4005, "data": [2025, 10, 11] },
+          { "nome": "Città Vecchia", "latitudine": 50.0870, "longitudine": 14.4208, "data": [2025, 10, 12] }
+        ]
+      },
+      "listaElementi": {
+        "list": [
+          { "nome": "Guida storia", "descrizione": "Per scoprire le leggende locali.", "luogoAcquisto": "Libreria", "isAcquistato": false },
+          { "nome": "Adaptér UE", "descrizione": "Per prese elettriche europee.", "luogoAcquisto": "Elettronica", "isAcquistato": false },
+          { "nome": "Staffa per smartphone", "descrizione": "Per time-lapse del Ponte Carlo.", "luogoAcquisto": "Elettronica", "isAcquistato": false }
+        ]
+      }
+    },
+    "cosaVedere": "Cammina sul suggestivo Ponte Carlo all’alba.\nScopri il complesso del Castello di Praga.\nPerditi tra le vie medievali della Città Vecchia.",
+    "urlImmagine": "https://example.com/images/praga.jpg"
+  },
+  {
+    "viaggio": {
+      "nomeUnivoco": "Berlino",
+      "mezzoUsato": "Piedi",
+      "obiettivo": "Visitare",
+      "budget": {
+        "budgetIniziale": 920,
+        "budgetSpeso": 0,
+        "tieniConto": []
+      },
+      "itinerario": {
+        "nome": "Berlino",
+        "tappe": [
+          { "nome": "Porta di Brandeburgo", "latitudine": 52.5163, "longitudine": 13.3777, "data": [2025, 11, 20] },
+          { "nome": "Reichstag", "latitudine": 52.5186, "longitudine": 13.3762, "data": [2025, 11, 21] },
+          { "nome": "East Side Gallery", "latitudine": 52.5055, "longitudine": 13.4396, "data": [2025, 11, 22] }
+        ]
+      },
+      "listaElementi": {
+        "list": [
+          { "nome": "Guida muro di Berlino", "descrizione": "Storia e murales celebri.", "luogoAcquisto": "Libreria", "isAcquistato": false },
+          { "nome": "Adattatore UE", "descrizione": "Per le prese tedesche.", "luogoAcquisto": "Elettronica", "isAcquistato": false },
+          { "nome": "Borraccia termica", "descrizione": "Per le camminate in città.", "luogoAcquisto": "Negozio sportivo", "isAcquistato": false }
+        ]
+      }
+    },
+    "cosaVedere": "Scopri la storia alla Porta di Brandeburgo.\nSalita alla cupola del Reichstag.\nPercorri l’East Side Gallery e ammira i murales.",
+    "urlImmagine": "https://example.com/images/berlino.jpg"
+  },
+  {
+    "viaggio": {
+      "nomeUnivoco": "Atene",
+      "mezzoUsato": "Piedi",
+      "obiettivo": "Visitare",
+      "budget": {
+        "budgetIniziale": 880,
+        "budgetSpeso": 0,
+        "tieniConto": []
+      },
+      "itinerario": {
+        "nome": "Atene",
+        "tappe": [
+          { "nome": "Acropoli", "latitudine": 37.9715, "longitudine": 23.7257, "data": [2025, 9, 25] },
+          { "nome": "Agorà", "latitudine": 37.9735, "longitudine": 23.7227, "data": [2025, 9, 26] },
+          { "nome": "Monastiraki", "latitudine": 37.9755, "longitudine": 23.7229, "data": [2025, 9, 27] }
+        ]
+      },
+      "listaElementi": {
+        "list": [
+          { "nome": "Guida storica", "descrizione": "Per approfondire l’Antica Grecia.", "luogoAcquisto": "Libreria", "isAcquistato": false },
+          { "nome": "Cappello largo", "descrizione": "Per ripararsi dal sole.", "luogoAcquisto": "Mercato locale", "isAcquistato": false },
+          { "nome": "Acqua in bottiglia", "descrizione": "Per mantenersi idratati.", "luogoAcquisto": "Supermercato", "isAcquistato": false }
+        ]
+      }
+    },
+    "cosaVedere": "Sali all’Acropoli e ammira il Partenone.\nVisita l’Agorà e scopri i luoghi del dibattito filosofico.\nEsplora il quartiere di Monastiraki con il suo mercato.",
+    "urlImmagine": "https://example.com/images/athens.jpg"
+  }
+]

@@ -1,22 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.PasswordField?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.shape.Line?>
-<?import javafx.scene.text.Font?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700" prefWidth="900" style="-fx-background-color: #e1e6ea;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="praticaest1.praticaest1.HomeController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700" prefWidth="900" style="-fx-background-color: #e1e6ea;" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="praticaest1.praticaest1.HomeController">
    <children>
       <AnchorPane fx:id="base" layoutX="10.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="680.0" prefWidth="880.0" style="-fx-background-color: #f9fafb; -fx-background-radius: 32;">
          <padding>
@@ -36,7 +27,7 @@
                         </ImageView>
                         <VBox spacing="2">
                             <Label fx:id="nomeUtente" style="-fx-font-weight: bold; -fx-font-size: 14px;" text="NOME UTENTE" />
-                            <Label style="-fx-text-fill: #6B7280; -fx-font-size: 12px;" text="Versione 1.1 - Update ✅" />
+                            <Label style="-fx-text-fill: #6B7280; -fx-font-size: 12px;" text="Versione 1.2 - Update ✅" />
                         </VBox>
                     </HBox>
 
@@ -50,13 +41,13 @@
                             </ImageView>
                             <Label text="Home" />
                         </HBox>
-                        <HBox fx:id="b2" alignment="CENTER_LEFT" spacing="10" style="-fx-background-color: #f9fafb; -fx-background-radius: 8; -fx-padding: 8;">
+                        <HBox fx:id="b2" alignment="CENTER_LEFT" onMouseClicked="#goToExplore" spacing="10" style="-fx-background-color: #f9fafb; -fx-background-radius: 8; -fx-padding: 8;">
                             <ImageView fitHeight="16" fitWidth="16">
                                 <image>
                                     <Image url="@img/soon-icon.png" />
                                 </image>
                             </ImageView>
-                            <Label text="Esplora - In arrivo" />
+                            <Label text="Esplora - NOVITA'" />
                         </HBox>
                         <HBox fx:id="b3" alignment="CENTER_LEFT" onMouseClicked="#goToTrip" spacing="10" style="-fx-background-color: #f9fafb; -fx-background-radius: 8; -fx-padding: 8;">
                             <ImageView fitHeight="16" fitWidth="16">
@@ -81,7 +72,7 @@
             <AnchorPane fx:id="workBox" layoutX="310.0" layoutY="40.0" prefHeight="600.0" prefWidth="570.0" style="-fx-background-color: #f9fafb;">
                <children>
                   <AnchorPane fx:id="profileBox" disable="true" prefHeight="600.0" prefWidth="570.0" visible="false">
-                      <VBox alignment="TOP_LEFT"  layoutX="27.0" layoutY="21.0" prefHeight="570.0" prefWidth="517.0" spacing="20" style="-fx-background-color: #F9FAFB; -fx-padding: 20;" >
+                      <VBox alignment="TOP_LEFT" layoutX="27.0" layoutY="21.0" prefHeight="570.0" prefWidth="517.0" spacing="20" style="-fx-background-color: #F9FAFB; -fx-padding: 20;">
                           <!-- Titolo -->
                           <Label style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Profilo utente" />
 
@@ -117,7 +108,7 @@
 
                       </VBox>
                   </AnchorPane>
-                  <AnchorPane fx:id="homeBox" visible="true" disable="false" layoutX="10.0" layoutY="10.0" prefHeight="600.0" prefWidth="558.0">
+                  <AnchorPane fx:id="homeBox" disable="false" layoutX="10.0" layoutY="10.0" prefHeight="600.0" prefWidth="558.0" visible="true">
                       <ScrollPane fitToWidth="true" style="-fx-background: #F9FAFB;">
                           <content>
                               <VBox alignment="TOP_LEFT" prefHeight="588.0" prefWidth="555.0" spacing="20" style="-fx-background-color: #F9FAFB; -fx-padding: 24;">
@@ -127,14 +118,14 @@
                                   <Label style="-fx-font-family: 'Segoe UI Emoji'; -fx-text-fill: #6B7280; -fx-font-size: 14px;" text="La tua app gratuita per pianificare viaggi in modo semplice e smart! 🚀" />
 
                                   <!-- Card Esplora -->
-                                  <HBox alignment="CENTER_LEFT" spacing="15" style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 16;                          -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 4);">
+                                  <HBox alignment="CENTER_LEFT" onMouseClicked="#goToExplore" spacing="15" style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 16;                          -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 4);">
                                       <ImageView fitHeight="36" fitWidth="36">
                                           <image>
-                                              <Image url="@img/plane-icon.png" />
+                                              <Image url="@img/soon-icon.png" />
                                           </image>
                                       </ImageView>
                                       <VBox spacing="4">
-                                          <Label style="-fx-font-size: 14px; -fx-font-weight: bold;" text="Sezione Esplora - Coming soon" />
+                                          <Label style="-fx-font-size: 14px; -fx-font-weight: bold;" text="Sezione Esplora - NOVITA'" />
                                           <Label style="-fx-font-family: 'Segoe UI Emoji';-fx-text-fill: #4B5563; -fx-font-size: 12px;" text="Ottieni idee ispirazionali per la tua prossima avventura 💡💡" />
                                       </VBox>
                                   </HBox>
@@ -153,9 +144,9 @@
 
                                       <!-- Sotto-sezioni Viaggi -->
                                       <VBox spacing="8" style="-fx-padding: 8 0 0 8;">
-                                          <Label style="-fx-font-family: 'Segoe UI Emoji'; -fx-text-fill: #374151; -fx-font-size: 12px;" text="• Gestione finanziaria – Tieni traccia delle spese del viaggio 💶" wrapText="true"/>
+                                          <Label style="-fx-font-family: 'Segoe UI Emoji'; -fx-text-fill: #374151; -fx-font-size: 12px;" text="• Gestione finanziaria – Tieni traccia delle spese del viaggio 💶" wrapText="true" />
                                           <Label style="-fx-font-family: 'Segoe UI Emoji'; -fx-text-fill: #374151; -fx-font-size: 12px;" text="• Organizzazione bagagli – Crea liste smart e condivisibili più facilmente 🧳" wrapText="true" />
-                                          <Label style="-fx-font-family: 'Segoe UI Emoji'; -fx-text-fill: #374151; -fx-font-size: 12px;" text="• Road Trip – Pianifica tragitti, tappe e tempi 🕐" wrapText="true"/>
+                                          <Label style="-fx-font-family: 'Segoe UI Emoji'; -fx-text-fill: #374151; -fx-font-size: 12px;" text="• Road Trip – Pianifica tragitti, tappe e tempi 🕐" wrapText="true" />
                                       </VBox>
                                   </VBox>
 
@@ -185,14 +176,15 @@
 
                                       <!-- Sotto-sezioni Viaggi -->
                                       <VBox spacing="8" style="-fx-padding: 8 0 0 8;">
-                                          <Label style="-fx-font-family: 'Segoe UI Emoji'; -fx-text-fill: #374151; -fx-font-size: 12px;" text="• Scelta di un nuovo viaggio – In base ai tuoi interessi SALVINO ti consiglierà " wrapText="true"/>
-                                          <Label style="-fx-font-family: 'Segoe UI Emoji'; -fx-text-fill: #374151; -fx-font-size: 12px;" text="  nuovi viaggi da intraprendere 🧐"/>
+                                          <Label style="-fx-font-family: 'Segoe UI Emoji'; -fx-text-fill: #374151; -fx-font-size: 12px;" text="• Scelta di un nuovo viaggio – In base ai tuoi interessi SALVINO ti consiglierà " wrapText="true" />
+                                          <Label style="-fx-font-family: 'Segoe UI Emoji'; -fx-text-fill: #374151; -fx-font-size: 12px;" text="  nuovi viaggi da intraprendere 🧐" />
                                           <Label style="-fx-font-family: 'Segoe UI Emoji'; -fx-text-fill: #374151; -fx-font-size: 12px;" text="• Organizzazione bagagli – In base ai tutti i parametri del tuo viaggio SALVINO" wrapText="true" />
                                           <Label style="-fx-font-family: 'Segoe UI Emoji'; -fx-text-fill: #374151; -fx-font-size: 12px;" text="  ti consiglierà dei nuovi elementi da aggiungere, cosi non dimentichi a casa più nulla!" wrapText="true" />
-                                          <Label style="-fx-font-family: 'Segoe UI Emoji'; -fx-text-fill: #374151; -fx-font-size: 12px;" text="• Road trip - SALVINO ed il suo compare GRAPHHOPPER collaborano per suggerirti" wrapText="true"/>
+                                          <Label style="-fx-font-family: 'Segoe UI Emoji'; -fx-text-fill: #374151; -fx-font-size: 12px;" text="• Road trip - SALVINO ed il suo compare GRAPHHOPPER collaborano per suggerirti" wrapText="true" />
                                           <Label style="-fx-font-family: 'Segoe UI Emoji'; -fx-text-fill: #374151; -fx-font-size: 12px;" text="  un possibile roadtrip in base alle tue preferenze, il quale poi può essere rintracciato " wrapText="true" />
-                                          <Label style="-fx-font-family: 'Segoe UI Emoji'; -fx-text-fill: #374151; -fx-font-size: 12px;" text="  in altre app di navigazione! 🗺"/>
-                                          <Label style="-fx-font-family: 'Segoe UI Emoji'; -fx-text-fill: #374151; -fx-font-size: 12px;" text="• Molto altro ancora a cui stiamo ancora lavorando 🫡" wrapText="true"/>
+                                          <Label style="-fx-font-family: 'Segoe UI Emoji'; -fx-text-fill: #374151; -fx-font-size: 12px;" text="  in altre app di navigazione! 🗺" />
+                                          <Label style="-fx-font-family: 'Segoe UI Emoji'; -fx-text-fill: #374151; -fx-font-size: 12px;" text="• Molto altro ancora a cui stiamo ancora lavorando 🫡" wrapText="true" />
+                                          <Label style="-fx-font-family: 'Segoe UI Emoji'; -fx-text-fill: #374151; -fx-font-size: 12px;" text="ATTENZIONE, SALVINO può sbagliare, quindi non fidarti ciecamente." wrapText="true" />
                                       </VBox>
                                   </VBox>
                               </VBox>
@@ -218,18 +210,82 @@
                                        </children>
                                     </HBox>
                                     <Label style="-fx-text-fill: #6B7280; -fx-font-size: 14px;" text="Aggiungi, elimina o accedi a tutti i tuoi viaggi dove e quando vuoi!" />
-                                    <VBox fx:id="scrollTrip" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="545.0" />
+                                    <HBox prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                                       <children>
+                                          <VBox prefHeight="445.0" prefWidth="247.0">
+                                             <children>
+                                                 <Button fx:id="p1" mnemonicParsing="false" prefHeight="41.0" prefWidth="117.0" style="-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;" text="Piedi" textFill="white" />
+                                                 <Region prefHeight="20.0" prefWidth="111.0" />
+                                                 <Button fx:id="p2" mnemonicParsing="false" prefHeight="41.0" prefWidth="117.0" style="-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;" text="Bici" textFill="white" />
+                                                 <Region prefHeight="20.0" prefWidth="111.0" />
+                                                 <Button fx:id="p3" mnemonicParsing="false" prefHeight="41.0" prefWidth="117.0" style="-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;" text="Auto" textFill="white" />
+                                                 <Region prefHeight="20.0" prefWidth="111.0" />
+                                                 <Button fx:id="p4" mnemonicParsing="false" prefHeight="41.0" prefWidth="117.0" style="-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;" text="Caravan" textFill="white" />
+                                                 <Region prefHeight="20.0" prefWidth="111.0" />
+                                                 <Button fx:id="p5" mnemonicParsing="false" prefHeight="41.0" prefWidth="117.0" style="-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;" text="Natura" textFill="white" />
+                                                 <Region prefHeight="20.0" prefWidth="111.0" />
+                                                 <Button fx:id="p6" mnemonicParsing="false" prefHeight="41.0" prefWidth="117.0" style="-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;" text="Rilassarsi" textFill="white" />
+                                                 <Region prefHeight="20.0" prefWidth="111.0" />
+                                                 <Button fx:id="p7" mnemonicParsing="false" prefHeight="41.0" prefWidth="117.0" style="-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;" text="Visitare" textFill="white" />
+                                                 <Region prefHeight="20.0" prefWidth="111.0" />
+                                             </children>
+                                          </VBox>
+                                          <Region prefHeight="445.0" prefWidth="200.0" />
+                                          <VBox fx:id="scrollTrip" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="545.0" />
+                                       </children>
+                                    </HBox>
                                  </children>
                               </VBox>
                            </content>
                         </ScrollPane>
                      </children>
                   </AnchorPane>
-                  <AnchorPane fx:id="intoTripBox" layoutX="10.0" layoutY="10.0" prefHeight="600.0" prefWidth="558.0" visible="false" disable="true">
+                   <AnchorPane fx:id="exploreBox" disable="true" layoutX="10.0" layoutY="10.0" prefHeight="600.0" prefWidth="558.0" visible="false">
+                       <ScrollPane fitToWidth="true" style="-fx-background: #F9FAFB;">
+                           <content>
+                               <VBox alignment="TOP_LEFT" prefHeight="588.0" prefWidth="555.0" spacing="20" style="-fx-background-color: #F9FAFB; -fx-padding: 24;">
+                                   <HBox prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                                       <children>
+                                           <VBox prefHeight="445.0" prefWidth="247.0">
+                                               <children>
+                                                   <Button fx:id="p11" mnemonicParsing="false" prefHeight="41.0" prefWidth="117.0" style="-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;" text="Piedi" textFill="white" />
+                                                   <Region prefHeight="20.0" prefWidth="111.0" />
+                                                   <Button fx:id="p21" mnemonicParsing="false" prefHeight="41.0" prefWidth="117.0" style="-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;" text="Bici" textFill="white" />
+                                                   <Region prefHeight="20.0" prefWidth="111.0" />
+                                                   <Button fx:id="p31" mnemonicParsing="false" prefHeight="41.0" prefWidth="117.0" style="-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;" text="Auto" textFill="white" />
+                                                   <Region prefHeight="20.0" prefWidth="111.0" />
+                                                   <Button fx:id="p41" mnemonicParsing="false" prefHeight="41.0" prefWidth="117.0" style="-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;" text="Caravan" textFill="white" />
+                                                   <Region prefHeight="20.0" prefWidth="111.0" />
+                                                   <Button fx:id="p51" mnemonicParsing="false" prefHeight="41.0" prefWidth="117.0" style="-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;" text="Natura" textFill="white" />
+                                                   <Region prefHeight="20.0" prefWidth="111.0" />
+                                                   <Button fx:id="p61" mnemonicParsing="false" prefHeight="41.0" prefWidth="117.0" style="-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;" text="Rilassarsi" textFill="white" />
+                                                   <Region prefHeight="20.0" prefWidth="111.0" />
+                                                   <Button fx:id="p71" mnemonicParsing="false" prefHeight="41.0" prefWidth="117.0" style="-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;" text="Visitare" textFill="white" />
+                                                   <Region prefHeight="20.0" prefWidth="111.0" />
+                                               </children>
+                                           </VBox>
+                                           <Region prefHeight="445.0" prefWidth="200.0" />
+                                           <VBox fx:id="scrollExplore" alignment="TOP_LEFT" prefHeight="588.0" prefWidth="555.0" spacing="20" style="-fx-background-color: #F9FAFB; -fx-padding: 24;">
+
+                                               <!-- Titolo Home -->
+                                               <Label style="-fx-font-size: 22px; -fx-font-weight: bold;" text="Trova ispirazione per nuovi viaggi" />
+                                               <Label style="-fx-font-family: 'Segoe UI Emoji'; -fx-text-fill: #6B7280; -fx-font-size: 14px;" text="Grazie a SALVINO ti possiamo consigliare i viaggi più adatti ai tuoi gusti! 🚀" />
+
+                                               <!-- Card Esplora -->
+                                           </VBox>
+                                       </children>
+                                   </HBox>
+                               </VBox>
+                           </content>
+                       </ScrollPane>
+
+                   </AnchorPane>
+
+                   <AnchorPane fx:id="intoTripBox" disable="true" layoutX="10.0" layoutY="10.0" prefHeight="600.0" prefWidth="558.0" visible="false">
                      <children>
                          <ScrollPane fitToWidth="true" style="-fx-background: #F9FAFB;">
                            <content>
-                              <VBox alignment="TOP_LEFT"  prefHeight="588.0" prefWidth="555.0" spacing="20" style="-fx-background-color: #F9FAFB; -fx-padding: 24;">
+                              <VBox alignment="TOP_LEFT" prefHeight="588.0" prefWidth="555.0" spacing="20" style="-fx-background-color: #F9FAFB; -fx-padding: 24;">
                                  <children>
                                     <HBox maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="35.0" prefWidth="507.0">
                                        <children>
@@ -244,7 +300,7 @@
                                           </HBox>
                                        </children>
                                     </HBox>
-                                     <AnchorPane fx:id="workTrip" VBox.vgrow="ALWAYS"/>
+                                     <AnchorPane fx:id="workTrip" VBox.vgrow="ALWAYS" />
                                  </children>
                               </VBox>
                            </content>

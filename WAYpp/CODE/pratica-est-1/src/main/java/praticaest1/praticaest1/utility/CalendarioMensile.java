@@ -1,10 +1,13 @@
 package praticaest1.praticaest1.utility;
 
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
+import praticaest1.praticaest1.GroqClient;
 import praticaest1.praticaest1.obj.Itinerario;
 import praticaest1.praticaest1.obj.Tappa;
 
@@ -20,13 +23,15 @@ public class CalendarioMensile extends VBox {
     private final Itinerario itinerario;
     private List<Tappa> tappeMeseCorrente;
     private final AnchorPane base,baseScroll;
+    private final GroqClient groq;
 
-    public CalendarioMensile(YearMonth meseIniziale, Itinerario itinerario, AnchorPane base, AnchorPane baseScroll) {
+    public CalendarioMensile(YearMonth meseIniziale, Itinerario itinerario, AnchorPane base, AnchorPane baseScroll,GroqClient groq) {
         this.meseCorrente = meseIniziale;
         this.itinerario=itinerario;
         this.base=base;
         this.baseScroll=baseScroll;
         this.tappeMeseCorrente=new ArrayList<Tappa>();
+        this.groq=groq;
 
         setSpacing(10);
         setPadding(new Insets(15));
@@ -120,55 +125,39 @@ public class CalendarioMensile extends VBox {
                     if (tappa.getData().getDayOfMonth()==giornoCorrente){
                         giorno.setStyle("-fx-background-color: #f29f22; -fx-border-color: #f29f22; -fx-background-radius: 5; -fx-text-fill:white;");
                         giorno.setOnMouseClicked(e -> {
-                                StackPane overlay = new StackPane();
-                                overlay.setPrefSize(this.base.getWidth(), this.base.getHeight());
-                                overlay.setStyle("-fx-background-color: rgba(0,0,0,0.3);");
+                            ProgressIndicator spinner = new ProgressIndicator();
+                            spinner.setMaxSize(40, 40);
+                            spinner.setStyle("-fx-progress-color: #3B82F6;");
+                            VBox overlaySpinner = new VBox(spinner);
+                            overlaySpinner.setAlignment(Pos.CENTER);
+                            overlaySpinner.setStyle("-fx-background-color: rgba(255,255,255,0.6);");
+                            overlaySpinner.setPrefSize(base.getWidth(), base.getHeight());
+                            base.getChildren().add(overlaySpinner);
 
-                                VBox popupBox = new VBox(10);
-                                popupBox.setPadding(new Insets(20));
-                                popupBox.setStyle("-fx-background-color: white; -fx-background-radius: 8;");
-                                popupBox.setPrefWidth(400);
-                                popupBox.setMaxWidth(400);
-                                popupBox.setPrefHeight(300);
-                                popupBox.setMaxHeight(300);
-                                popupBox.setAlignment(Pos.TOP_CENTER);
+                            Task<Void> task = new Task<>() {
+                                @Override
+                                protected Void call() throws Exception {
+                                    try {
+                                        Platform.runLater(() -> {
+                                            try {
+                                                base.getChildren().remove(overlaySpinner);
+                                                creaPopBox(giorno,tappa);
+                                            } catch (Exception ex) {
+                                                Platform.runLater(() -> {
+                                                    base.getChildren().remove(overlaySpinner);
+                                                });
+                                            }
+                                        });
+                                    } catch (Exception ex) {
+                                        Platform.runLater(() -> {
+                                            base.getChildren().remove(overlaySpinner);
+                                        });
+                                    }
+                                    return null;
+                                }
+                            };
 
-                                Button chiudi = new Button("X");
-                                chiudi.setStyle("-fx-background-color: transparent; -fx-font-size: 14px; -fx-text-fill: #6B7280;");
-                                chiudi.setOnAction(ez -> {
-                                    this.base.getChildren().remove(overlay);
-                                    baseScroll.setDisable(false);
-                                    giorno.setDisable(false);
-                                });
-                                Label l1=new Label("Dettagli viaggio: ");
-                                l1.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
-                                Label l2 = new Label("Destinazione: ");
-                                l2.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
-                                Label l3=new Label(tappa.getNome());
-                                l3.setStyle("-fx-font-size: 12px;");
-                                Label l4 = new Label("Data di arrivo: ");
-                                l4.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
-                                Label l5=new Label(tappa.getData().toString());
-                                l5.setStyle("-fx-font-size: 12px;");
-
-                                Button chiudi2 = new Button("Chiudi");
-                                chiudi2.setStyle("-fx-background-color: #3B82F6; -fx-text-fill: white;");
-                                chiudi2.setOnAction(ez -> {
-                                    this.base.getChildren().remove(overlay);
-                                    baseScroll.setDisable(false);
-                                    giorno.setDisable(false);
-                                });
-
-                                HBox topBar = new HBox(chiudi2);
-                                topBar.setAlignment(Pos.TOP_RIGHT);
-                                HBox bottomBar = new HBox(chiudi2);
-                                bottomBar.setAlignment(Pos.CENTER_RIGHT);
-
-                                popupBox.getChildren().addAll(topBar,l1,l2,l3,l4,l5,bottomBar);
-                                overlay.getChildren().add(popupBox);
-                                this.base.getChildren().add(overlay);
-                                baseScroll.setDisable(true);
-                                giorno.setDisable(true);
+                            new Thread(task).start();
                         });
                         isChange=true;
                         break;
@@ -188,4 +177,63 @@ public class CalendarioMensile extends VBox {
             giornoCorrente++;
         }
     }
+    private void creaPopBox(Label giorno, Tappa tappa) throws Exception{
+        StackPane overlay = new StackPane();
+        overlay.setPrefSize(this.base.getWidth(), this.base.getHeight());
+        overlay.setStyle("-fx-background-color: rgba(0,0,0,0.3);");
+
+        VBox popupBox = new VBox(10);
+        popupBox.setPadding(new Insets(20));
+        popupBox.setStyle("-fx-background-color: white; -fx-background-radius: 8;");
+        popupBox.setPrefWidth(400);
+        popupBox.setMaxWidth(400);
+        popupBox.setPrefHeight(300);
+        popupBox.setMaxHeight(500);
+        popupBox.setAlignment(Pos.TOP_CENTER);
+
+        Button chiudi = new Button("X");
+        chiudi.setStyle("-fx-background-color: transparent; -fx-font-size: 14px; -fx-text-fill: #6B7280;");
+        chiudi.setOnAction(ez -> {
+            this.base.getChildren().remove(overlay);
+            baseScroll.setDisable(false);
+            giorno.setDisable(false);
+        });
+        Label l1=new Label("Dettagli viaggio: ");
+        l1.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
+        Label l2 = new Label("Destinazione: ");
+        l2.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
+        Label l3=new Label(tappa.getNome());
+        l3.setStyle("-fx-font-size: 12px;");
+        Label l4 = new Label("Data di arrivo: ");
+        l4.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
+        Label l5=new Label(tappa.getData().toString());
+        l5.setStyle("-fx-font-size: 12px;");
+        //Consiglio Ia
+        Label l6=new Label("SALVINO Consiglia:");
+        l6.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
+        Label l7=new Label(groq.generaRisposta("Destinazione: "+tappa.getNome()+" Date: "+tappa.getData().toString()));
+        l7.setStyle("-fx-font-size: 12px;");
+        l7.setWrapText(true);
+        VBox.setVgrow(l7, Priority.ALWAYS);
+
+        Button chiudi2 = new Button("Chiudi");
+        chiudi2.setStyle("-fx-background-color: #3B82F6; -fx-text-fill: white;");
+        chiudi2.setOnAction(ez -> {
+            this.base.getChildren().remove(overlay);
+            baseScroll.setDisable(false);
+            giorno.setDisable(false);
+        });
+
+        HBox topBar = new HBox(chiudi2);
+        topBar.setAlignment(Pos.TOP_RIGHT);
+        HBox bottomBar = new HBox(chiudi2);
+        bottomBar.setAlignment(Pos.CENTER_RIGHT);
+
+        popupBox.getChildren().addAll(topBar,l1,l2,l3,l4,l5,l6,l7,bottomBar);
+        overlay.getChildren().add(popupBox);
+        this.base.getChildren().add(overlay);
+        baseScroll.setDisable(true);
+        giorno.setDisable(true);
+    }
 }
+

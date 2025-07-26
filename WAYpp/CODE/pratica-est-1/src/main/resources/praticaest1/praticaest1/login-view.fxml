@@ -1,21 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Hyperlink?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.PasswordField?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.shape.Line?>
-<?import javafx.scene.text.Font?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane fx:id="anchorBase" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700" prefWidth="900" style="-fx-background-color: #e1e6ea;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="praticaest1.praticaest1.HelloController">
+<AnchorPane fx:id="anchorBase" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700" prefWidth="900" style="-fx-background-color: #e1e6ea;" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="praticaest1.praticaest1.HelloController">
    <children>
       <AnchorPane layoutX="10.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="680.0" prefWidth="880.0" style="-fx-background-color: #f9fafb; -fx-background-radius: 32;">
          <padding>
@@ -56,7 +48,7 @@
       
                          <!-- Link password dimenticata -->
                          <HBox alignment="CENTER_RIGHT" prefWidth="300">
-                             <Hyperlink style="-fx-text-fill: #3B82F6; -fx-font-size: 11px;" text="Hai dimenticato la password?" />
+                             <Hyperlink onAction="#goToForgotPassword" style="-fx-text-fill: #3B82F6; -fx-font-size: 11px;" text="Hai dimenticato la password?" />
                          </HBox>
       
                          <!-- Bottone Login -->
@@ -119,6 +111,40 @@
                      </VBox>
                  </children>
              </AnchorPane>
+            <AnchorPane fx:id="forgotBox" disable="true" layoutX="242.0" layoutY="122.0" style="-fx-background-color: #F9FAFB;" visible="false">
+               <children>
+                  <VBox alignment="CENTER" prefWidth="400" spacing="20" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <Label style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #111827;" text="Waypp" />
+                        <Label style="-fx-text-fill: #6B7280; -fx-font-size: 13px;" text="Tranquillo/a ti aiutiamo anche qui!" />
+                        <VBox fx:id="emailBox" prefWidth="300" spacing="5">
+                           <children>
+                              <Label style="-fx-font-size: 12px; -fx-text-fill: #374151;" text="Email" />
+                              <TextField fx:id="emailV" promptText="Inserisci la tua email" style="-fx-background-radius: 8; -fx-padding: 10; -fx-background-color: white;" />
+                           </children>
+                        </VBox>
+                        <VBox fx:id="codiceBox" disable="true" prefWidth="300" spacing="5" visible="false">
+                           <children>
+                              <Label style="-fx-font-size: 12px; -fx-text-fill: #374151;" text="Inserisci il codice di verifica" />
+                              <PasswordField fx:id="codiceV" promptText="Inserisci il codice di verifica" style="-fx-background-radius: 8; -fx-padding: 10; -fx-background-color: white;" />
+                           </children>
+                        </VBox>
+                         <VBox fx:id="passwordBox" disable="true" prefWidth="300" spacing="5" visible="false">
+                             <children>
+                                 <Label style="-fx-font-size: 12px; -fx-text-fill: #374151;" text="Nuova Password" />
+                                 <TextField fx:id="passwordV" promptText="Inserisci la tua nuova password" style="-fx-background-radius: 8; -fx-padding: 10; -fx-background-color: white;" />
+                             </children>
+                         </VBox>
+                         <HBox alignment="CENTER_RIGHT" prefWidth="300">
+                           <children>
+                              <Hyperlink onAction="#goToLogin" style="-fx-text-fill: #3B82F6; -fx-font-size: 11px;" text="Hai già un'account?" />
+                           </children>
+                        </HBox>
+                        <Button fx:id="b3" onAction="#forgotPassword" prefWidth="300" style="-fx-background-color: #3B82F6; -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 10 0; -fx-font-weight: bold;" text="Continua" />
+                     </children>
+                  </VBox>
+               </children>
+            </AnchorPane>
 
          </children>
       </AnchorPane>
