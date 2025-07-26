@@ -3,7 +3,7 @@
 # WAYpp - Il Tuo Compagno di Viaggio Intelligente
 
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/DOrtenzio/WAYpp/blob/main/LICENSE)
-[![GitHub contributors](https://img.shields.io/github/contributors/your-repo/your-project)](https://github.com/DOrtenzio/WAYpp/your-project/graphs/contributors)
+[![GitHub contributors](https://img.shields.io/github/contributors/DOrtenzio/WAYpp)](https://github.com/DOrtenzio/WAYpp/graphs/contributors)
 [![JavaFX](https://img.shields.io/badge/UI-JavaFX-brightgreen.svg)](https://openjfx.io/)
 [![PHP](https://img.shields.io/badge/Backend-PHP-blueviolet.svg)](https://www.php.net/)
 [![MySQL](https://img.shields.io/badge/Database-MySQL-orange.svg)](https://www.mysql.com/)
