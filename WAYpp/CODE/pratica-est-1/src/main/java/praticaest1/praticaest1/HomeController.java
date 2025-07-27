@@ -411,7 +411,7 @@ public class HomeController {
         // Root
         HBox root = new HBox();
         root.setAlignment(Pos.CENTER_LEFT);
-        root.setPrefSize(507, 194);
+        root.setPrefSize(507, 300);
         root.setStyle(
                 "-fx-background-color: white;" +
                         "-fx-background-radius: 12;" +
@@ -421,13 +421,13 @@ public class HomeController {
 
         // Immagine
         ImageView imageView = new ImageView(new Image(urlimg, true)); // true = backgroundLoading
-        imageView.setFitWidth(156);
-        imageView.setFitHeight(165);
+        imageView.setFitWidth(80);
+        imageView.setFitHeight(100);
         imageView.setPreserveRatio(true);
 
         // Spaziatore tra immagine e testo
         Region spacer1 = new Region();
-        spacer1.setPrefSize(67, 166);
+        spacer1.setPrefSize(45, 166);
 
         // Colonna di destra
         VBox rightBox = new VBox(4);
@@ -436,19 +436,19 @@ public class HomeController {
         Label titolo = new Label("Destinazione :"+v.getNomeUnivoco()); //data la generazione del viaggio il nome univoco combacierà con la destinazione
         if(isIAGenerated) titolo.setText("Destinazione :"+v.getNomeUnivoco()+" SCELTA PER TE DA SALVINO");
         titolo.setPrefSize(285, 20);
-        titolo.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
+        titolo.setStyle("-fx-font-size: 10px; -fx-font-weight: bold;");
 
         Label tipo = new Label("Tipo di viaggio :"+v.getObiettivo()+" Mezzo:"+v.getMezzoUsato());
         tipo.setPrefSize(286, 34);
-        tipo.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-text-fill: #4B5563; -fx-font-size: 12px;");
+        tipo.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-text-fill: #4B5563; -fx-font-size: 7px;");
 
         Label tappe = new Label("Tappe del viaggio: "+v.getItinerario().ottieniStringaTappe());
         tappe.setPrefSize(286, 31);
-        tappe.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-text-fill: #4B5563; -fx-font-size: 12px;");
+        tappe.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-text-fill: #4B5563; -fx-font-size: 7px;");
 
         Label cosaVedere = new Label(desc);
         cosaVedere.setPrefSize(286, 46);
-        cosaVedere.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-text-fill: #4B5563; -fx-font-size: 12px;");
+        cosaVedere.setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-text-fill: #4B5563; -fx-font-size: 7px;");
 
         // Riga bottone in basso a destra
         HBox buttonRow = new HBox();
@@ -459,7 +459,7 @@ public class HomeController {
         HBox.setHgrow(spacer2, Priority.ALWAYS);
 
         Button btn = new Button("Aggiungi e modifica");
-        btn.setPrefSize(160, 26);
+        btn.setPrefSize(130, 16);
         btn.setStyle("-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-text-fill: white;");
         btn.setOnAction(e->{
             goToTrip();
@@ -1710,7 +1710,7 @@ public class HomeController {
             VBox bb4 = new VBox(5, l4, c4);
             CheckBox ck=new CheckBox("Acquistato");
             ck.setSelected(elemento.isAcquistato());
-            Button salva = new Button("Chiudi");
+            Button salva = new Button("Salva");
             ck.setOnAction(ez->{
                 try {
                     viaggioAttuale.getListaElementi().setElementoAcquistato(elemento,ck.isSelected());
@@ -1803,9 +1803,9 @@ public class HomeController {
                         checkChanges.run();
 
                         if (saveTask.getValue()) {
-                            base.getChildren().remove(overlay);
-                            base.setDisable(false);
-                            sezItinerario();
+                            this.base.getChildren().remove(overlay);
+                            baseScroll.setDisable(false);
+                            sezElementi();
                         } else {
                             animazioneBottone(salva, "-fx-background-color: #BE2538; -fx-background-radius: 6; -fx-padding: 8 16;", "-fx-background-color: #3B82F6; -fx-background-radius: 6; -fx-padding: 8 16;");
                         }
@@ -1832,7 +1832,7 @@ public class HomeController {
             b5.setAlignment(Pos.CENTER_RIGHT);
 
             // Inserimento
-            popupBox.getChildren().addAll(bb1,bb2,bb3,bb4,bb5);
+            popupBox.getChildren().addAll(b0,bb1,bb2,bb3,bb4,bb5,b5);
             overlay.getChildren().add(popupBox);
             this.base.getChildren().add(overlay);
             baseScroll.setDisable(true);

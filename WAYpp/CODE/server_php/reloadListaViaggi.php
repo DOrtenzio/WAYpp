@@ -135,13 +135,14 @@ if ( !isset($input['p1']['email']) || !isset($input['p1']['nome']) || !isset($in
                 $listaId = $pdo->lastInsertId();
 
                 if (!empty($viaggio['listaElementi']['list'])) {
-                    $stmtElemento = $pdo->prepare("INSERT INTO elementi (nome, descrizione, luogoAcquisto, isAcquistato, lista_elementi_id) VALUES (:nome, :desc, :luogo, :acq, :lista_id)");
+                    $stmtElemento = $pdo->prepare("INSERT INTO elementi (nome, descrizione, luogoAcquisto, isAcquistato, quantita, lista_elementi_id) VALUES (:nome, :desc, :luogo, :acq, :quant, :lista_id)");
                     foreach ($viaggio['listaElementi']['list'] as $el) {
                         $stmtElemento->execute([
                             'nome' => $el['nome'] ?? '',
                             'desc' => $el['descrizione'] ?? '',
                             'luogo' => $el['luogoAcquisto'] ?? '',
                             'acq' => $el['isAcquistato'] ? 1 : 0,
+                            'quant' => $el['quantita'] ?? 0,
                             'lista_id' => $listaId
                         ]);
                     }

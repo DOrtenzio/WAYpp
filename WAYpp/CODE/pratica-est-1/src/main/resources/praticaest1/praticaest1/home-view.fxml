@@ -264,13 +264,13 @@
                                                    <Region prefHeight="20.0" prefWidth="111.0" />
                                                </children>
                                            </VBox>
-                                           <Region prefHeight="445.0" prefWidth="200.0" />
+                                           <Region prefHeight="445.0" prefWidth="100.0" />
                                            <VBox fx:id="scrollExplore" alignment="TOP_LEFT" prefHeight="588.0" prefWidth="555.0" spacing="20" style="-fx-background-color: #F9FAFB; -fx-padding: 24;">
 
                                                <!-- Titolo Home -->
-                                               <Label style="-fx-font-size: 22px; -fx-font-weight: bold;" text="Trova ispirazione per nuovi viaggi" />
-                                               <Label style="-fx-font-family: 'Segoe UI Emoji'; -fx-text-fill: #6B7280; -fx-font-size: 14px;" text="Grazie a SALVINO ti possiamo consigliare i viaggi più adatti ai tuoi gusti! 🚀" />
-
+                                               <Label style="-fx-font-size: 20px; -fx-font-weight: bold;" text="Trova ispirazione per nuovi viaggi" />
+                                               <Label style="-fx-font-family: 'Segoe UI Emoji'; -fx-text-fill: #6B7280; -fx-font-size: 14px;" text="Grazie a SALVINO ti possiamo consigliare" />
+                                               <Label style="-fx-font-family: 'Segoe UI Emoji'; -fx-text-fill: #6B7280; -fx-font-size: 14px;" text=" i viaggi più adatti ai tuoi gusti! 🚀" />
                                                <!-- Card Esplora -->
                                            </VBox>
                                        </children>

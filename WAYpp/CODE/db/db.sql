@@ -64,6 +64,7 @@ CREATE TABLE `elementi` (
   `nome` varchar(255),
   `descrizione` text,
   `luogoAcquisto` varchar(255),
+  `quantita` int,
   `isAcquistato` boolean,
   `lista_elementi_id` int,
   FOREIGN KEY (lista_elementi_id) REFERENCES listaElementi(id) ON DELETE CASCADE

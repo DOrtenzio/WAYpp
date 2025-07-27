@@ -146,13 +146,14 @@ if ((!isset($input['p1']['email'])) || (!isset($input['p1']['nome'])) || (!isset
 
                $pdo->prepare("DELETE FROM elementi WHERE lista_elementi_id = :id")->execute(['id' => $lista['id']]);
 
-               $stmtEl = $pdo->prepare("INSERT INTO elementi (nome, descrizione, luogoAcquisto, isAcquistato, lista_elementi_id) VALUES (:nome, :desc, :luogo, :acq, :lista_id)");
+               $stmtEl = $pdo->prepare("INSERT INTO elementi (nome, descrizione, luogoAcquisto, isAcquistato, quantita, lista_elementi_id) VALUES (:nome, :desc, :luogo, :acq, :quant, :lista_id)");
                foreach ($input['p2']['listaElementi']['list'] as $el) {
                    $stmtEl->execute([
                        'nome' => $el['nome'] ?? '',
                        'desc' => $el['descrizione'] ?? '',
                        'luogo' => $el['luogoAcquisto'] ?? '',
                        'acq' => $el['isAcquistato'] ? 1 : 0,
+                       'quant' => $el['quantita'] ?? 0,
                        'lista_id' => $lista['id']
                    ]);
                }

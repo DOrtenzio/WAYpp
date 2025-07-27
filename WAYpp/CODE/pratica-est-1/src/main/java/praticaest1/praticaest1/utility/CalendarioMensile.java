@@ -224,7 +224,7 @@ public class CalendarioMensile extends VBox {
             giorno.setDisable(false);
         });
 
-        HBox topBar = new HBox(chiudi2);
+        HBox topBar = new HBox(chiudi);
         topBar.setAlignment(Pos.TOP_RIGHT);
         HBox bottomBar = new HBox(chiudi2);
         bottomBar.setAlignment(Pos.CENTER_RIGHT);
